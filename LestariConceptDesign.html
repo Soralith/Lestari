@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Lestari</title>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <style>
+    @layer base {
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      main>:first-child {
+        margin-top: 0 !important;
+      }
+      main>:last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            /* Blue palette - replacing the teal/green palette */
+            "error-container": "#ffdad6",
+            "surface-tint": "#1a56a0",
+            "surface-container-lowest": "#ffffff",
+            "secondary-container": "#d0e4ff",
+            "on-tertiary-fixed": "#001636",
+            "outline": "#5f6b7c",
+            "surface-bright": "#f0f6ff",
+            "secondary-fixed": "#d0e4ff",
+            "on-error-container": "#93000a",
+            "inverse-surface": "#1a2d45",
+            "surface-container": "#ddeaff",
+            "on-surface": "#071524",
+            "on-secondary-container": "#1d4e8f",
+            "primary": "#003380",
+            "on-primary": "#f0f6ff",
+            "on-tertiary-container": "#91c4f8",
+            "surface-container-low": "#e5eeff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#0a3d7a",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001636",
+            "primary-fixed-dim": "#7aacf0",
+            "outline-variant": "#bcc7d8",
+            "inverse-on-surface": "#dceaff",
+            "on-secondary-fixed": "#001636",
+            "surface-container-highest": "#c8daff",
+            "on-error": "#ffffff",
+            "on-primary-container": "#9fc4f8",
+            "tertiary-fixed": "#b0d0ff",
+            "primary-fixed": "#a8c8ff",
+            "surface-dim": "#c0d4f0",
+            "surface-container-high": "#d2e3ff",
+            "background": "#ffffff",
+            "tertiary": "#003060",
+            "primary-container": "#0e4494",
+            "on-background": "#071524",
+            "tertiary-container": "#1a4a8a",
+            "surface-variant": "#c8daff",
+            "surface": "#ffffff",
+            "inverse-primary": "#7aacf0",
+            "secondary": "#1b4f9c",
+            "on-secondary-fixed-variant": "#0a3570",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#3a4758",
+            "tertiary-fixed-dim": "#88b8f8",
+            "secondary-fixed-dim": "#7aacf0",
+            "on-primary-fixed-variant": "#0a3d7a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "container-padding-mobile": "1rem",
+            "space-2xl": "3rem",
+            "space-xs": "0.5rem",
+            "space-3xl": "4rem",
+            "container-padding-desktop": "2rem",
+            "space-lg": "1.5rem",
+            "chat-max-width": "768px",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "space-2xs": "0.25rem",
+            "space-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Plus Jakarta Sans"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "label-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "title-md": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-background font-body-md text-on-surface">
+
+  <aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="flex flex-col h-full overflow-hidden">
+
+      <div class="p-space-lg flex items-center gap-space-sm">
+        <img alt="Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmam4EtGgMTvuksoNjAoxjqKfjClgO8JKea-BxWFdr1TsRDOag8HMSc3qGG7y5n0xOpntw6_D5Oo9Qc3mU9y1muBklHLssq5WUzhl6U0SN45yY9c-1VfmosVdbaxqB6AJ7RMrvb_Td0zZCV0cOkbYTg1EHWoOvTocoSPAtD_c3gtsnMQmiyAV6_QzSdRHTFTUP39BL4sLMkjHXZBfLFev_bVVhPOSTq0PwqQuBwh4Nd-eAuOI50DS0yQ" />
+        <div class="flex flex-col">
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight">Lestari</span>
+        </div>
+      </div>
+
+      <div class="px-space-md mb-space-md">
+        <a class="flex items-center justify-center gap-space-xs w-full py-space-sm px-space-md bg-primary-container text-on-primary rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.08)] hover:bg-primary transition-all" data-path="konsultasi-ai-baru" href="#">
+          <span class="material-symbols-outlined text-primary-fixed">add_circle</span>
+          <span class="font-label-lg text-label-lg">Konsultasi AI Baru</span>
+        </a>
+      </div>
+
+      <div class="flex-1 overflow-y-auto px-space-md space-y-space-md">
+        <nav class="space-y-space-2xs" data-active-classes="bg-surface-container-highest text-primary font-title-md">
+          <a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl transition-colors bg-surface-container-highest text-primary font-title-md" data-path="konsultasi-ai-baru" href="#">
+            <span class="material-symbols-outlined text-secondary">chat</span>
+            <span class="font-body-md text-body-md">Konsultasi AI</span>
+          </a>
+          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="artikel-kesehatan" href="#">
+            <span class="material-symbols-outlined text-secondary">article</span>
+            <span class="font-body-md text-body-md">Artikel Kesehatan</span>
+          </a>
+          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="artikel-kesehatan" href="#">
+            <span class="material-symbols-outlined text-secondary">cloud</span>
+            <span class="font-body-md text-body-md">Cuaca</span>
+          </a>
+        </nav>
+
+        <div class="pt-space-xs">
+          <span class="px-space-md font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Sesi Terakhir</span>
+          <div class="mt-space-2xs space-y-space-2xs">
+            <a class="block px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="konsultasi-ai-baru" href="#">
+              <p class="font-body-md text-body-md truncate">Konsultasi Demam &amp; Flu</p>
+              <span class="font-label-sm text-label-sm text-outline">Hari ini • Triage Ringan</span>
+            </a>
+            <a class="block px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="konsultasi-ai-baru" href="#">
+              <p class="font-body-md text-body-md truncate">Analisis Lab Darah</p>
+              <span class="font-label-sm text-label-sm text-outline">Kemarin • 4 Indikator</span>
+            </a>
+            <a class="block px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="konsultasi-ai-baru" href="#">
+              <p class="font-body-md text-body-md truncate">Pola Diet Lambung (GERD)</p>
+              <span class="font-label-sm text-label-sm text-outline">2 hari lalu • Nutrisi</span>
+            </a>
+            <a class="block px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="konsultasi-ai-baru" href="#">
+              <p class="font-body-md text-body-md truncate">Nyeri Otot Leher &amp; Bahu</p>
+              <span class="font-label-sm text-label-sm text-outline">12 Okt • Terapi Mandiri</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-space-md bg-surface-container rounded-t-xl mx-space-sm mb-space-sm space-y-space-sm">
+        <div class="flex items-center justify-between gap-space-xs">
+          <div class="flex items-center gap-space-xs">
+            <img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgqF_td4oRZSjF6zztcFEZTbI4X_tvRjesTG09FakKonZ0S7HP7Is7JRF94-uExF8SBA7G_nliFoCwpD6MnuWLCjGxONRqplr8iItuhWPS01IcChhGFv0Iz6-oPhyhiwP0mF65eMNXFRc5wZT4NDipawe71kOxbOPk8VhZIi3ziGiKTgCXnpO9yKaHV-amPbMdpLkKGap5T5uTh1VRumEYBGtFoQu-buijjelIGVkiWthF-VGJxUS02Q" />
+            <div class="flex flex-col">
+              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[110px]">Nama Akun</span>
+              <span class="font-label-sm text-label-sm text-secondary">Pengguna</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <div class="pl-72 flex flex-col min-h-screen">
+
+    <header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
+      <div class="flex items-center gap-space-sm"></div>
+      <div class="flex items-center gap-space-md">
+        <div class="flex items-center bg-surface-container rounded-full p-space-2xs">
+          <button class="px-space-xs py-space-2xs text-primary font-label-sm text-label-sm font-bold bg-surface-container-lowest rounded-full shadow-[0_1px_3px_-1px_rgba(0,30,80,0.06)]">ID</button>
+          <button class="px-space-xs py-space-2xs text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface">EN</button>
+        </div>
+        <img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgqF_td4oRZSjF6zztcFEZTbI4X_tvRjesTG09FakKonZ0S7HP7Is7JRF94-uExF8SBA7G_nliFoCwpD6MnuWLCjGxONRqplr8iItuhWPS01IcChhGFv0Iz6-oPhyhiwP0mF65eMNXFRc5wZT4NDipawe71kOxbOPk8VhZIi3ziGiKTgCXnpO9yKaHV-amPbMdpLkKGap5T5uTh1VRumEYBGtFoQu-buijjelIGVkiWthF-VGJxUS02Q" />
+      </div>
+    </header>
+
+    <main class="w-full pt-16 bg-surface flex-1">
+      <div class="flex flex-col w-full">
+
+        <div class="relative w-full min-h-[calc(100vh-4rem)] flex flex-col justify-between items-center px-space-md md:px-space-xl py-space-xl overflow-hidden">
+
+          <!-- Blue-toned gradient blobs -->
+          <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[620px] h-[360px] bg-gradient-to-tr from-secondary-container/40 via-surface-container/60 to-primary-fixed-dim/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+          <div class="absolute bottom-12 right-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-2xl -z-10 pointer-events-none"></div>
+
+          <div class="w-full max-w-[768px] flex flex-col items-center my-auto py-space-md z-10">
+
+            <div class="flex flex-col items-center text-center mb-space-lg">
+              <div class="relative mb-space-sm">
+                <div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-[0_4px_16px_-4px_rgba(0,30,80,0.12)]">
+                  <!-- Updated icon with blue tones -->
+                  <svg class="w-9 h-9 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 10H29V19H38V29H29V38H19V29H10V19H19V10Z" fill="currentColor" fill-opacity="0.12"></path>
+                    <path d="M21 12C21 10.8954 21.8954 10 23 10H25C26.1046 10 27 10.8954 27 12V21H36C37.1046 21 38 21.8954 38 23V25C38 26.1046 37.1046 27 36 27H27V36C27 37.1046 26.1046 38 25 38H23C21.8954 38 21 37.1046 21 36V27H12C10.8954 27 10 26.1046 10 25V23C10 21.8954 10.8954 21 12 21H21V12Z" fill="#0e4494"></path>
+                    <path d="M22 28C22 28 26 25 31 16C33 24 30 33 22 36C22 36 24 30 22 28Z" fill="#1b4f9c"></path>
+                    <path d="M17 24L20 27L22 21L25 29L27 24H31" stroke="#f0f6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                  </svg>
+                </div>
+                <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-xs">
+                  <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+                </span>
+              </div>
+              <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-2xs">
+                Ada keluhan kesehatan apa hari ini?
+              </h1>
+              <p class="font-body-md text-body-md text-on-surface-variant max-w-[580px]">
+                Konsultasikan gejala fisik, pertanyaan obat, atau foto resep/hasil lab Anda secara instan, aman, dan terlindungi privasi bersama Lestari AI.
+              </p>
+            </div>
+
+            <div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.09),0_2px_8px_-2px_rgba(0,30,80,0.04)] transition-all duration-300 p-space-md focus-within:shadow-[0_16px_36px_-6px_rgba(0,30,80,0.14)]">
+
+              <div class="hidden flex items-center gap-space-xs pb-space-xs mb-space-xs overflow-x-auto" id="attachment-tray">
+                <div class="inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container rounded-lg">
+                  <span class="material-symbols-outlined text-secondary text-[16px]">description</span>
+                  <span class="font-label-sm text-label-sm text-on-surface truncate max-w-[140px]">Hasil_Lab_Darah.pdf</span>
+                  <button class="text-on-surface-variant hover:text-error" onclick="document.getElementById('attachment-tray').classList.add('hidden')" type="button">
+                    <span class="material-symbols-outlined text-[14px]">close</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="relative w-full">
+                <textarea class="w-full resize-none bg-transparent outline-none font-body-lg text-body-lg text-on-surface placeholder:text-outline/70 transition-colors" id="symptom-input" placeholder="Ceritakan keluhan Anda (misal: 'Sudah 3 hari pusing berputar disertai mual saat bangun tidur...')" rows="3"></textarea>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-space-xs pt-space-xs">
+
+                <div class="flex items-center gap-space-2xs">
+                  <label class="flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface cursor-pointer transition-colors" title="Unggah Foto Gejala atau Hasil Lab">
+                    <span class="material-symbols-outlined text-secondary text-[18px]">add_photo_alternate</span>
+                    <span class="font-label-md text-label-md hidden sm:inline">Foto / Lab</span>
+                    <input class="hidden" onchange="document.getElementById('attachment-tray').classList.remove('hidden')" type="file" />
+                  </label>
+
+                  <button class="flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors" id="btn-voice" onclick="toggleVoiceRecording()" title="Rekam Keluhan Menggunakan Suara" type="button">
+                    <span class="material-symbols-outlined text-secondary text-[18px]" id="voice-icon">mic</span>
+                    <span class="font-label-md text-label-md hidden sm:inline" id="voice-text">Suara</span>
+                  </button>
+
+                  <div class="relative">
+                    <button class="flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface transition-colors" id="mode-dropdown-btn" onclick="toggleModeMenu()" type="button">
+                      <span class="material-symbols-outlined text-secondary text-[18px]">vital_signs</span>
+                      <span class="font-label-md text-label-md" id="selected-mode-text">Triase Lengkap</span>
+                      <span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+                    </button>
+
+                    <div class="hidden absolute left-0 bottom-full mb-space-2xs w-48 bg-surface-container-lowest rounded-xl shadow-lg p-space-2xs z-30" id="mode-dropdown">
+                      <button class="w-full text-left px-space-sm py-space-xs font-label-md text-label-md rounded-lg hover:bg-surface-container text-on-surface flex items-center gap-space-xs" onclick="selectMode('Triase Lengkap')" type="button">
+                        <span class="material-symbols-outlined text-[16px] text-secondary">clinical_notes</span>
+                        Triase Lengkap
+                      </button>
+                      <button class="w-full text-left px-space-sm py-space-xs font-label-md text-label-md rounded-lg hover:bg-surface-container text-on-surface flex items-center gap-space-xs" onclick="selectMode('Konsultasi Cepat')" type="button">
+                        <span class="material-symbols-outlined text-[16px] text-secondary">bolt</span>
+                        Konsultasi Cepat
+                      </button>
+                      <button class="w-full text-left px-space-sm py-space-xs font-label-md text-label-md rounded-lg hover:bg-surface-container text-on-surface flex items-center gap-space-xs" onclick="selectMode('Tanya Obat &amp; Resep')" type="button">
+                        <span class="material-symbols-outlined text-[16px] text-secondary">prescriptions</span>
+                        Tanya Obat &amp; Resep
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-space-xs">
+                  <span class="hidden md:inline font-label-sm text-label-sm text-outline">Tekan Enter ↵</span>
+                  <button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] disabled:opacity-50" id="btn-send" onclick="dispatchConsultation()" title="Kirim Keluhan ke AI" type="button">
+                    <span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="w-full mt-space-md">
+              <p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-space-xs text-center md:text-left">
+                Atau pilih topik keluhan klinis umum:
+              </p>
+              <div class="flex flex-wrap items-center justify-center md:justify-start gap-space-xs">
+                <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Sudah lebih dari 2 hari demam naik turun disertai meriang dan nyeri sendi')" type="button">
+                  <span class="w-5 h-5 rounded-full bg-error-container flex items-center justify-center text-on-error-container text-[12px]">🌡️</span>
+                  <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Demam &amp; Meriang &gt; 2 Hari</span>
+                </button>
+                <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Dada terasa panas seperti terbakar menjalar ke tenggorokan dan perut kembung (GERD)')" type="button">
+                  <span class="w-5 h-5 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container text-[12px]">🫀</span>
+                  <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Dada Sesak &amp; Asam Lambung Naik</span>
+                </button>
+                <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Bolehkah mengonsumsi Paracetamol bersamaan dengan antibiotik Amoxicillin?')" type="button">
+                  <span class="w-5 h-5 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed text-[12px]">💊</span>
+                  <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Cek Interaksi Obat &amp; Dosis</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="w-full max-w-[768px] pt-space-md text-center">
+            <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full">
+              <span class="material-symbols-outlined text-secondary text-[16px]">medical_services</span>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">
+                <strong class="font-semibold text-primary">Peringatan:</strong> Lestari AI memberikan saran triase kesehatan berbasis bukti medis dan AI, bukan pengganti diagnosis darurat rumah sakit. Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika dalam kondisi kritis.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    let isRecording = false;
+
+    function toggleVoiceRecording() {
+      isRecording = !isRecording;
+      const btn = document.getElementById('btn-voice');
+      const icon = document.getElementById('voice-icon');
+      const text = document.getElementById('voice-text');
+      const input = document.getElementById('symptom-input');
+
+      if (isRecording) {
+        btn.classList.add('bg-error-container', 'text-on-error-container', 'animate-pulse');
+        btn.classList.remove('bg-surface-container-low', 'text-on-surface');
+        icon.textContent = 'graphic_eq';
+        text.textContent = 'Mendengarkan...';
+        input.placeholder = 'Sedang mendengarkan suara Anda... Silakan berbicara dengan jelas.';
+      } else {
+        btn.classList.remove('bg-error-container', 'text-on-error-container', 'animate-pulse');
+        btn.classList.add('bg-surface-container-low', 'text-on-surface');
+        icon.textContent = 'mic';
+        text.textContent = 'Suara';
+        input.placeholder = "Ceritakan keluhan Anda (misal: 'Sudah 3 hari pusing berputar disertai mual saat bangun tidur...')";
+      }
+    }
+
+    function toggleModeMenu() {
+      const menu = document.getElementById('mode-dropdown');
+      menu.classList.toggle('hidden');
+    }
+
+    function selectMode(modeName) {
+      document.getElementById('selected-mode-text').textContent = modeName;
+      document.getElementById('mode-dropdown').classList.add('hidden');
+    }
+
+    function applyQuickPrompt(text) {
+      const input = document.getElementById('symptom-input');
+      input.value = text;
+      input.focus();
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function dispatchConsultation() {
+      const input = document.getElementById('symptom-input');
+      const query = input.value.trim();
+      if (!query) {
+        input.focus();
+        return;
+      }
+
+      const btnSend = document.getElementById('btn-send');
+      btnSend.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span>';
+      btnSend.disabled = true;
+
+      setTimeout(() => {
+        const newPath = 'konsultasi-ai-baru';
+        const targetNav = document.querySelector(`nav a[data-path="${newPath}"]`);
+        if (targetNav) {
+          targetNav.click();
+        } else {
+          btnSend.innerHTML = '<span class="material-symbols-outlined text-[20px]">check</span>';
+        }
+      }, 600);
+    }
+
+    document.getElementById('symptom-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        dispatchConsultation();
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const dropdown = document.getElementById('mode-dropdown');
+      const dropdownBtn = document.getElementById('mode-dropdown-btn');
+      if (dropdown && dropdownBtn && !dropdownBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  </script>
+
+</body>
+</html>
