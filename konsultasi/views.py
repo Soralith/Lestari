@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from .models import ConsultationSession, ConsultationMessage, Profile
 from .services import get_ai_response
+from .artikel import fetch_articles
 from .bmkg import BmkgError, get_forecast, search_locations
 from .storage import (
     MAX_AVATAR_BYTES,
@@ -180,6 +181,19 @@ def session_page(request, session_id):
 def cuaca_page(request):
     """Weather forecast page (/cuaca/)."""
     return render(request, "konsultasi/cuaca.html")
+
+
+@login_required
+def artikel_page(request):
+    """Health articles page (/artikel/)."""
+    return render(request, "konsultasi/artikel.html")
+
+
+@login_required
+def api_artikel(request):
+    """Return health articles for a query (cached Google News search)."""
+    q = (request.GET.get("q") or "").strip() or "kesehatan"
+    return JsonResponse({"articles": fetch_articles(q)})
 
 
 @login_required

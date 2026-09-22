@@ -87,3 +87,11 @@ class WeatherSearchCache(models.Model):
     query = models.CharField(max_length=120, primary_key=True)
     payload = models.JSONField()
     fetched_at = models.DateTimeField(auto_now=True)
+
+
+class ArtikelCache(models.Model):
+    """Cached Google News article results for a query string."""
+
+    query = models.CharField(max_length=200, primary_key=True)
+    payload = models.JSONField()
+    fetched_at = models.DateTimeField(auto_now=True)

@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Lestari — Cuaca</title>
+  <title>Lestari — Artikel Kesehatan</title>
 
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
@@ -124,11 +124,11 @@
             <span class="material-symbols-outlined text-secondary">chat</span>
             <span class="font-body-md text-body-md">Konsultasi AI</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:artikel' %}">
+          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-highest text-primary font-title-md transition-colors" href="{% url 'konsultasi:artikel' %}">
             <span class="material-symbols-outlined text-secondary">article</span>
             <span class="font-body-md text-body-md">Artikel Kesehatan</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-highest text-primary font-title-md transition-colors" href="{% url 'konsultasi:cuaca' %}">
+          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:cuaca' %}">
             <span class="material-symbols-outlined text-secondary">cloud</span>
             <span class="font-body-md text-body-md">Cuaca</span>
           </a>
@@ -168,7 +168,7 @@
         <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Menu" onclick="toggleSidebar()">
           <span class="material-symbols-outlined text-[20px]">menu</span>
         </button>
-        <span class="font-title-md text-title-md text-on-surface">Prakiraan Cuaca</span>
+        <span class="font-title-md text-title-md text-on-surface">Artikel Kesehatan</span>
       </div>
       <div class="flex items-center gap-space-md">
         <span class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
@@ -180,57 +180,37 @@
 
     <main class="w-full pt-16 bg-surface flex-1 flex flex-col px-space-md md:px-space-xl py-space-lg">
 
+      <!-- Category chips -->
+      <div id="category-chips" class="max-w-[860px] mx-auto flex flex-wrap items-center gap-space-xs"></div>
+
       <!-- Search -->
-      <div class="w-full max-w-[860px] mx-auto mb-space-lg relative">
+      <div class="max-w-[860px] mx-auto mt-space-md relative">
         <div class="flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-lowest rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.08)]">
           <span class="material-symbols-outlined text-secondary">search</span>
-          <input id="cuaca-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md placeholder:text-outline/70"
-            placeholder="Cari desa/kelurahan (misal: Kemayoran, Tebet, Bandung…)" autocomplete="off" />
-          <button id="cuaca-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
+          <input id="artikel-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md placeholder:text-outline/70"
+            placeholder="Cari artikel kesehatan…" autocomplete="off" />
+          <button id="artikel-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
             <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
-        <div id="search-results" class="hidden absolute left-0 right-0 top-full mt-space-xs z-30 bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.18)] max-h-72 overflow-y-auto"></div>
-        <p id="cuaca-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs"></p>
+        <p id="artikel-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs"></p>
       </div>
 
-      <!-- Current conditions -->
-      <div id="cuaca-loading" class="max-w-[860px] mx-auto text-center py-space-xl">
+      <!-- Loading -->
+      <div id="artikel-loading" class="max-w-[860px] mx-auto text-center py-space-xl">
         <span class="material-symbols-outlined text-secondary text-[32px] animate-spin">progress_activity</span>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">Memuat prakiraan cuaca…</p>
+        <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">Memuat artikel…</p>
       </div>
 
-      <div id="cuaca-content" class="hidden max-w-[860px] mx-auto w-full">
+      <!-- Articles -->
+      <div id="artikel-list" class="max-w-[860px] mx-auto w-full grid gap-space-sm"></div>
 
-        <!-- Current card -->
-        <div class="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary-container/80 via-secondary-container/70 to-tertiary-fixed/40 p-space-xl mb-space-md">
-          <div class="absolute -top-10 right-0 w-72 h-72 bg-primary-fixed/20 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="flex flex-col gap-space-md">
-            <div class="flex items-center gap-space-sm">
-              <span class="material-symbols-outlined text-on-secondary-container text-[18px]">location_on</span>
-              <p id="cur-location" class="font-title-md text-title-md text-on-surface truncate">—</p>
-            </div>
-            <div class="flex items-center justify-between flex-wrap gap-space-lg">
-              <div>
-                <p id="cur-temp" class="font-headline-lg text-headline-lg text-on-primary leading-none">—</p>
-                <p id="cur-desc" class="font-body-md text-body-md text-on-primary-fixed mt-space-xs">—</p>
-              </div>
-              <img id="cur-icon" class="w-24 h-24 object-contain" alt="Ikon cuaca" />
-            </div>
-            <div id="cur-details" class="grid grid-cols-2 sm:grid-cols-4 gap-space-xs"></div>
-          </div>
-        </div>
-
-        <!-- 3-day forecast -->
-        <div id="forecast-days" class="flex flex-col gap-space-sm"></div>
-
-        <!-- Attribution -->
-        <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full mt-space-md">
-          <span class="material-symbols-outlined text-secondary text-[16px]">cloud</span>
-          <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
-            Sumber Data: <a class="font-semibold text-primary underline underline-offset-2" href="https://www.bmkg.go.id" target="_blank" rel="noopener">BMKG</a> (Badan Meteorologi, Klimatologi, dan Geofisika) — data prakiraan cuaca terbuka.
-          </p>
-        </div>
+      <!-- Attribution -->
+      <div class="max-w-[860px] mx-auto inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full mt-space-md">
+        <span class="material-symbols-outlined text-secondary text-[16px]">newspaper</span>
+        <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
+          Sumber: <a class="font-semibold text-primary underline underline-offset-2" href="https://news.google.com" target="_blank" rel="noopener">Google Berita</a> — agregasi artikel kesehatan terbuka.
+        </p>
       </div>
 
     </main>
@@ -273,18 +253,15 @@
       sidebar.classList.add('translate-x-0');
       sidebarBackdrop.classList.remove('hidden');
     }
-
     function closeSidebar() {
       sidebar.classList.remove('translate-x-0');
       sidebar.classList.add('-translate-x-full');
       sidebarBackdrop.classList.add('hidden');
     }
-
     function toggleSidebar() {
       if (sidebar.classList.contains('translate-x-0')) closeSidebar();
       else openSidebar();
     }
-
     document.querySelectorAll('#sidebar a, #sidebar button').forEach(el => {
       el.addEventListener('click', closeSidebar);
     });
@@ -328,159 +305,121 @@
       modalAvatarInput.value = '';
     });
 
-    // ============ Cuaca ============
-    const DEFAULT_ADM4 = '31.71.03.1001'; // Kemayoran, Jakarta Pusat
+    // ============ Artikel Kesehatan ============
+    const CATEGORIES = [
+      { label: 'Kesehatan', q: 'kesehatan' },
+      { label: 'Fitnes', q: 'fitnes' },
+      { label: 'Nutrisi', q: 'nutrisi' },
+      { label: 'Obat', q: 'obat' },
+      { label: 'Kesehatan Mental', q: 'kesehatan mental' },
+      { label: 'Teknologi Medis', q: 'teknologi medis' },
+    ];
 
-    const searchInput = document.getElementById('cuaca-search');
-    const searchResults = document.getElementById('search-results');
-    const clearBtn = document.getElementById('cuaca-search-clear');
-    const errorEl = document.getElementById('cuaca-error');
-    const loadingEl = document.getElementById('cuaca-loading');
-    const contentEl = document.getElementById('cuaca-content');
+    const chipsEl = document.getElementById('category-chips');
+    const searchInput = document.getElementById('artikel-search');
+    const clearBtn = document.getElementById('artikel-search-clear');
+    const errorEl = document.getElementById('artikel-error');
+    const loadingEl = document.getElementById('artikel-loading');
+    const listEl = document.getElementById('artikel-list');
 
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.classList.remove('hidden');
+    let currentQuery = 'kesehatan';
+
+    function renderChips() {
+      chipsEl.innerHTML = CATEGORIES.map(c =>
+        `<button type="button" class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all ${c.q === currentQuery ? 'bg-primary text-on-primary shadow-[0_2px_6px_-2px_rgba(0,30,80,0.2)]' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'}" data-q="${c.q}">${c.label}</button>`
+      ).join('');
+      chipsEl.querySelectorAll('[data-q]').forEach(btn => {
+        btn.addEventListener('click', () => loadArticles(btn.dataset.q, btn.textContent.trim()));
+      });
     }
+
+    function showError(msg) { errorEl.textContent = msg; errorEl.classList.remove('hidden'); }
     function hideError() { errorEl.classList.add('hidden'); }
-
-    function fmtTime(localDt) {
-      // "2026-09-22 07:00:00" -> "07:00"
-      const m = (localDt || '').match(/(\d{2}):(\d{2})/);
-      return m ? m[1] + ':' + m[2] : (localDt || '');
-    }
-
-    function fmtDate(dateStr) {
-      const d = new Date(dateStr + 'T00:00:00');
-      const day = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'][d.getDay()] || '';
-      const month = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'][d.getMonth()] || '';
-      return `${day}, ${d.getDate()} ${month}`;
-    }
-
-    function renderForecast(data) {
-      hideError();
-      loadingEl.classList.add('hidden');
-      contentEl.classList.remove('hidden');
-
-      const loc = data.location;
-      const parts = [loc.desa, loc.kecamatan, loc.kotkab, loc.provinsi].filter(Boolean);
-      document.getElementById('cur-location').textContent = parts.join(' › ') || '—';
-
-      const firstSlot = data.days[0]?.slots[0] || {};
-      document.getElementById('cur-temp').textContent = (firstSlot.t != null ? Math.round(firstSlot.t) : '—') + '°C';
-      document.getElementById('cur-desc').textContent = firstSlot.weather_desc || '—';
-      const icon = document.getElementById('cur-icon');
-      if (firstSlot.image) { icon.src = firstSlot.image; icon.classList.remove('hidden'); }
-      else icon.classList.add('hidden');
-
-      const details = [
-        { icon: 'water_drop', label: 'Kelembapan', value: firstSlot.hu != null ? firstSlot.hu + '%' : '—' },
-        { icon: 'air', label: 'Angin', value: firstSlot.ws != null ? firstSlot.ws + ' km/h' + (firstSlot.wd ? ' dari ' + firstSlot.wd : '') : '—' },
-        { icon: 'cloud', label: 'Tutupan Awan', value: firstSlot.tcc != null ? firstSlot.tcc + '%' : '—' },
-        { icon: 'visibility', label: 'Jarak Pandang', value: firstSlot.vs_text || '—' },
-      ];
-      document.getElementById('cur-details').innerHTML = details.map(d =>
-        `<div class="flex items-center gap-space-2xs bg-surface-container-lowest/90 rounded-lg px-space-sm py-space-xs">
-           <span class="material-symbols-outlined text-secondary text-[16px]">${d.icon}</span>
-           <div class="min-w-0 flex-1">
-             <p class="font-label-sm text-label-sm text-outline">${d.label}</p>
-             <p class="font-label-md text-label-md text-on-surface truncate">${escapeHtml(String(d.value))}</p>
-           </div>
-         </div>`).join('');
-
-      const daysEl = document.getElementById('forecast-days');
-      daysEl.innerHTML = data.days.map(day => {
-        const rows = day.slots.map(s =>
-          `<div class="flex items-center gap-space-sm px-space-md py-space-2xs rounded-lg hover:bg-surface-container transition-colors">
-             <span class="w-12 font-label-md text-label-md text-on-surface-variant">${fmtTime(s.local_datetime)}</span>
-             <img src="${s.image || ''}" alt="${escapeHtml(s.weather_desc || '')}" class="w-6 h-6 object-contain" />
-             <span class="font-body-md text-body-md text-on-surface truncate flex-1 text-left">${escapeHtml(s.weather_desc || '—')}</span>
-             <span class="font-label-md text-label-md text-secondary">${s.ws != null ? s.ws + ' km/h' : ''}</span>
-             <span class="font-label-lg text-label-lg text-primary w-12 text-right">${s.t != null ? Math.round(s.t) + '°' : '—'}</span>
-           </div>`).join('');
-        return `
-          <div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_8px_-2px_rgba(0,30,80,0.06)] overflow-hidden">
-            <div class="px-space-md py-space-xs bg-surface-container font-label-md text-label-md text-on-surface-variant font-semibold">${fmtDate(day.date)}</div>
-            <div class="flex flex-col divide-y divide-outline-variant/30">${rows}</div>
-          </div>`;
-      }).join('');
-    }
 
     function escapeHtml(s) {
       return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    async function loadForecast(adm4, name) {
-      loadingEl.classList.remove('hidden');
-      contentEl.classList.add('hidden');
+    function timeAgo(iso) {
+      if (!iso) return '';
+      const t = new Date(iso);
+      if (isNaN(t.getTime())) return '';
+      const s = Math.max(0, (Date.now() - t.getTime()) / 1000);
+      if (s < 90) return 'Kali baru';
+      const m = Math.floor(s / 60);
+      if (m < 60) return m + ' min lalu';
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + ' jam lalu';
+      const d = Math.floor(h / 24);
+      if (d < 7) return d + ' hari lalu';
+      return t.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function renderArticles(articles) {
       hideError();
+      loadingEl.classList.add('hidden');
+      if (!articles || !articles.length) {
+        listEl.innerHTML = '<div class="text-center py-space-xl"><p class="font-body-md text-body-md text-on-surface-variant">Belum ada artikel untuk pengeen ini.</p></div>';
+        return;
+      }
+      listEl.innerHTML = articles.map(a => `
+        <a href="${escapeHtml(a.link)}" target="_blank" rel="noopener"
+           class="group flex flex-col gap-space-xs p-space-md bg-surface-container-lowest rounded-xl shadow-[0_2px_8px_-2px_rgba(0,30,80,0.06)] hover:shadow-[0_12px_28px_-6px_rgba(0,30,80,0.12)] transition-all">
+          <div class="flex items-center gap-space-2xs">
+            <span class="inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-secondary-container rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">${escapeHtml(a.source || 'Sumber')}</span>
+            <span class="font-label-sm text-label-sm text-outline ml-auto">${timeAgo(a.published)}</span>
+          </div>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors leading-snug">${escapeHtml(a.title)}</h3>
+          ${a.snippet ? `<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">${escapeHtml(a.snippet)}</p>` : ''}
+          <span class="inline-flex items-center gap-space-2xs font-label-md text-label-md text-secondary group-hover:text-primary transition-colors">Buka artikel <span class="material-symbols-outlined text-[14px]">arrow_outward</span></span>
+        </a>`).join('');
+    }
+
+    async function loadArticles(q, label) {
+      currentQuery = q;
+      if (label) searchInput.value = label;
+      loadingEl.classList.remove('hidden');
+      listEl.innerHTML = '';
+      hideError();
+      renderChips();
       try {
-        const resp = await fetch('/api/cuaca/forecast/?adm4=' + encodeURIComponent(adm4));
+        const resp = await fetch('/api/artikel/?q=' + encodeURIComponent(q));
         const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Gagal memuat prakiraan.');
-        renderForecast(data);
-        if (name) { searchInput.value = name; }
+        if (!resp.ok) throw new Error(data.error || 'Gagal memuat artikel.');
+        renderArticles(data.articles);
       } catch (err) {
         loadingEl.classList.add('hidden');
-        showError(err.message || 'Gagal memuat prakiraan cuaca. Silakan coba lagi.');
+        showError(err.message || 'Gagal memuat artikel. Silakan coba lagi.');
       }
     }
 
     let searchTimer = null;
-    async function runSearch(q) {
-      searchResults.classList.add('hidden');
-      if (q.length < 2) return;
-      try {
-        const resp = await fetch('/api/cuaca/search/?q=' + encodeURIComponent(q));
-        const data = await resp.json();
-        if (data.error) throw new Error(data.error);
-        if (!data.results || !data.results.length) {
-          searchResults.innerHTML = '<p class="px-space-md py-space-sm font-body-sm text-body-sm text-outline">Lokasi tidak ditemukan.</p>';
-        } else {
-          searchResults.innerHTML = data.results.map(r =>
-            `<button type="button" class="w-full text-left px-space-md py-space-sm rounded-lg hover:bg-surface-container transition-colors" data-adm4="${r.code}">
-               <span class="block font-body-md text-body-md text-on-surface truncate">${escapeHtml(r.name)}</span>
-               <span class="block font-label-sm text-label-sm text-outline truncate">${escapeHtml(r.path)}</span>
-             </button>`).join('');
-        }
-        searchResults.classList.remove('hidden');
-      } catch (err) {
-        showError(err.message || 'Gagal mencari lokasi.');
-      }
-    }
-
     searchInput.addEventListener('input', () => {
       hideError();
       clearBtn.classList.toggle('hidden', !searchInput.value.length);
-      const q = searchInput.value.trim();
       clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => runSearch(q), 350);
+      searchTimer = setTimeout(() => {
+        const q = searchInput.value.trim();
+        if (q.length >= 2) loadArticles(q, q);
+      }, 400);
+    });
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const q = searchInput.value.trim();
+        if (q.length >= 2) loadArticles(q, q);
+      }
     });
 
     clearBtn.addEventListener('click', () => {
       searchInput.value = '';
       clearBtn.classList.add('hidden');
-      searchResults.classList.add('hidden');
       hideError();
     });
 
-    searchResults.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-adm4]');
-      if (!btn) return;
-      const adm4 = btn.dataset.adm4;
-      const name = btn.querySelector('span')?.textContent || adm4;
-      searchResults.classList.add('hidden');
-      loadForecast(adm4, name);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('#cuaca-search') && !e.target.closest('#search-results')) {
-        searchResults.classList.add('hidden');
-      }
-    });
-
     // ============ Init ============
-    loadForecast(DEFAULT_ADM4, 'Kemayoran, Jakarta Pusat');
+    renderChips();
+    loadArticles(currentQuery, 'Kesehatan');
   </script>
 
 </body>
