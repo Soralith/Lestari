@@ -1,0 +1,679 @@
+
+
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jendela AI — Transparansi Data Pemerintahan Indonesia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet" />
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: "Plus Jakarta Sans", sans-serif; background: #F7F9FC; color: #0f172a; }
+      ::-webkit-scrollbar { width: 0; }
+
+      /* ── Page wipe ── */
+      .page-wipe { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #323446 0%, #1a1c2a 100%); clip-path: circle(0% at 50% 50%); visibility: hidden; pointer-events: none; }
+      .page-wipe.active { visibility: visible; animation: wipe-in 750ms cubic-bezier(0.65,0,0.35,1) forwards; }
+      @keyframes wipe-in { to { clip-path: circle(150% at 50% 50%); } }
+      .page-exit { animation: page-exit 650ms cubic-bezier(0.4,0,1,1) forwards; pointer-events: none; }
+      @keyframes page-exit { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(1.05); } }
+
+      /* ── Nav ── */
+      .nav-pill { position: relative; font-size: 14px; font-weight: 600; color: #64748b; padding: 6px 14px; border-radius: 999px; transition: all 200ms; }
+      .nav-pill:hover { color: #0f172a; background: rgba(50,52,70,0.07); }
+
+      /* ── Marquee ── */
+      .marquee-track { display: flex; gap: 48px; animation: marquee 28s linear infinite; width: max-content; }
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .marquee-track:hover { animation-play-state: paused; }
+
+      /* ── Hero ── */
+      .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 900ms ease; pointer-events: none; }
+      .hero-slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+      .hero-slide img { transform: scale(1.04); transition: transform 6000ms ease; }
+      .hero-slide.active img { transform: scale(1); }
+
+      /* ── Dot nav ── */
+      .hero-dot { width: 6px; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.4); border: none; padding: 0; cursor: pointer; transition: all 300ms ease; }
+      .hero-dot.active { width: 24px; background: #fff; }
+
+      /* ── Feature grid ── */
+      .feat-card { background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; padding: 32px; transition: box-shadow 250ms, transform 250ms; cursor: default; }
+      .feat-card:hover { box-shadow: 0 16px 40px -16px rgba(50,52,70,0.18); transform: translateY(-4px); }
+      .feat-icon { width: 44px; height: 44px; border-radius: 14px; background: #323446; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+
+      /* ── Game cards ── */
+      .game-card { border-radius: 18px; overflow: hidden; background: #fff; border: 1px solid #e2e8f0; transition: all 300ms cubic-bezier(0.22,1,0.36,1); cursor: pointer; }
+      .game-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -16px rgba(50,52,70,0.28); }
+      .game-card img { transition: transform 500ms cubic-bezier(0.22,1,0.36,1); }
+      .game-card:hover img { transform: scale(1.08); }
+
+      /* ── Category tiles ── */
+      .cat-tile { border-radius: 20px; border: 1px solid #e2e8f0; background: #fff; padding: 28px; cursor: pointer; transition: all 220ms; position: relative; overflow: hidden; }
+      .cat-tile::before { content: ''; position: absolute; inset: 0; background: #323446; opacity: 0; transition: opacity 220ms; }
+      .cat-tile:hover::before { opacity: 1; }
+      .cat-tile:hover .cat-num, .cat-tile:hover .cat-name, .cat-tile:hover .cat-link { color: #fff; }
+      .cat-tile > * { position: relative; }
+      .cat-num { font-size: 11px; font-weight: 700; letter-spacing: .12em; color: #94a3b8; transition: color 220ms; }
+      .cat-name { font-size: 17px; font-weight: 700; color: #0f172a; margin-top: 14px; line-height: 1.3; transition: color 220ms; }
+      .cat-link { font-size: 12px; font-weight: 600; color: #64748b; margin-top: 12px; display: inline-block; transition: color 220ms; }
+
+      /* ── Pulse ── */
+      .pulse-dot { animation: pulse 2s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.2); } }
+
+      /* ── Case tabs ── */
+      .case-tab { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; cursor: pointer; transition: all 250ms; display: flex; align-items: center; gap: 16px; text-align: left; }
+      .case-tab:hover { border-color: #94a3b8; transform: translateX(4px); }
+      .case-tab.active { background: #323446; border-color: #323446; box-shadow: 0 16px 36px -12px rgba(50,52,70,0.4); }
+      .case-tab .ct-num { font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; color: #94a3b8; transition: color 250ms; }
+      .case-tab .ct-title { font-size: 16px; font-weight: 700; color: #0f172a; transition: color 250ms; }
+      .case-tab .ct-desc { font-size: 13px; color: #64748b; margin-top: 2px; transition: color 250ms; }
+      .case-tab .ct-arrow { color: #cbd5e1; transition: all 250ms; flex-shrink: 0; }
+      .case-tab.active .ct-num { color: rgba(255,255,255,.45); }
+      .case-tab.active .ct-title { color: #fff; }
+      .case-tab.active .ct-desc { color: #94a3b8; }
+      .case-tab.active .ct-arrow { color: #fff; transform: rotate(-45deg); }
+
+      /* ── CS panel ── */
+      #cs-panel { transition: opacity 250ms ease, transform 250ms ease; }
+
+      /* ── Ticker ── */
+      .ticker-item { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #64748b; white-space: nowrap; }
+
+      /* ── Scroll fade in ── */
+      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 600ms ease, transform 600ms ease; }
+      .reveal.visible { opacity: 1; transform: translateY(0); }
+
+      /* ── Category modal ── */
+      #cat-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 24px; visibility: hidden; opacity: 0; transition: opacity 200ms, visibility 200ms; }
+      #cat-modal.open { visibility: visible; opacity: 1; }
+      #cat-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.5); backdrop-filter: blur(4px); }
+      #cat-card { position: relative; width: 100%; max-width: 440px; background: #fff; border-radius: 20px; padding: 36px; box-shadow: 0 32px 64px -20px rgba(50,52,70,.4); transform: translateY(16px) scale(.98); opacity: 0; transition: all 250ms cubic-bezier(0.22,1,0.36,1); }
+      #cat-modal.open #cat-card { transform: translateY(0) scale(1); opacity: 1; }
+
+      /* ── Stat bar ── */
+      .stat-bar { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .stat-cell { padding: 24px 32px; text-align: center; }
+      .stat-cell + .stat-cell { border-left: 1px solid #e2e8f0; }
+
+      /* ── Logo circles ── */
+      .pub-pill { display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px; background: #fff; border: 1px solid #e2e8f0; font-size: 13px; font-weight: 700; color: #475569; transition: all 250ms; }
+      .pub-pill:hover { border-color: #323446; color: #323446; box-shadow: 0 8px 20px -8px rgba(50,52,70,.2); transform: translateY(-2px); }
+
+      /* ── Badge ── */
+      .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+      .badge-new { background: #323446; color: #fff; }
+      .badge-pre { background: #e2e8f0; color: #475569; }
+
+      /* ── Hero nav ── */
+      .hero-nav { width: 42px; height: 42px; border-radius: 999px; background: rgba(255,255,255,.12); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: all 200ms; }
+      .hero-nav:hover { background: rgba(255,255,255,.25); transform: scale(1.06); }
+
+      @media (max-width: 1023px) { .grid > * { min-width: 0; } }
+
+      /* ── Split headline ── */
+      .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #94a3b8; margin-bottom: 14px; }
+
+      /* ── Sticky nav glow ── */
+      header { background: rgba(247,249,252,.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(226,232,240,.7); }
+    </style>
+  </head>
+  {% load l10n %}
+  <body class="antialiased overflow-x-hidden">
+
+    <!-- ═══════════ NAVBAR ═══════════ -->
+    <header class="sticky top-0 z-40">
+      <nav class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3">
+          <span class="font-extrabold text-slate-900 text-[17px] tracking-tight">Jendela <span class="text-red-500">AI</span></span>
+        </a>
+
+        <!-- Links -->
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#top" class="nav-pill">Beranda</a>
+          <a href="#features" class="nav-pill">Fitur</a>
+          <a href="#store" class="nav-pill">Cara Kerja</a>
+          <a href="#releases" class="nav-pill">Sumber Data</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          {% if user.is_authenticated %}
+            <a href="/dashboard/" class="inline-flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+                {% if user.profile.avatar_updated_at %}
+                  <img src="/api/auth/avatar?t={{ user.profile.avatar_updated_at.timestamp|unlocalize }}" alt="Avatar" class="w-full h-full object-cover">
+                {% else %}
+                  <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-red-500 to-orange-400 text-white text-xs font-bold">{{ user.first_name|first|default:"J" }}</span>
+                {% endif %}
+              </span>
+              <span class="text-[14px] font-semibold text-slate-600 hover:text-slate-900 transition-colors">Dashboard</span>
+            </a>
+          {% else %}
+            <button onclick="openAuthModal('')" class="text-[14px] font-semibold text-slate-500 hover:text-slate-900 transition-colors px-3 py-2">Masuk</button>
+            <button onclick="onGetStarted()" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-[13px] font-bold px-5 py-2.5 rounded-full transition-all hover:-translate-y-px shadow-sm">
+              Daftar <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </button>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section id="top" class="max-w-screen-2xl mx-auto px-6 lg:px-12 pt-8">
+      <div class="relative rounded-[2rem] overflow-hidden" style="height:580px">
+        <!-- Slide 1 -->
+        <div class="hero-slide active" data-slide="0">
+          <img src="{% static 'images/inibendera1.jpg' %}" alt="Bendera 1" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#1a1c2a]/80 via-[#1a1c2a]/30 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Data Resmi Pemerintah</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap data<br/>punya cerita.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/dashboard/" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Go to Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="#" onclick="onGetStarted(); return false;" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Mulai Menganalisis <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Pelajari lebih lanjut →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="hero-slide" data-slide="1">
+          <img src="{% static 'images/inibendera2.jpg' %}" alt="Bendera 1" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#1a1c2a]/80 via-[#1a1c2a]/30 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Deteksi Kejanggalan</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap anomali<br/>terdeteksi.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/dashboard/" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Go to Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="#" onclick="onGetStarted(); return false;" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Coba Sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Lihat cara kerja →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="hero-slide" data-slide="2">
+          <img src="{% static 'images/inibukanbendera1.jpg' %}" alt="Bendera 1" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#1a1c2a]/80 via-[#1a1c2a]/30 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Opini Publik & Media</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap opini<br/>tervalidasi.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/dashboard/" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Go to Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="#" onclick="onGetStarted(); return false;" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Jelajahi Data <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Lihat fitur →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="hero-slide" data-slide="3">
+          <img src="{% static 'images/inibukanbendera2.jpg' %}" alt="Bendera 1" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#1a1c2a]/80 via-[#1a1c2a]/30 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Sintesis AI</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap jawaban<br/>berbasis data.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/dashboard/" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Go to Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="#" onclick="onGetStarted(); return false;" class="inline-flex items-center gap-2 bg-white text-[#323446] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Mulai Gratis <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Pelajari lebih lanjut →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav prev/next -->
+        <button id="hero-prev" aria-label="Previous" class="hero-nav absolute left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+        <button id="hero-next" aria-label="Next" class="hero-nav absolute right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+
+        <!-- Dots -->
+        <div class="absolute top-6 right-8 flex items-center gap-2 z-20">
+          <button class="hero-dot active" data-goto="0" aria-label="Slide 1"></button>
+          <button class="hero-dot" data-goto="1" aria-label="Slide 2"></button>
+          <button class="hero-dot" data-goto="2" aria-label="Slide 3"></button>
+          <button class="hero-dot" data-goto="3" aria-label="Slide 4"></button>
+        </div>
+
+        <!-- Corner stats overlay -->
+        <div class="absolute bottom-0 right-0 hidden lg:grid grid-cols-3 z-10" style="width:580px">
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20">
+            <p class="text-3xl font-extrabold text-slate-900">3</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Sumber validasi per analisis</p>
+          </div>
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20">
+            <p class="text-3xl font-extrabold text-slate-900">AI</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Sintesis cerdas otomatis</p>
+          </div>
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20 rounded-br-[2rem]">
+            <p class="text-3xl font-extrabold text-slate-900">24/7</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Akses data kapan saja</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ MARQUEE / PUBLISHER STRIP ═══════════ -->
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 pt-14 pb-4">
+      <p class="eyebrow text-center mb-8">Sumber data kami</p>
+      <div class="flex flex-wrap items-center justify-center gap-8">
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="database" class="w-4 h-4 text-[#323446]"></i> data.go.id</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="shield" class="w-4 h-4 text-[#323446]"></i> Nemesis</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="newspaper" class="w-4 h-4 text-[#323446]"></i> Google News</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="sparkles" class="w-4 h-4 text-[#323446]"></i> Gemini AI</span>
+      </div>
+    </section>
+
+    <!-- ═══════════ INTRO SPLIT ═══════════ -->
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-24 reveal">
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-center">
+        <div>
+          <p class="eyebrow">Tentang Jendela AI</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12]">
+            <span class="text-slate-900">Analisis data negara.</span><br/>
+            <span class="text-slate-400">Validasi multi-sumber.</span>
+          </h2>
+          <p class="text-[15px] text-slate-500 leading-relaxed mt-6 max-w-md">
+            Setiap pertanyaan dijawab dengan rigor tiga sumber independen — data resmi, deteksi anomali, dan opini publik — lalu disintesis oleh AI. Transparansi data pemerintahan untuk semua.
+          </p>
+          {% if user.is_authenticated %}
+            <a href="/dashboard/" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-6 py-3 rounded-full mt-8 transition-all hover:-translate-y-px">
+              Buka Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          {% else %}
+            <button onclick="onGetStarted()" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-6 py-3 rounded-full mt-8 transition-all hover:-translate-y-px">
+              Mulai Gratis <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          {% endif %}
+        </div>
+        <!-- Right: stacked image collage -->
+        <div class="relative hidden lg:block" style="height:400px">
+          <div class="absolute inset-0 rounded-[1.6rem] overflow-hidden">
+            <img src="{% static 'images/multisumber.jpg' %}" alt="collector" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#1a1c2a]/40 to-transparent"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ FEATURES ═══════════ -->
+    <section id="features" class="bg-[#E2E7EE] py-24">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="text-center mb-14 reveal">
+          <p class="eyebrow">Fitur Platform</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12] max-w-2xl mx-auto">
+            <span class="text-slate-900">Satu dashboard</span>
+            <span class="text-slate-400"> untuk semua kebutuhan analisis data</span>
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="layers" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Pencarian Dataset Cerdas</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Cari dataset dari data.go.id menggunakan bahasa alami. AI otomatis menemukan data yang paling relevan.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="badge-check" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Deteksi Kejanggalan</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Integrasi dengan Nemesis untuk mendeteksi anomali pengadaan, markup berlebih, dan potensi penyalahgunaan anggaran.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="sparkles" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Validasi Opini Publik</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Cek bagaimana media dan masyarakat merespons isu yang sama. Lihat liputan, opini, dan sentimen publik.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="package" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Sintesis AI</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">AI menggabungkan ketiga sumber menjadi kesimpulan komprehensif, berimbang, dilengkapi confidence score.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="book-open" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Chat Lanjutan</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Ajukan pertanyaan lanjutan tentang hasil analisis. AI akan mencari data tambahan dan menjawab dengan konteks.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="headphones" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Riwayat Analisis</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Semua analisis tersimpan otomatis. Buka kembali kapan saja, download dataset, atau lanjutkan percakapan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ STORE / CATEGORIES ═══════════ -->
+    <section id="store" class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-24">
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-start">
+
+        <!-- Left -->
+        <div class="reveal">
+          <p class="eyebrow">Cara Kerja</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12]">
+            <span class="text-slate-900">Analisis Tiga Fase</span><br/>
+            <span class="text-slate-400">Validasi Multi-Sumber</span>
+          </h2>
+          <p class="text-[15px] text-slate-500 leading-relaxed mt-5 max-w-md">Setiap pertanyaan dijawab dengan rigor tiga sumber independen — data resmi, deteksi anomali, dan opini publik.</p>
+
+          <!-- Category tiles 2×2 -->
+          <div class="grid grid-cols-2 gap-4 mt-10">
+            <div class="cat-tile" data-cat="0" role="button" tabindex="0">
+              <span class="cat-num">01</span>
+              <h4 class="cat-name">Data Resmi</h4>
+              <span class="cat-link">View details →</span>
+            </div>
+            <div class="cat-tile" data-cat="1" role="button" tabindex="0">
+              <span class="cat-num">02</span>
+              <h4 class="cat-name">Deteksi Kejanggalan</h4>
+              <span class="cat-link">View details →</span>
+            </div>
+            <div class="cat-tile" data-cat="2" role="button" tabindex="0">
+              <span class="cat-num">03</span>
+              <h4 class="cat-name">Opini Publik</h4>
+              <span class="cat-link">View details →</span>
+            </div>
+            <div class="cat-tile" data-cat="3" role="button" tabindex="0">
+              <span class="cat-num">04</span>
+              <h4 class="cat-name">Sintesis AI</h4>
+              <span class="cat-link">View details →</span>
+            </div>
+          </div>
+
+          {% if user.is_authenticated %}
+            <a href="/dashboard/" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-7 py-3.5 rounded-full mt-10 transition-all hover:-translate-y-px">
+              Go to Dashboard <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+          {% else %}              <button onclick="onGetStarted()" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-7 py-3.5 rounded-full mt-10 transition-all hover:-translate-y-px">
+              Mulai Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </button>
+          {% endif %}
+        </div>
+
+        <!-- Right: image -->
+        <div class="reveal rounded-[1.6rem] overflow-hidden" style="height:560px">
+          <img src="{% static 'images/analisis.webp' %}" alt="collector" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ NEW RELEASES ═══════════ -->
+    <section id="releases" class="bg-[#F7F9FC] py-24">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 reveal">
+          <div>
+            <p class="eyebrow">Sumber Data</p>
+            <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12]">
+              <span class="text-slate-900">Data terintegrasi</span><br/>
+              <span class="text-slate-400">dari berbagai sumber</span>
+            </h2>
+          </div>
+          <p class="text-[15px] text-slate-500 leading-relaxed max-w-xs lg:pb-2">Dataset resmi, deteksi anomali, dan opini publik — semuanya terhubung dalam satu analisis.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+          <!-- Card 1 -->
+          <div class="game-card">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="{% static 'images/satudataindonesia.png' %}" alt="data.go.id" class="w-full h-full object-cover" />
+            </div>
+            <div class="p-5">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Portal Data Terbuka</p>
+              <h4 class="text-base font-bold text-slate-900 mt-1.5">data.go.id</h4>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-sm font-extrabold text-slate-900">Dataset Resmi</span>
+                <span class="text-xs font-semibold text-slate-400">Aktif</span>
+              </div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="game-card">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="{% static 'images/nemesis.jpg' %}" alt="Nemesis" class="w-full h-full object-cover" />
+            </div>
+            <div class="p-5">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Deteksi Anomali</p>
+              <h4 class="text-base font-bold text-slate-900 mt-1.5">Nemesis</h4>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-sm font-extrabold text-slate-900">Pengadaan</span>
+                <span class="text-xs font-semibold text-slate-400">Aktif</span>
+              </div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="game-card">
+            <div class="relative overflow-hidden" style="height:200px">
+              <img src="{% static 'images/googlenews.webp' %}" alt="Media" class="w-full h-full object-cover" />
+            </div>
+            <div class="p-5">
+              <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Multi-Sumber</p>
+              <h4 class="text-base font-bold text-slate-900 mt-1.5">Opini Publik</h4>
+              <div class="flex items-center justify-between mt-4">
+                <span class="text-sm font-extrabold text-slate-900">Media & News</span>
+                <span class="text-xs font-semibold text-slate-400">Aktif</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ FOOTER CTA ═══════════ -->
+    <section class="bg-[#323446] py-24">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p class="eyebrow text-white/40">Mulai Sekarang</p>
+            <h2 class="text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] tracking-tight">
+              Saatnya telusuri<br/>data negara Anda.
+            </h2>
+            <!-- <div class="flex flex-wrap items-center gap-6 mt-8">
+              <span class="flex items-center gap-2 text-sm font-semibold text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> Gratis selamanya</span>
+              <span class="flex items-center gap-2 text-sm font-semibold text-slate-300"><i data-lucide="check-circle-2" class="w-4 h-4 text-white"></i> Tanpa iklan, tanpa pola gelap</span>
+            </div> -->
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4 lg:justify-end">
+            {% if user.is_authenticated %}
+              <a href="/dashboard/" class="inline-flex items-center justify-center gap-2 bg-white text-[#323446] text-sm font-bold px-8 py-4 rounded-full hover:-translate-y-px hover:shadow-lg transition-all">
+                Go to Dashboard <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </a>
+            {% else %}
+              <button onclick="onGetStarted()" class="inline-flex items-center justify-center gap-2 bg-white text-[#323446] text-sm font-bold px-8 py-4 rounded-full hover:-translate-y-px hover:shadow-lg transition-all">
+                Daftar Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </button>
+            {% endif %}
+            <a href="#features" class="inline-flex items-center justify-center gap-2 border border-white/20 text-white text-sm font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all">
+              Learn more
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ CATEGORY MODAL ═══════════ -->
+    <div id="cat-modal" aria-hidden="true">
+      <div id="cat-backdrop"></div>
+      <div id="cat-card">
+        <button id="cat-close" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors" aria-label="Close">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <span id="cat-num" class="text-[11px] font-bold text-[#323446] tracking-widest uppercase">01</span>
+        <h3 id="cat-title" class="text-2xl font-extrabold text-slate-900 mt-3 leading-snug">Data Resmi</h3>
+        <p id="cat-desc" class="text-[15px] text-slate-500 leading-relaxed mt-4"></p>
+        <div class="flex items-center gap-3 mt-8">
+          {% if user.is_authenticated %}
+            <a href="/dashboard/" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-6 py-3 rounded-full transition-colors">Go to Dashboard <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+          {% else %}
+            <button onclick="onGetStarted()" class="inline-flex items-center gap-2 bg-[#323446] hover:bg-slate-800 text-white text-sm font-bold px-6 py-3 rounded-full transition-colors">Mulai Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i></button>
+          {% endif %}
+          <button id="cat-cancel" class="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transition overlay -->
+    <div id="page-wipe" class="page-wipe" aria-hidden="true"></div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeAuthModal()"></div>
+      <div class="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 md:p-8">
+        <button onclick="closeAuthModal()" aria-label="Tutup" class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="text-center mb-6">
+          <h3 class="text-xl font-bold text-slate-900">Selamat Datang di Jendela AI</h3>
+          <p id="authHint" class="text-sm text-slate-500 mt-1.5">Masuk untuk melanjutkan analisis</p>
+        </div>
+        <div class="flex rounded-xl bg-slate-100 p-1 mb-6">
+          <button id="tabLogin" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all">Masuk</button>
+          <button id="tabRegister" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-sm font-semibold transition-all">Daftar</button>
+        </div>
+        <form id="authForm" onsubmit="submitAuth(event)">
+          <label for="authEmail" class="block text-xs font-semibold text-slate-600 mb-1.5">Email</label>
+          <input id="authEmail" type="email" required autocomplete="email" placeholder="nama@email.com"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 mb-4">
+          <label for="authPassword" class="block text-xs font-semibold text-slate-600 mb-1.5">Password</label>
+          <input id="authPassword" type="password" required minlength="8" autocomplete="current-password" placeholder="Minimal 8 karakter"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/50">
+          <div id="authError" class="hidden mt-3 text-xs font-medium text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2.5"></div>
+          <button type="submit" id="authSubmitBtn" class="w-full mt-5 bg-[#323446] text-white py-3 rounded-xl text-sm font-semibold hover:bg-slate-800 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">Masuk</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      /* ─── Hero carousel ─── */
+      (function(){
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-dot');
+        let cur = 0, timer;
+        function goTo(i){
+          cur = (i + slides.length) % slides.length;
+          slides.forEach((s,j) => s.classList.toggle('active', j===cur));
+          dots.forEach((d,j) => d.classList.toggle('active', j===cur));
+        }
+        function startAuto(){ timer = setInterval(() => goTo(cur+1), 5000); }
+        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.goto)));
+        document.getElementById('hero-prev').addEventListener('click', () => goTo(cur-1));
+        document.getElementById('hero-next').addEventListener('click', () => goTo(cur+1));
+        goTo(0); startAuto();
+        document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible'){ clearInterval(timer); startAuto(); } });
+      })();
+
+      /* ─── Page wipe ─── */
+      var wipe = document.getElementById('page-wipe');
+      document.querySelectorAll('a[href="/login/"], a[href="/dashboard/"]').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          var target = link.getAttribute('href');
+          document.body.classList.add('page-exit');
+          wipe.classList.add('active');
+          setTimeout(() => window.location.href = target, 720);
+        });
+      });
+
+      /* ─── Smooth scroll ─── */
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          var t = document.querySelector(a.getAttribute('href'));
+          if(t){ e.preventDefault(); t.scrollIntoView({ behavior:'smooth', block:'start' }); }
+        });
+      });
+
+      /* ─── Category modal ─── */
+      var CATS = [
+        { num:'01', title:'Data Resmi', desc:'Mencari dan mengunduh dataset langsung dari data.go.id — portal data terbuka pemerintah Indonesia. Semua data bersumber dari instansi resmi pemerintah.' },
+        { num:'02', title:'Deteksi Kejanggalan', desc:'Menghubungkan data dengan Nemesis untuk mendeteksi potensi kejanggalan pengadaan, ketidaksesuaian anggaran, dan anomali data.' },
+        { num:'03', title:'Opini Publik', desc:'Mengambil data dari multi-sumber media dan opini publik untuk memvalidasi temuan dari data resmi dengan perspektif masyarakat.' },
+        { num:'04', title:'Sintesis AI', desc:'AI menggabungkan ketiga sumber data menjadi kesimpulan yang komprehensif, berimbang, dan transparan — dilengkapi confidence score.' }
+      ];
+      var catModal = document.getElementById('cat-modal');
+      function openCat(i){ var c=CATS[i]; document.getElementById('cat-num').textContent=c.num; document.getElementById('cat-title').textContent=c.title; document.getElementById('cat-desc').textContent=c.desc; catModal.classList.add('open'); catModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+      function closeCat(){ catModal.classList.remove('open'); catModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+      document.querySelectorAll('.cat-tile').forEach(tile => {
+        function trigger(e){ e.preventDefault(); openCat(+tile.dataset.cat); }
+        tile.addEventListener('click', trigger);
+        tile.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') trigger(e); });
+      });
+      document.getElementById('cat-backdrop').addEventListener('click', closeCat);
+      document.getElementById('cat-close').addEventListener('click', closeCat);
+      document.getElementById('cat-cancel').addEventListener('click', closeCat);
+      document.addEventListener('keydown', e => { if(e.key==='Escape' && catModal.classList.contains('open')) closeCat(); });
+
+      /* ─── Scroll reveal ─── */
+      var revealEls = document.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.12 });
+      revealEls.forEach(el => io.observe(el));
+
+      /* ─── Auth System (Jendela AI) ─── */
+      var authMode = 'login';
+      function getCookie(n){ var m = document.cookie.match(new RegExp('(^|; )' + n + '=([^;]*)')); return m ? decodeURIComponent(m[2]) : ''; }
+      var CSRF_TOKEN = getCookie('csrftoken');
+      function openAuthModal(hint){
+        if(hint) document.getElementById('authHint').textContent = hint;
+        var modal = document.getElementById('authModal');
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        document.getElementById('authError').classList.add('hidden');
+        setTimeout(function(){ document.getElementById('authEmail').focus(); }, 50);
+      }
+      function closeAuthModal(){
+        var modal = document.getElementById('authModal');
+        modal.classList.add('hidden'); modal.classList.remove('flex');
+      }
+      function switchAuthTab(mode){
+        authMode = mode;
+        var loginTab = document.getElementById('tabLogin');
+        var regTab = document.getElementById('tabRegister');
+        var base = 'flex-1 py-2 rounded-lg text-sm font-semibold transition-all';
+        loginTab.className = mode==='login' ? base + ' bg-white text-[#323446] shadow-sm' : base + ' text-slate-500';
+        regTab.className = mode==='register' ? base + ' bg-white text-[#323446] shadow-sm' : base + ' text-slate-500';
+        document.getElementById('authSubmitBtn').textContent = mode==='login' ? 'Masuk' : 'Daftar';
+        document.getElementById('authHint').textContent = mode==='login'
+          ? 'Masuk untuk melanjutkan analisis' : 'Buat akun baru untuk mulai menggunakan Jendela AI';
+      }
+      function showAuthError(msg){
+        var el = document.getElementById('authError');
+        el.textContent = msg; el.classList.remove('hidden');
+      }
+      function submitAuth(e){
+        e.preventDefault();
+        var email = document.getElementById('authEmail').value.trim();
+        var password = document.getElementById('authPassword').value;
+        if(!email || !password) return;
+        var btn = document.getElementById('authSubmitBtn');
+        btn.disabled = true;
+        fetch(authMode==='login' ? '/api/auth/login' : '/api/auth/register', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'X-CSRFToken': CSRF_TOKEN},
+          body: JSON.stringify({email: email, password: password}),
+        }).then(function(res){ return res.json().then(function(d){ return {ok:res.ok, d:d}; }); })
+          .then(function(r){
+            if(!r.ok){ showAuthError(r.d.error || 'Terjadi kesalahan'); return; }
+            window.location.href = '/dashboard/';
+          })
+          .catch(function(){ showAuthError('Gagal terhubung ke server.'); })
+          .finally(function(){ btn.disabled = false; });
+      }
+      function onGetStarted(){ openAuthModal(''); }
+    </script>
+  </body>
+</html>

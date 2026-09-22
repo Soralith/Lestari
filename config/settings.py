@@ -33,6 +33,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
 
+# Redirect unauthenticated users to the login/sign up screen at '/'
+LOGIN_URL = '/'
+
 
 # Application definition
 
@@ -81,12 +84,19 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
+
+# Supabase requires SSL on every connection.
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
 
 
 # Password validation
@@ -128,6 +138,13 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Lestari AI
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+
+# Supabase Storage (S3-compatible) for user profile pictures
+S3_ENDPOINT_URL = os.environ.get('S3_ENDPOINT_URL', '')
+S3_ACCESS_KEY_ID = os.environ.get('S3_ACCESS_KEY_ID', '')
+S3_SECRET_ACCESS_KEY = os.environ.get('S3_SECRET_ACCESS_KEY', '')
+S3_BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
+S3_PUBLIC_BASE_URL = os.environ.get('S3_PUBLIC_BASE_URL', '')
 
 
 # Email

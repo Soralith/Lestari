@@ -13,13 +13,40 @@ from konsultasi.models import ConsultationSession, ConsultationMessage
 
 c = Client()
 
-# --- 1. Index page renders ---
+# --- 1. Root serves the Lestari landing page ---
 resp = c.get("/")
+print("LANDING:", resp.status_code)
+assert resp.status_code == 200
+assert b"Konsultasi Kesehatan AI" in resp.content
+
+# --- 1b. Login / sign up pages render ---
+resp = c.get("/login/")
+print("LOGIN PAGE:", resp.status_code)
+assert resp.status_code == 200 and b"tab-login" in resp.content
+resp = c.get("/signup/")
+print("SIGNUP PAGE:", resp.status_code)
+assert resp.status_code == 200 and b"signup-form" in resp.content
+
+# --- 2. Sign up with name, email, password → logged in & redirected ---
+resp = c.post(
+    "/signup/",
+    {
+        "name": "Sora Test",
+        "email": "sora@example.com",
+        "password": "lestari1234",
+        "confirm_password": "lestari1234",
+    },
+)
+print("SIGNUP:", resp.status_code, "redirect:", resp.get("Location"))
+assert resp.status_code == 302 and resp.get("Location") == "/konsultasi/"
+
+# --- 3. Konsultasi index renders for the logged-in user ---
+resp = c.get("/konsultasi/")
 print("INDEX:", resp.status_code)
 assert resp.status_code == 200
 assert b"Ada keluhan kesehatan apa hari ini?" in resp.content
 
-# --- 2. Health question → real Gemini call ---
+# --- 4. Health question → real Gemini call ---
 def send(payload):
     cookie = c.cookies["csrftoken"].value
     return c.post(

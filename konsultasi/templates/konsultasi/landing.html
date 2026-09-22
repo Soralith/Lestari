@@ -1,0 +1,524 @@
+{% load static %}
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lestari — Konsultasi Kesehatan AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet" />
+    <style>
+      * { box-sizing: border-box; }
+      body { font-family: "Plus Jakarta Sans", sans-serif; background: #F7F9FC; color: #0f172a; }
+      ::-webkit-scrollbar { width: 0; }
+
+      /* ── Page wipe ── */
+      .page-wipe { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #0e4494 0%, #003380 100%); clip-path: circle(0% at 50% 50%); visibility: hidden; pointer-events: none; }
+      .page-wipe.active { visibility: visible; animation: wipe-in 750ms cubic-bezier(0.65,0,0.35,1) forwards; }
+      @keyframes wipe-in { to { clip-path: circle(150% at 50% 50%); } }
+      .page-exit { animation: page-exit 650ms cubic-bezier(0.4,0,1,1) forwards; pointer-events: none; }
+      @keyframes page-exit { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(1.05); } }
+
+      /* ── Nav ── */
+      .nav-pill { position: relative; font-size: 14px; font-weight: 600; color: #64748b; padding: 6px 14px; border-radius: 999px; transition: all 200ms; }
+      .nav-pill:hover { color: #0f172a; background: rgba(14,68,148,0.07); }
+
+      /* ── Marquee ── */
+      .marquee-track { display: flex; gap: 48px; animation: marquee 28s linear infinite; width: max-content; }
+      @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .marquee-track:hover { animation-play-state: paused; }
+
+      /* ── Hero ── */
+      .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 900ms ease; pointer-events: none; }
+      .hero-slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+      .hero-slide img { transform: scale(1.04); transition: transform 6000ms ease; }
+      .hero-slide.active img { transform: scale(1); }
+
+      /* ── Dot nav ── */
+      .hero-dot { width: 6px; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.4); border: none; padding: 0; cursor: pointer; transition: all 300ms ease; }
+      .hero-dot.active { width: 24px; background: #fff; }
+
+      /* ── Feature grid ── */
+      .feat-card { background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; padding: 32px; transition: box-shadow 250ms, transform 250ms; cursor: default; }
+      .feat-card:hover { box-shadow: 0 16px 40px -16px rgba(14,68,148,0.18); transform: translateY(-4px); }
+      .feat-icon { width: 44px; height: 44px; border-radius: 14px; background: #003380; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+
+      /* ── Mode cards ── */
+      .game-card { border-radius: 18px; overflow: hidden; background: #fff; border: 1px solid #e2e8f0; transition: all 300ms cubic-bezier(0.22,1,0.36,1); cursor: pointer; }
+      .game-card:hover { transform: translateY(-6px); box-shadow: 0 24px 48px -16px rgba(14,68,148,0.28); }
+
+      /* ── Category tiles ── */
+      .cat-tile { border-radius: 20px; border: 1px solid #e2e8f0; background: #fff; padding: 28px; cursor: pointer; transition: all 220ms; position: relative; overflow: hidden; }
+      .cat-tile::before { content: ''; position: absolute; inset: 0; background: #003380; opacity: 0; transition: opacity 220ms; }
+      .cat-tile:hover::before { opacity: 1; }
+      .cat-tile:hover .cat-num, .cat-tile:hover .cat-name, .cat-tile:hover .cat-link { color: #fff; }
+      .cat-tile > * { position: relative; }
+      .cat-num { font-size: 11px; font-weight: 700; letter-spacing: .12em; color: #94a3b8; transition: color 220ms; }
+      .cat-name { font-size: 17px; font-weight: 700; color: #0f172a; margin-top: 14px; line-height: 1.3; transition: color 220ms; }
+      .cat-link { font-size: 12px; font-weight: 600; color: #64748b; margin-top: 12px; display: inline-block; transition: color 220ms; }
+
+      /* ── Pulse ── */
+      .pulse-dot { animation: pulse 2s ease-in-out infinite; }
+      @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.2); } }
+
+      /* ── Case tabs ── */
+      .case-tab { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; cursor: pointer; transition: all 250ms; display: flex; align-items: center; gap: 16px; text-align: left; }
+      .case-tab:hover { border-color: #94a3b8; transform: translateX(4px); }
+      .case-tab.active { background: #003380; border-color: #003380; box-shadow: 0 16px 36px -12px rgba(14,68,148,0.4); }
+      .case-tab .ct-num { font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; color: #94a3b8; transition: color 250ms; }
+      .case-tab .ct-title { font-size: 16px; font-weight: 700; color: #0f172a; transition: color 250ms; }
+      .case-tab .ct-desc { font-size: 13px; color: #64748b; margin-top: 2px; transition: color 250ms; }
+      .case-tab .ct-arrow { color: #cbd5e1; transition: all 250ms; flex-shrink: 0; }
+      .case-tab.active .ct-num { color: rgba(255,255,255,.45); }
+      .case-tab.active .ct-title { color: #fff; }
+      .case-tab.active .ct-desc { color: #94a3b8; }
+      .case-tab.active .ct-arrow { color: #fff; transform: rotate(-45deg); }
+
+      /* ── CS panel ── */
+      #cs-panel { transition: opacity 250ms ease, transform 250ms ease; }
+
+      /* ── Scroll fade in ── */
+      .reveal { opacity: 0; transform: translateY(24px); transition: opacity 600ms ease, transform 600ms ease; }
+      .reveal.visible { opacity: 1; transform: translateY(0); }
+
+      /* ── Category modal ── */
+      #cat-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: 24px; visibility: hidden; opacity: 0; transition: opacity 200ms, visibility 200ms; }
+      #cat-modal.open { visibility: visible; opacity: 1; }
+      #cat-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.5); backdrop-filter: blur(4px); }
+      #cat-card { position: relative; width: 100%; max-width: 440px; background: #fff; border-radius: 20px; padding: 36px; box-shadow: 0 32px 64px -20px rgba(14,68,148,.4); transform: translateY(16px) scale(.98); opacity: 0; transition: all 250ms cubic-bezier(0.22,1,0.36,1); }
+      #cat-modal.open #cat-card { transform: translateY(0) scale(1); opacity: 1; }
+
+      /* ── Stat bar ── */
+      .stat-bar { display: grid; grid-template-columns: repeat(3, 1fr); }
+      .stat-cell { padding: 24px 32px; text-align: center; }
+      .stat-cell + .stat-cell { border-left: 1px solid #e2e8f0; }
+
+      /* ── Badge ── */
+      .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+      .badge-new { background: #003380; color: #fff; }
+      .badge-pre { background: #e2e8f0; color: #475569; }
+
+      /* ── Hero nav ── */
+      .hero-nav { width: 42px; height: 42px; border-radius: 999px; background: rgba(255,255,255,.12); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; transition: all 200ms; }
+      .hero-nav:hover { background: rgba(255,255,255,.25); transform: scale(1.06); }
+
+      @media (max-width: 1023px) { .grid > * { min-width: 0; } }
+
+      /* ── Split headline ── */
+      .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #94a3b8; margin-bottom: 14px; }
+
+      /* ── Sticky nav glow ── */
+      header { background: rgba(247,249,252,.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(226,232,240,.7); }
+    </style>
+  </head>
+  <body class="antialiased overflow-x-hidden">
+
+    <!-- ═══════════ NAVBAR ═══════════ -->
+    <header class="sticky top-0 z-40">
+      <nav class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-4 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3">
+          <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari" class="h-9 w-auto object-contain" />
+          <span class="font-extrabold text-slate-900 text-[17px] tracking-tight">Lestari</span>
+        </a>
+
+        <!-- Links -->
+        <div class="hidden md:flex items-center gap-1">
+          <a href="#top" class="nav-pill">Beranda</a>
+          <a href="#features" class="nav-pill">Fitur</a>
+          <a href="#store" class="nav-pill">Cara Kerja</a>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center gap-3">
+          {% if user.is_authenticated %}
+            <a href="/konsultasi/" class="inline-flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-full overflow-hidden border border-slate-200">
+                {% if request.user.profile.avatar_url %}
+                  <img src="{{ request.user.profile.avatar_url }}" alt="Avatar" class="w-full h-full object-cover">
+                {% else %}
+                  <span class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0e4494] to-[#1b4f9c] text-white text-xs font-bold">{{ request.user.first_name|first|default:"L" }}</span>
+                {% endif %}
+              </span>
+              <span class="text-[14px] font-semibold text-slate-600 hover:text-slate-900 transition-colors">Konsultasi</span>
+            </a>
+          {% else %}
+            <a href="/login/" class="text-[14px] font-semibold text-slate-500 hover:text-slate-900 transition-colors px-3 py-2">Masuk</a>
+            <a href="/signup/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-[13px] font-bold px-5 py-2.5 rounded-full transition-all hover:-translate-y-px shadow-sm">
+              Daftar <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+    <!-- ═══════════ HERO ═══════════ -->
+    <section id="top" class="max-w-screen-2xl mx-auto px-6 lg:px-12 pt-8">
+      <div class="relative rounded-[2rem] overflow-hidden" style="height:580px">
+        <!-- Slide 1 -->
+        <div class="hero-slide active" data-slide="0">
+          <img src="{% static 'images/inibendera1.jpg' %}" alt="Lestari" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#003380]/85 via-[#003380]/35 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Konsultasi AI Aman</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Keluhan kesehatan?<br/>Pertanyaan instan.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Buka Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="/signup/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Mulai Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Lihat cara kerja →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="hero-slide" data-slide="1">
+          <img src="{% static 'images/inibendera2.jpg' %}" alt="Lestari" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#003380]/85 via-[#003380]/35 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Triase Berbasis AI</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap gejala<br/>teranalisis cerdas.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Buka Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="/signup/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Coba Sekarang <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Lihat cara kerja →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="hero-slide" data-slide="2">
+          <img src="{% static 'images/inibukanbendera1.jpg' %}" alt="Lestari" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#003380]/85 via-[#003380]/35 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Foto &amp; Hasil Lab</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap foto<br/>terinterpretasi.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Buka Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="/signup/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Unggah Foto <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Lihat fitur →</a>
+            </div>
+          </div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="hero-slide" data-slide="3">
+          <img src="{% static 'images/inibukanbendera2.jpg' %}" alt="Lestari" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-gradient-to-r from-[#003380]/85 via-[#003380]/35 to-transparent"></div>
+          <div class="absolute inset-0 flex flex-col justify-end px-10 lg:px-16 pb-14">
+            <p class="eyebrow text-white/60">Privasi &amp; Aman</p>
+            <h1 class="text-5xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight max-w-2xl">Setiap data<br/>terlindungi privasi.</h1>
+            <div class="flex items-center gap-6 mt-8">
+              {% if user.is_authenticated %}
+                <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Buka Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% else %}
+                <a href="/signup/" class="inline-flex items-center gap-2 bg-white text-[#003380] text-sm font-bold px-6 py-3 rounded-full hover:bg-slate-100 transition-all hover:-translate-y-px">Mulai Gratis <i data-lucide="arrow-right" class="w-4 h-4"></i></a>
+              {% endif %}
+              <a href="#features" class="text-sm font-semibold text-white/70 hover:text-white transition-colors">Pelajari lebih lanjut →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nav prev/next -->
+        <button id="hero-prev" aria-label="Previous" class="hero-nav absolute left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+        <button id="hero-next" aria-label="Next" class="hero-nav absolute right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+
+        <!-- Dots -->
+        <div class="absolute top-6 right-8 flex items-center gap-2 z-20">
+          <button class="hero-dot active" data-goto="0" aria-label="Slide 1"></button>
+          <button class="hero-dot" data-goto="1" aria-label="Slide 2"></button>
+          <button class="hero-dot" data-goto="2" aria-label="Slide 3"></button>
+          <button class="hero-dot" data-goto="3" aria-label="Slide 4"></button>
+        </div>
+
+        <!-- Corner stats overlay -->
+        <div class="absolute bottom-0 right-0 hidden lg:grid grid-cols-3 z-10" style="width:580px">
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20">
+            <p class="text-3xl font-extrabold text-slate-900">3</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Mode konsultasi AI</p>
+          </div>
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20">
+            <p class="text-3xl font-extrabold text-slate-900">AI</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Analisis gejala otomatis</p>
+          </div>
+          <div class="bg-white/95 backdrop-blur-md px-8 py-7 border-t border-l border-white/20 rounded-br-[2rem]">
+            <p class="text-3xl font-extrabold text-slate-900">24/7</p>
+            <p class="text-xs text-slate-500 font-medium mt-2 leading-snug">Akses kapan saja</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ MARQUEE / CAPABILITY STRIP ═══════════ -->
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 pt-14 pb-4">
+      <p class="eyebrow text-center mb-8">Fitur platform kami</p>
+      <div class="flex flex-wrap items-center justify-center gap-8">
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="heart-pulse" class="w-4 h-4 text-[#003380]"></i> Saran Triase Berbasis AI</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="shield" class="w-4 h-4 text-[#003380]"></i> Privasi End-to-end</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="sparkles" class="w-4 h-4 text-[#003380]"></i> Gemini AI</span>
+        <span class="flex items-center gap-2 text-sm font-semibold text-slate-600"><i data-lucide="stethoscope" class="w-4 h-4 text-[#003380]"></i> Konsultasi 24/7</span>
+      </div>
+    </section>
+
+    <!-- ═══════════ INTRO SPLIT ═══════════ -->
+    <section class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-24 reveal">
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-center">
+        <div>
+          <p class="eyebrow">Tentang Lestari</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12]">
+            <span class="text-slate-900">Konsultasi kesehatan instan.</span><br/>
+            <span class="text-slate-400">Analisis AI berbasis data.</span>
+          </h2>
+          <p class="text-[15px] text-slate-500 leading-relaxed mt-6 max-w-md">
+            Lestari AI menganalisis gejala fisik, pertanyaan obat, dan foto resep/hasil lab — secara instan, aman, dan terlindungi privasi. Saran triase berbasis evidensi medis, bukan pengganti diagnosis dokter.
+          </p>
+          {% if user.is_authenticated %}
+            <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-6 py-3 rounded-full mt-8 transition-all hover:-translate-y-px">
+              Buka Konsultasi <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          {% else %}
+            <a href="/signup/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-6 py-3 rounded-full mt-8 transition-all hover:-translate-y-px">
+              Mulai Gratis <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          {% endif %}
+        </div>
+        <!-- Right: image -->
+        <div class="relative hidden lg:block" style="height:420px">
+          <div class="absolute inset-0 rounded-[1.6rem] overflow-hidden">
+            <img src="{% static 'images/multisumber.jpg' %}" alt="Lestari AI" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#003380]/45 to-transparent"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ FEATURES ═══════════ -->
+    <section id="features" class="bg-[#DDEAFF] py-24">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="text-center mb-14 reveal">
+          <p class="eyebrow">Fitur Platform</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12] max-w-2xl mx-auto">
+            <span class="text-slate-900">Satu platform</span>
+            <span class="text-slate-400"> untuk semua kebutuhan kesehatan</span>
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="layers" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Konsultasi Triase Lengkap</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Analisis gejala komprehensif: kemungkinan penyebab, red flags untuk perhatikan, dan langkah-langkah yang bisa dilakukan.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="package" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Cek Interaksi Obat</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Cek kompatibilitas obat, dosis maksimal, dan potensi interaksi sebelum konsumsi bersama.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="image" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Foto &amp; Hasil Lab</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Unggah foto resep atau hasil lab; AI membantu interpretasi hasil secara instan dan aman.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Peringatan Darurat</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Deteksi kondisi kritis dan peringatan hubungi 119 secara instant sebelum sesua lain.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="bolt" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Konsultasi Cepat</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Pertanyaan ringan tentang dosis, dosis interaksi, dan saran triase — tanpa analisis panjang.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon"><i data-lucide="history" class="w-5 h-5 text-white"></i></div>
+            <h3 class="text-[17px] font-bold text-slate-900">Riwayat Sesi</h3>
+            <p class="text-[14px] text-slate-500 mt-3 leading-relaxed">Semua sesi konsultasi tersimpan otomatis. Buka kembali kapan saja dan lanjutkan percakapan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ HOW IT WORKS / CATEGORIES ═══════════ -->
+    <section id="store" class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-24">
+      <div class="grid lg:grid-cols-[1fr_1fr] gap-16 items-start">
+
+        <!-- Left -->
+        <div class="reveal">
+          <p class="eyebrow">Cara Kerja</p>
+          <h2 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.12]">
+            <span class="text-slate-900">Triase Tiga Fase</span><br/>
+            <span class="text-slate-400">Konsultasi Multi-Langkah</span>
+          </h2>
+          <p class="text-[15px] text-slate-500 leading-relaxed mt-5 max-w-md">Setiap keluhan dijawab dengan analisis triase berbasis evidensi medis — penyebab, red flags, dan saran tindakan.</p>
+
+          <!-- Category tiles 2×2 -->
+          <div class="grid grid-cols-2 gap-4 mt-10">
+            <div class="cat-tile" data-cat="0" role="button" tabindex="0">
+              <span class="cat-num">01</span>
+              <h4 class="cat-name">Konsultasi</h4>
+              <span class="cat-link">Lihat detail →</span>
+            </div>
+            <div class="cat-tile" data-cat="1" role="button" tabindex="0">
+              <span class="cat-num">02</span>
+              <h4 class="cat-name">Analisis AI</h4>
+              <span class="cat-link">Lihat detail →</span>
+            </div>
+            <div class="cat-tile" data-cat="2" role="button" tabindex="0">
+              <span class="cat-num">03</span>
+              <h4 class="cat-name">Foto &amp; Lab</h4>
+              <span class="cat-link">Lihat detail →</span>
+            </div>
+            <div class="cat-tile" data-cat="3" role="button" tabindex="0">
+              <span class="cat-num">04</span>
+              <h4 class="cat-name">Saran &amp; Tindakan</h4>
+              <span class="cat-link">Lihat detail →</span>
+            </div>
+          </div>
+
+          {% if user.is_authenticated %}
+            <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-7 py-3.5 rounded-full mt-10 transition-all hover:-translate-y-px">
+              Buka Konsultasi <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+          {% else %}
+            <a href="/signup/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-7 py-3.5 rounded-full mt-10 transition-all hover:-translate-y-px">
+              Mulai Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+          {% endif %}
+        </div>
+
+        <!-- Right: image -->
+        <div class="reveal rounded-[1.6rem] overflow-hidden" style="height:560px">
+          <img src="{% static 'images/analisis.webp' %}" alt="Lestari AI" class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ FOOTER CTA ═══════════ -->
+    <section class="bg-[#003380] py-24">
+      <div class="max-w-screen-2xl mx-auto px-6 lg:px-12">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p class="eyebrow text-white/40">Mulai Sekarang</p>
+            <h2 class="text-4xl lg:text-5xl font-extrabold text-white leading-[1.1] tracking-tight">
+              Konsultasikan keluhan<br/>kesehatan Anda hari ini.
+            </h2>
+            <p class="text-[15px] text-white/70 leading-relaxed mt-6">Lestari AI membantu 24/7 — instan, aman, terlindungi privasi. Hubungi 119 jika kondisi kritis.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4 lg:justify-end">
+            {% if user.is_authenticated %}
+              <a href="/konsultasi/" class="inline-flex items-center justify-center gap-2 bg-white text-[#003380] text-sm font-bold px-8 py-4 rounded-full hover:-translate-y-px hover:shadow-lg transition-all">
+                Buka Konsultasi <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </a>
+            {% else %}
+              <a href="/signup/" class="inline-flex items-center justify-center gap-2 bg-white text-[#003380] text-sm font-bold px-8 py-4 rounded-full hover:-translate-y-px hover:shadow-lg transition-all">
+                Daftar Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+              </a>
+            {% endif %}
+            <a href="#features" class="inline-flex items-center justify-center gap-2 border border-white/20 text-white text-sm font-bold px-8 py-4 rounded-full hover:bg-white/10 transition-all">
+              Lihat fitur
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ CATEGORY MODAL ═══════════ -->
+    <div id="cat-modal" aria-hidden="true">
+      <div id="cat-backdrop"></div>
+      <div id="cat-card">
+        <button id="cat-close" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition-colors" aria-label="Close">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <span id="cat-num" class="text-[11px] font-bold text-[#003380] tracking-widest uppercase">01</span>
+        <h3 id="cat-title" class="text-2xl font-extrabold text-slate-900 mt-3 leading-snug">Konsultasi</h3>
+        <p id="cat-desc" class="text-[15px] text-slate-500 leading-relaxed mt-4"></p>
+        <div class="flex items-center gap-3 mt-8">
+          {% if user.is_authenticated %}
+            <a href="/konsultasi/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-6 py-3 rounded-full transition-colors">Buka Konsultasi <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+          {% else %}
+            <a href="/signup/" class="inline-flex items-center gap-2 bg-[#003380] hover:bg-[#0e4494] text-white text-sm font-bold px-6 py-3 rounded-full transition-colors">Mulai Gratis <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+          {% endif %}
+          <button id="cat-cancel" class="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">Sasang</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Transition overlay -->
+    <div id="page-wipe" class="page-wipe" aria-hidden="true"></div>
+
+    <script>
+      lucide.createIcons();
+
+      /* ─── Hero carousel ─── */
+      (function(){
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots = document.querySelectorAll('.hero-dot');
+        let cur = 0, timer;
+        function goTo(i){
+          cur = (i + slides.length) % slides.length;
+          slides.forEach((s,j) => s.classList.toggle('active', j===cur));
+          dots.forEach((d,j) => d.classList.toggle('active', j===cur));
+        }
+        function startAuto(){ timer = setInterval(() => goTo(cur+1), 5000); }
+        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.goto)));
+        document.getElementById('hero-prev').addEventListener('click', () => goTo(cur-1));
+        document.getElementById('hero-next').addEventListener('click', () => goTo(cur+1));
+        goTo(0); startAuto();
+        document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible'){ clearInterval(timer); startAuto(); } });
+      })();
+
+      /* ─── Page wipe ─── */
+      var wipe = document.getElementById('page-wipe');
+      document.querySelectorAll('a[href="/login/"], a[href="/signup/"], a[href="/konsultasi/"]').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+          var target = link.getAttribute('href');
+          document.body.classList.add('page-exit');
+          wipe.classList.add('active');
+          setTimeout(() => window.location.href = target, 720);
+        });
+      });
+
+      /* ─── Smooth scroll ─── */
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+          var t = document.querySelector(a.getAttribute('href'));
+          if(t){ e.preventDefault(); t.scrollIntoView({ behavior:'smooth', block:'start' }); }
+        });
+      });
+
+      /* ─── Category modal ─── */
+      var CATS = [
+        { num:'01', title:'Konsultasi', desc:'Ceritakan gejala fisik atau pertanyaan kesehatan Anda dalam bahasa Indonesia — sama seperti chatting dengan konsultant kesehatan.' },
+        { num:'02', title:'Analisis AI', desc:'Lestari AI menganalisis dengan triase berbasis evidensi medis: kemungkinan penyebab, red flags, dan hal yang perlu dihindari.' },
+        { num:'03', title:'Foto & Lab', desc:'Unggah foto resep atau hasil lab; AI membantu interpretasi hasil secara instan dan menjelaskan makna setiap parameter.' },
+        { num:'04', title:'Saran & Tindakan', desc:'Terima saran triase dan langkah-langkah selanjutnya — dan kapan harus cari pertolongan medis profesional.' }
+      ];
+      var catModal = document.getElementById('cat-modal');
+      function openCat(i){ var c=CATS[i]; document.getElementById('cat-num').textContent=c.num; document.getElementById('cat-title').textContent=c.title; document.getElementById('cat-desc').textContent=c.desc; catModal.classList.add('open'); catModal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+      function closeCat(){ catModal.classList.remove('open'); catModal.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+      document.querySelectorAll('.cat-tile').forEach(tile => {
+        function trigger(e){ e.preventDefault(); openCat(+tile.dataset.cat); }
+        tile.addEventListener('click', trigger);
+        tile.addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' ') trigger(e); });
+      });
+      document.getElementById('cat-backdrop').addEventListener('click', closeCat);
+      document.getElementById('cat-close').addEventListener('click', closeCat);
+      document.getElementById('cat-cancel').addEventListener('click', closeCat);
+      document.addEventListener('keydown', e => { if(e.key==='Escape' && catModal.classList.contains('open')) closeCat(); });
+
+      /* ─── Scroll reveal ─── */
+      var revealEls = document.querySelectorAll('.reveal');
+      var io = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+      }, { threshold: 0.12 });
+      revealEls.forEach(el => io.observe(el));
+    </script>
+  </body>
+</html>

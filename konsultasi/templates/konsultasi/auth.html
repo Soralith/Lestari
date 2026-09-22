@@ -1,0 +1,280 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Lestari — Login / Sign Up</title>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "error-container": "#ffdad6",
+            "surface-tint": "#1a56a0",
+            "surface-container-lowest": "#ffffff",
+            "secondary-container": "#d0e4ff",
+            "on-tertiary-fixed": "#001636",
+            "outline": "#5f6b7c",
+            "surface-bright": "#f0f6ff",
+            "secondary-fixed": "#d0e4ff",
+            "on-error-container": "#93000a",
+            "inverse-surface": "#1a2d45",
+            "surface-container": "#ddeaff",
+            "on-surface": "#071524",
+            "on-secondary-container": "#1d4e8f",
+            "primary": "#003380",
+            "on-primary": "#f0f6ff",
+            "on-tertiary-container": "#91c4f8",
+            "surface-container-low": "#e5eeff",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#0a3d7a",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#001636",
+            "primary-fixed-dim": "#7aacf0",
+            "outline-variant": "#bcc7d8",
+            "inverse-on-surface": "#dceaff",
+            "on-secondary-fixed": "#001636",
+            "surface-container-highest": "#c8daff",
+            "on-error": "#ffffff",
+            "on-primary-container": "#9fc4f8",
+            "tertiary-fixed": "#b0d0ff",
+            "primary-fixed": "#a8c8ff",
+            "surface-dim": "#c0d4f0",
+            "surface-container-high": "#d2e3ff",
+            "background": "#ffffff",
+            "tertiary": "#003060",
+            "primary-container": "#0e4494",
+            "on-background": "#071524",
+            "tertiary-container": "#1a4a8a",
+            "surface-variant": "#c8daff",
+            "surface": "#ffffff",
+            "inverse-primary": "#7aacf0",
+            "secondary": "#1b4f9c",
+            "on-secondary-fixed-variant": "#0a3570",
+            "error": "#ba1a1a",
+            "on-surface-variant": "#3a4758",
+            "tertiary-fixed-dim": "#88b8f8",
+            "secondary-fixed-dim": "#7aacf0",
+            "on-primary-fixed-variant": "#0a3d7a"
+          },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "spacing": {
+            "container-padding-mobile": "1rem", "space-2xl": "3rem", "space-xs": "0.5rem",
+            "space-3xl": "4rem", "container-padding-desktop": "2rem", "space-lg": "1.5rem",
+            "chat-max-width": "768px", "space-xl": "2rem", "space-md": "1rem",
+            "space-2xs": "0.25rem", "space-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"],
+            "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "600" }],
+            "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "title-md": ["18px", { "lineHeight": "26px", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }]
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .field {
+      width: 100%;
+      border-radius: 0.75rem;
+      background: transparent;
+      outline: none;
+      padding: 0.75rem 1rem 0.75rem 1rem;
+    }
+  </style>
+</head>
+
+<body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col items-center justify-center px-space-md overflow-hidden">
+
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[460px] bg-gradient-to-tr from-secondary-container/40 via-surface-container/60 to-primary-fixed-dim/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+  <div class="absolute bottom-12 left-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-2xl -z-10 pointer-events-none"></div>
+
+  <div class="w-full max-w-[420px] my-auto z-10">
+
+    <div class="flex flex-col items-center text-center mb-space-lg">
+      <img alt="Lestari" class="h-14 w-auto object-contain mb-space-sm" src="{% static 'images/LestariLogo.png' %}" />
+      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-2xs">Lestari</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-[380px] text-center">
+        Konsultasi kesehatan AI — aman, instan, dan terlindungi privasi.
+      </p>
+    </div>
+
+    <div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.09),0_2px_8px_-2px_rgba(0,30,80,0.04)] p-space-md">
+
+      <!-- Tab switcher -->
+      <div class="flex bg-surface-container rounded-full p-space-2xs mb-space-md">
+        <button id="tab-login" type="button"
+          class="flex-1 py-space-xs rounded-full font-label-lg text-label-lg transition-all">Login</button>
+        <button id="tab-signup" type="button"
+          class="flex-1 py-space-xs rounded-full font-label-lg text-label-lg transition-all">Sign Up</button>
+      </div>
+
+      <!-- ============ LOGIN FORM ============ -->
+      <form id="login-form" method="post" action="{% url 'konsultasi:login' %}">
+        {% csrf_token %}
+
+        <div class="flex flex-col gap-space-sm">
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Email</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="email" name="email"
+              placeholder="nama@example.com" required autocomplete="email"
+              value="{{ login_email|default:'' }}" />
+          </label>
+
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Password</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="password"
+              placeholder="••••••••" required autocomplete="current-password" />
+          </label>
+        </div>
+
+        {% if login_error %}
+        <div class="mt-space-sm flex items-start gap-space-xs bg-error-container rounded-lg px-space-sm py-space-xs">
+          <span class="material-symbols-outlined text-on-error-container text-[16px]">error</span>
+          <p class="font-body-sm text-body-sm text-on-error-container">{{ login_error }}</p>
+        </div>
+        {% endif %}
+
+        <button type="submit"
+          class="w-full mt-space-md flex items-center justify-center gap-space-xs py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all">
+          <span class="material-symbols-outlined text-[18px]">login</span>
+          Login
+        </button>
+      </form>
+
+      <!-- ============ SIGN UP FORM ============ -->
+      <form id="signup-form" method="post" action="{% url 'konsultasi:signup' %}" enctype="multipart/form-data" class="hidden">
+        {% csrf_token %}
+
+        <div class="flex flex-col items-center mb-space-sm">
+          <label for="signup-avatar" class="group relative w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center cursor-pointer overflow-hidden">
+            <img id="signup-avatar-preview" class="hidden w-full h-full object-cover" alt="PFP" />
+            <span id="signup-avatar-placeholder" class="material-symbols-outlined text-on-surface-variant text-[36px]">person</span>
+            <span class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center border-2 border-surface shadow-[0_1px_4px_rgba(0,30,80,0.15)]">
+              <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+            </span>
+          </label>
+          <input id="signup-avatar" class="hidden" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" />
+          <p class="font-label-sm text-label-sm text-outline mt-space-2xs">Foto profile (opsional)</p>
+        </div>
+
+        <div class="flex flex-col gap-space-sm">
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Nama</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="text" name="name"
+              placeholder="Nama Anda" required autocomplete="name"
+              value="{{ signup_name|default:'' }}" />
+          </label>
+
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Email</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="email" name="email"
+              placeholder="nama@example.com" required autocomplete="email"
+              value="{{ signup_email|default:'' }}" />
+          </label>
+
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Password</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="password"
+              placeholder="Minimal 8 karakter" required autocomplete="new-password" />
+          </label>
+
+          <label class="flex flex-col gap-space-2xs">
+            <span class="font-label-md text-label-md text-on-surface-variant">Konfirmasi Password</span>
+            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="confirm_password"
+              placeholder="••••••••" required autocomplete="new-password" />
+          </label>
+        </div>
+
+        {% if signup_error %}
+        <div class="mt-space-sm flex items-start gap-space-xs bg-error-container rounded-lg px-space-sm py-space-xs">
+          <span class="material-symbols-outlined text-on-error-container text-[16px]">error</span>
+          <p class="font-body-sm text-body-sm text-on-error-container">{{ signup_error }}</p>
+        </div>
+        {% endif %}
+
+        <button type="submit"
+          class="w-full mt-space-md flex items-center justify-center gap-space-xs py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all">
+          <span class="material-symbols-outlined text-[18px]">person_add</span>
+          Reketster Akun
+        </button>
+      </form>
+
+    </div>
+
+    <div class="w-full mt-space-md inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full">
+      <span class="material-symbols-outlined text-secondary text-[16px]">medical_services</span>
+      <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
+        Lestari AI memberikan saran triase kesehatan, bukan pengganti diagnosis darurat.
+        Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika kondisi kritis.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    const activeTab = "{{ active_tab|default:'login' }}";
+
+    function setTab(tab) {
+      const isLogin = tab === 'login';
+      document.getElementById('login-form').classList.toggle('hidden', !isLogin);
+      document.getElementById('signup-form').classList.toggle('hidden', isLogin);
+      for (const key of ['login', 'signup']) {
+        const btn = document.getElementById('tab-' + key);
+        const isActive = key === tab;
+        btn.classList.toggle('bg-primary', isActive);
+        btn.classList.toggle('text-on-primary', isActive);
+        btn.classList.toggle('text-on-surface-variant', !isActive);
+      }
+    }
+
+    document.getElementById('tab-login').addEventListener('click', () => setTab('login'));
+    document.getElementById('tab-signup').addEventListener('click', () => setTab('signup'));
+    setTab(activeTab);
+
+    const avatarInput = document.getElementById('signup-avatar');
+    const avatarPreview = document.getElementById('signup-avatar-preview');
+    const avatarPlaceholder = document.getElementById('signup-avatar-placeholder');
+    avatarInput.addEventListener('change', () => {
+      const file = avatarInput.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatarPreview.src = reader.result;
+        avatarPreview.classList.remove('hidden');
+        avatarPlaceholder.classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>

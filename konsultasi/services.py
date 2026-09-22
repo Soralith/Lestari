@@ -136,9 +136,16 @@ def _get_client():
     return _client
 
 
-def get_ai_response(user_message: str, mode: str = "Triase Lengkap") -> dict:
+def get_ai_response(
+    user_message: str,
+    mode: str = "Triase Lengkap",
+    image: dict | None = None,
+) -> dict:
     """
-    Send the user's message to Gemini with the strict Lestari AI persona.
+    Send the user's message (and optional image) to Gemini with the strict
+    Lestari AI persona.
+
+    `image` is an optional dict: {"data": bytes, "mime_type": str}.
 
     Returns a dict:
     {
@@ -153,9 +160,17 @@ def get_ai_response(user_message: str, mode: str = "Triase Lengkap") -> dict:
             raise RuntimeError("GEMINI_API_KEY is not configured")
 
         client = _get_client()
+        # If an image is attached, send it as a Part next to the message text.
+        contents = user_message
+        if image:
+            contents = [
+                user_message,
+                types.Part.from_bytes(data=image["data"], mime_type=image["mime_type"]),
+            ]
+
         response = client.models.generate_content(
             model=MODEL_NAME,
-            contents=user_message,
+            contents=contents,
             config=types.GenerateContentConfig(
                 system_instruction=SYSTEM_INSTRUCTION,
                 temperature=0.2,  # low temperature → more factual & analytical
