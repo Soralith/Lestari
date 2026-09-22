@@ -136,7 +136,7 @@
 
 <body class="bg-background font-body-md text-on-surface">
 
-  <aside class="fixed left-0 top-0 h-screen w-72 bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
     <div class="flex flex-col h-full overflow-hidden">
 
       <div class="p-space-lg flex items-center gap-space-sm">
@@ -164,7 +164,7 @@
             <span class="material-symbols-outlined text-secondary">article</span>
             <span class="font-body-md text-body-md">Artikel Kesehatan</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="#">
+          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:cuaca' %}">
             <span class="material-symbols-outlined text-secondary">cloud</span>
             <span class="font-body-md text-body-md">Cuaca</span>
           </a>
@@ -202,10 +202,15 @@
     </div>
   </aside>
 
-  <div class="pl-72 flex flex-col min-h-screen">
+  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-black/40 backdrop-blur-sm lg:hidden"></div>
 
-    <header class="fixed top-0 left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
+  <div class="lg:pl-72 flex flex-col min-h-screen">
+
+    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
       <div class="flex items-center gap-space-sm">
+        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Menu" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-[20px]">menu</span>
+        </button>
         <span id="chat-session-title" class="font-title-md text-title-md text-on-surface hidden truncate max-w-[420px]"></span>
       </div>
       <div class="flex items-center gap-space-md">
@@ -698,6 +703,31 @@
 
     document.getElementById('btn-new-chat').addEventListener('click', () => showWelcome());
 
+    // ============ Sidebar (mobile off-canvas) ============
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      sidebarBackdrop.classList.remove('hidden');
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('translate-x-0');
+      sidebar.classList.add('-translate-x-full');
+      sidebarBackdrop.classList.add('hidden');
+    }
+
+    function toggleSidebar() {
+      if (sidebar.classList.contains('translate-x-0')) closeSidebar();
+      else openSidebar();
+    }
+
+    document.querySelectorAll('#sidebar a, #sidebar button').forEach(el => {
+      el.addEventListener('click', closeSidebar);
+    });
+
     // ============ Profile modal ============
     const profileModal = document.getElementById('profile-modal');
     const modalAvatarInput = document.getElementById('modal-avatar-input');
@@ -715,7 +745,7 @@
     }
 
     document.getElementById('profile-modal-close').addEventListener('click', closeProfile);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProfile(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeProfile(); closeSidebar(); } });
     profileModal.addEventListener('click', (e) => {
       if (e.target === profileModal) closeProfile();
     });

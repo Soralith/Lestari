@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from .models import ConsultationSession, ConsultationMessage, Profile
 from .services import get_ai_response
+from .bmkg import BmkgError, get_forecast, search_locations
 from .storage import (
     MAX_AVATAR_BYTES,
     ALLOWED_CONTENT_TYPES,
@@ -173,6 +174,36 @@ def session_page(request, session_id):
     """Deep-linkable page for one consultation session (/konsultasi/<id>/)."""
     get_object_or_404(ConsultationSession, id=session_id)
     return render(request, "konsultasi/index.html")
+
+
+@login_required
+def cuaca_page(request):
+    """Weather forecast page (/cuaca/)."""
+    return render(request, "konsultasi/cuaca.html")
+
+
+@login_required
+def api_cuaca_search(request):
+    """Resolve a place name to BMKG village codes (level-4 / adm4)."""
+    q = (request.GET.get("q") or "").strip()
+    if len(q) < 2:
+        return JsonResponse({"results": []})
+    try:
+        return JsonResponse({"results": search_locations(q)})
+    except BmkgError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
+
+
+@login_required
+def api_cuaca_forecast(request):
+    """Return a cached/upstream 3-day forecast for an adm4 code."""
+    adm4 = (request.GET.get("adm4") or "").strip()
+    if not adm4:
+        return JsonResponse({"error": "Parameter adm4 wajib."}, status=400)
+    try:
+        return JsonResponse(get_forecast(adm4))
+    except BmkgError as exc:
+        return JsonResponse({"error": str(exc)}, status=502)
 
 
 @login_required

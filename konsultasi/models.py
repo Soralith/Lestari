@@ -71,3 +71,19 @@ class ConsultationMessage(models.Model):
 
     def __str__(self):
         return f"{self.get_role_display()}: {self.content[:50]}"
+
+
+class WeatherCache(models.Model):
+    """Cached BMKG forecast for one adm4 location (respects rate limits)."""
+
+    adm4 = models.CharField(max_length=30, primary_key=True)
+    payload = models.JSONField()
+    fetched_at = models.DateTimeField(auto_now=True)
+
+
+class WeatherSearchCache(models.Model):
+    """Cached location-search results for a query string."""
+
+    query = models.CharField(max_length=120, primary_key=True)
+    payload = models.JSONField()
+    fetched_at = models.DateTimeField(auto_now=True)
