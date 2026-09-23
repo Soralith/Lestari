@@ -19,6 +19,8 @@
       main>:last-child { margin-bottom: 0 !important; }
     }
     ::-webkit-scrollbar { display: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     /* Markdown output styling inside AI bubbles */
     .ai-md h3 { font-size: 14px; font-weight: 700; color: #003380; margin: 14px 0 6px; letter-spacing: .01em; }
@@ -99,7 +101,7 @@
             "secondary-fixed-dim": "#7aacf0",
             "on-primary-fixed-variant": "#0a3d7a"
           },
-          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
           "spacing": {
             "container-padding-mobile": "1rem", "space-2xl": "3rem", "space-xs": "0.5rem",
             "space-3xl": "4rem", "container-padding-desktop": "2rem", "space-lg": "1.5rem",
@@ -107,12 +109,12 @@
             "space-2xs": "0.25rem", "space-sm": "0.75rem"
           },
           "fontFamily": {
-            "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"],
-            "headline-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"],
-            "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"],
-            "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"],
-            "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"],
-            "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"]
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"], "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"], "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"], "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"], "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "title-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg": ["Plus Jakarta Sans", "sans-serif"]
           },
           "fontSize": {
             "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
@@ -134,65 +136,75 @@
   </script>
 </head>
 
-<body class="bg-background font-body-md text-on-surface">
+<body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
 
-  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+  <!-- ============ SIDEBAR ============ -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 border-r border-outline-variant/30 shadow-lg lg:shadow-none">
     <div class="flex flex-col h-full overflow-hidden">
 
-      <div class="p-space-lg flex items-center gap-space-sm">
-        <img alt="Logo" class="h-8 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+      <!-- Header / Logo -->
+      <div class="p-space-lg flex items-center gap-space-sm border-b border-outline-variant/20">
+        <div class="p-1.5 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30">
+          <img alt="Logo" class="h-7 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+        </div>
         <div class="flex flex-col">
-          <span class="font-headline-sm text-headline-sm text-primary tracking-tight">Lestari</span>
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Lestari</span>
         </div>
       </div>
 
-      <div class="px-space-md mb-space-md">
+      <!-- New Chat Button -->
+      <div class="px-space-md pt-space-md">
         <button id="btn-new-chat" type="button"
-          class="flex items-center justify-center gap-space-xs w-full py-space-sm px-space-md bg-primary-container text-on-primary rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.08)] hover:bg-primary transition-all">
-          <span class="material-symbols-outlined text-primary-fixed">add_circle</span>
-          <span class="font-label-lg text-label-lg">Konsultasi AI Baru</span>
+          class="flex items-center justify-center gap-space-xs w-full py-2.5 px-space-md bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-2xl shadow-sm hover:shadow transition-all font-label-lg text-label-lg">
+          <span class="material-symbols-outlined text-[20px]">add_circle</span>
+          <span>Konsultasi AI Baru</span>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-space-md space-y-space-md">
-        <nav class="space-y-space-2xs" data-active-classes="bg-surface-container-highest text-primary font-title-md">
-          <a aria-current="page" class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl transition-colors bg-surface-container-highest text-primary font-title-md" href="/konsultasi">
-            <span class="material-symbols-outlined text-secondary">chat</span>
+      <!-- Navigation & Recent Sessions -->
+      <div class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-lg no-scrollbar">
+        <nav class="space-y-1">
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-container-highest text-primary font-semibold shadow-sm transition-all" href="/konsultasi">
+            <span class="material-symbols-outlined text-primary text-[22px]">chat</span>
             <span class="font-body-md text-body-md">Konsultasi AI</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:artikel' %}">
-            <span class="material-symbols-outlined text-secondary">article</span>
-            <span class="font-body-md text-body-md">Artikel Kesehatan</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:artikel' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">article</span>
+            <span class="font-body-md font-medium text-body-md">Artikel Kesehatan</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:cuaca' %}">
-            <span class="material-symbols-outlined text-secondary">cloud</span>
-            <span class="font-body-md text-body-md">Cuaca</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:cuaca' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">cloud</span>
+            <span class="font-body-md font-medium text-body-md">Cuaca</span>
           </a>
         </nav>
 
         <div class="pt-space-xs">
-          <span class="px-space-md font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Sesi Terakhir</span>
-          <div id="session-list" class="mt-space-2xs space-y-space-2xs">
-            <p class="px-space-md font-body-sm text-body-sm text-outline">Memuat sesi…</p>
+          <div class="flex items-center justify-between px-space-md mb-space-xs">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Sesi Terakhir</span>
+            <span class="material-symbols-outlined text-[16px] text-outline">history</span>
+          </div>
+          <div id="session-list" class="space-y-1">
+            <p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline animate-pulse">Memuat sesi…</p>
           </div>
         </div>
       </div>
 
-      <div class="p-space-md bg-surface-container rounded-t-xl mx-space-sm mb-space-sm space-y-space-sm">
-        <div class="flex items-center justify-between gap-space-xs">
+      <!-- User Profile Card -->
+      <div class="p-space-xs m-space-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm space-y-space-sm">
+        <div class="flex items-center justify-between p-space-xs">
           <div class="flex items-center gap-space-xs min-w-0">
-            <span id="sidebar-avatar" class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
-            <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-            <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-          </span>
+            <button type="button" id="sidebar-avatar" class="relative w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 ring-2 ring-transparent hover:ring-secondary transition-all active:scale-95 group" title="Profil" onclick="openProfile()">
+              <img data-avatar class="w-full h-full object-cover transition-transform group-hover:scale-105 {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
+              <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+            </button>
             <div class="flex flex-col min-w-0">
-              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[130px]">{{ request.user.first_name|default:"Pengguna" }}</span>
-              <span class="font-label-sm text-label-sm text-secondary truncate max-w-[130px]">{{ request.user.email|default:"—" }}</span>
+              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[120px]">{{ request.user.first_name|default:"Pengguna" }}</span>
+              <span class="font-label-sm text-label-sm text-outline truncate max-w-[120px]">{{ request.user.email|default:"—" }}</span>
             </div>
           </div>
           <form method="post" action="{% url 'konsultasi:logout' %}" class="inline">
             {% csrf_token %}
-            <button type="submit" class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-colors" title="Logout">
+            <button type="submit" class="w-8 h-8 rounded-xl bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-all active:scale-95" title="Logout">
               <span class="material-symbols-outlined text-[18px]">logout</span>
             </button>
           </form>
@@ -202,42 +214,42 @@
     </div>
   </aside>
 
-  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-black/40 backdrop-blur-sm lg:hidden"></div>
+  <!-- Sidebar Backdrop -->
+  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-on-surface/30 backdrop-blur-sm lg:hidden transition-opacity"></div>
 
+  <!-- ============ MAIN CONTENT AREA ============ -->
   <div class="lg:pl-72 flex flex-col min-h-screen">
 
-    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
+    <!-- Top Navigation Header -->
+    <header class="fixed top-0 lg:left-72 right-0 h-16 backdrop-blur-md border-b border-outline-variant/30 z-30 flex items-center justify-between px-space-md md:px-space-xl">
       <div class="flex items-center gap-space-sm">
-        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Menu" onclick="toggleSidebar()">
-          <span class="material-symbols-outlined text-[20px]">menu</span>
+        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Menu" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <span id="chat-session-title" class="font-title-md text-title-md text-on-surface hidden truncate max-w-[420px]"></span>
+        <span id="chat-session-title" class="font-title-md text-headline-sm text-on-surface font-semibold hidden truncate max-w-[420px]"></span>
       </div>
       <div class="flex items-center gap-space-md">
-        <div class="flex items-center bg-surface-container rounded-full p-space-2xs">
-          <button class="px-space-xs py-space-2xs text-primary font-label-sm text-label-sm font-bold bg-surface-container-lowest rounded-full shadow-[0_1px_3px_-1px_rgba(0,30,80,0.06)]">ID</button>
-          <button class="px-space-xs py-space-2xs text-on-surface-variant font-label-sm text-label-sm hover:text-on-surface">EN</button>
-        </div>
-        <span id="header-avatar" class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
+        <button type="button" class="w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center ring-2 ring-transparent hover:ring-secondary/50 transition-all active:scale-95" title="Profil" onclick="openProfile()">
           <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-        </span>
+          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+        </button>
       </div>
     </header>
 
-    <main class="w-full pt-16 bg-surface flex-1 flex flex-col">
+    <!-- Main Section Body -->
+    <main class="w-full pt-16 flex-1 flex flex-col">
 
-      <!-- ============ WELCOME (NEW CONSULTATION) VIEW ============ -->
-      <section id="welcome-view" class="relative w-full flex-1 flex flex-col justify-between items-center px-space-md md:px-space-xl py-space-xl overflow-hidden">
+      <!-- WELCOME VIEW -->
+      <section id="welcome-view" class="relative w-full flex-1 flex flex-col justify-between items-center px-space-md md:px-space-xl py-space-xl overflow-hidden max-w-[920px] mx-auto">
 
+        <!-- Ambient Light Accents -->
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[620px] h-[360px] bg-gradient-to-tr from-secondary-container/40 via-surface-container/60 to-primary-fixed-dim/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-        <div class="absolute bottom-12 right-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-2xl -z-10 pointer-events-none"></div>
 
         <div class="w-full max-w-[768px] flex flex-col items-center my-auto py-space-md z-10">
 
           <div class="flex flex-col items-center text-center mb-space-lg">
             <div class="relative mb-space-sm">
-              <div class="w-16 h-16 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-[0_4px_16px_-4px_rgba(0,30,80,0.12)]">
+              <div class="w-16 h-16 rounded-2xl bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-center shadow-md">
                 <svg class="w-9 h-9 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                   <path d="M19 10H29V19H38V29H29V38H19V29H10V19H19V10Z" fill="currentColor" fill-opacity="0.12"></path>
                   <path d="M21 12C21 10.8954 21.8954 10 23 10H25C26.1046 10 27 10.8954 27 12V21H36C37.1046 21 38 21.8954 38 23V25C38 26.1046 37.1046 27 36 27H27V36C27 37.1046 26.1046 38 25 38H23C21.8954 38 21 37.1046 21 36V27H12C10.8954 27 10 26.1046 10 25V23C10 21.8954 10.8954 21 12 21H21V12Z" fill="#0e4494"></path>
@@ -245,36 +257,33 @@
                   <path d="M17 24L20 27L22 21L25 29L27 24H31" stroke="#f0f6ff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
                 </svg>
               </div>
-              <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-xs">
-                <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
-              </span>
             </div>
-            <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-2xs">
+            <h1 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight mb-space-2xs">
               Ada keluhan kesehatan apa hari ini?
             </h1>
-            <p class="font-body-md text-body-md text-on-surface-variant max-w-[580px]">
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-[580px] leading-relaxed">
               Konsultasikan gejala fisik, pertanyaan obat, atau foto resep/hasil lab Anda secara instan, aman, dan terlindungi privasi bersama Lestari AI.
             </p>
           </div>
 
-          <!-- The input card is cloned from <template id="input-card-template"> by JS -->
+          <!-- The input card is cloned from template by JS -->
           <div id="input-card-mount" class="w-full"></div>
 
-          <div class="w-full mt-space-md">
-            <p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-space-xs text-center md:text-left">
+          <div class="w-full mt-space-lg">
+            <p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-space-xs text-center font-bold">
               Atau pilih topik keluhan klinis umum:
             </p>
-            <div class="flex flex-wrap items-center justify-center md:justify-start gap-space-xs">
-              <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Sudah lebih dari 2 hari demam naik turun disertai meriang dan nyeri sendi')" type="button">
-                <span class="w-5 h-5 rounded-full bg-error-container flex items-center justify-center text-on-error-container text-[12px]">🌡️</span>
+            <div class="flex flex-wrap items-center justify-center gap-space-xs">
+              <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Sudah lebih dari 2 hari demam naik turun disertai meriang dan nyeri sendi')" type="button">
+                <span class="w-6 h-6 rounded-full bg-error-container/60 flex items-center justify-center text-on-error-container text-[12px]">🌡️</span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Demam &amp; Meriang &gt; 2 Hari</span>
               </button>
-              <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Dada terasa panas seperti terbakar menjalar ke tenggorokan dan perut kembung (GERD)')" type="button">
-                <span class="w-5 h-5 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container text-[12px]">🫀</span>
+              <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Dada terasa panas seperti terbakar menjalar ke tenggorokan dan perut kembung (GERD)')" type="button">
+                <span class="w-6 h-6 rounded-full bg-secondary-container/60 flex items-center justify-center text-on-secondary-container text-[12px]">🫀</span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Dada Sesak &amp; Asam Lambung Naik</span>
               </button>
-              <button class="group flex items-center gap-space-xs px-space-sm py-space-xs bg-surface-container-lowest hover:bg-surface-container-high rounded-full shadow-[0_1px_4px_rgba(0,30,80,0.05)] transition-all" onclick="applyQuickPrompt('Bolehkah mengonsumsi Paracetamol bersamaan dengan antibiotik Amoxicillin?')" type="button">
-                <span class="w-5 h-5 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed text-[12px]">💊</span>
+              <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Bolehkah mengonsumsi Paracetamol bersamaan dengan antibiotik Amoxicillin?')" type="button">
+                <span class="w-6 h-6 rounded-full bg-tertiary-fixed/60 flex items-center justify-center text-on-tertiary-fixed text-[12px]">💊</span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Cek Interaksi Obat &amp; Dosis</span>
               </button>
             </div>
@@ -283,66 +292,66 @@
         </div>
 
         <div class="w-full max-w-[768px] pt-space-md text-center">
-          <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full">
-            <span class="material-symbols-outlined text-secondary text-[16px]">medical_services</span>
+          <div class="inline-flex items-center gap-space-xs px-space-md py-2 bg-surface-container-low/80 border border-outline-variant/30 rounded-full shadow-sm">
+            <span class="material-symbols-outlined text-secondary text-[18px]">medical_services</span>
             <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
-              <strong class="font-semibold text-primary">Peringatan:</strong> Lestari AI memberikan saran triase kesehatan berbasis bukti medis dan AI, bukan pengganti diagnosis darurat rumah sakit. Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika dalam kondisi kritis.
+              <strong class="font-semibold text-primary">Peringatan:</strong> Lestari AI memberikan saran triase kesehatan berbasis bukti medis, bukan pengganti diagnosis darurat rumah sakit. Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika dalam kondisi kritis.
             </p>
           </div>
         </div>
 
       </section>
 
-      <!-- ============ CHAT VIEW ============ -->
-      <!-- Definite height (viewport minus fixed header) so the input dock
-           is always pinned at the bottom and only the messages scroll. -->
+      <!-- CHAT VIEW -->
       <section id="chat-view" class="hidden w-full flex flex-col overflow-hidden h-[calc(100vh-4rem)]">
-        <div id="chat-messages" class="flex-1 min-h-0 overflow-y-auto w-full max-w-[768px] mx-auto px-space-md py-space-lg space-y-space-md"></div>
+        <div id="chat-messages" class="flex-1 min-h-0 overflow-y-auto w-full max-w-[800px] mx-auto px-space-md py-space-lg space-y-space-md no-scrollbar"></div>
 
-        <div class="w-full max-w-[768px] mx-auto px-space-md pb-space-md bg-surface shadow-[0_-6px_20px_-8px_rgba(0,30,80,0.10)]">
-          <div id="chat-input-dock"></div>
-          <p class="font-label-sm text-label-sm text-outline text-center mt-space-xs">
-            <span class="material-symbols-outlined text-[14px] align-middle text-secondary">medical_services</span>
-            Lestari AI bukan pengganti diagnosis dokter. Hubungi <a class="text-error font-semibold" href="tel:119">119</a> jika kondisi kritis.
-          </p>
+        <div class="w-full border-t border-outline-variant/20 bg-surface-bright/80 backdrop-blur-md pt-space-xs">
+          <div class="w-full max-w-[800px] mx-auto px-space-md pb-space-sm">
+            <div id="chat-input-dock"></div>
+            <p class="font-label-sm text-label-sm text-outline text-center mt-space-xs flex items-center justify-center gap-1">
+              <span class="material-symbols-outlined text-[14px] text-secondary">medical_services</span>
+              <span>Lestari AI bukan pengganti diagnosis dokter. Hubungi <a class="text-error font-semibold" href="tel:119">119</a> jika kondisi kritis.</span>
+            </p>
+          </div>
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- Shared input card (moved between views by JS) -->
+  <!-- Shared Input Card Template -->
   <template id="input-card-template">
-    <div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.09),0_2px_8px_-2px_rgba(0,30,80,0.04)] transition-all duration-300 p-space-md focus-within:shadow-[0_16px_36px_-6px_rgba(0,30,80,0.14)]">
+    <div class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded-3xl shadow-sm focus-within:shadow-md focus-within:border-primary/50 transition-all duration-300 p-space-md">
 
       <div class="hidden flex items-center gap-space-xs pb-space-xs mb-space-xs overflow-x-auto" id="attachment-tray">
-        <div class="inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container rounded-lg">
+        <div class="inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-surface-container rounded-xl border border-outline-variant/30">
           <img id="attachment-thumb" class="w-8 h-8 rounded-lg object-cover" alt="Foto" />
           <span id="attachment-name" class="font-label-sm text-label-sm text-on-surface truncate max-w-[140px]"></span>
-          <button class="text-on-surface-variant hover:text-error" id="btn-remove-image" title="Sasang Foto" type="button">
-            <span class="material-symbols-outlined text-[14px]">close</span>
+          <button class="text-on-surface-variant hover:text-error p-1 rounded-full transition-colors" id="btn-remove-image" title="Hapus Foto" type="button">
+            <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
       </div>
       <p id="image-error" class="hidden font-body-sm text-body-sm text-error mb-space-2xs"></p>
 
       <div class="relative w-full">
-        <textarea class="w-full resize-none bg-transparent outline-none font-body-lg text-body-lg text-on-surface placeholder:text-outline/70 transition-colors" id="symptom-input" placeholder="Ceritakan keluhan Anda (misal: 'Sudah 3 hari pusing berputar disertai mual saat bangun tidur...')" rows="3"></textarea>
+        <textarea class="w-full resize-none bg-transparent outline-none font-body-lg text-body-lg text-on-surface placeholder:text-outline/60 transition-colors" id="symptom-input" placeholder="Ceritakan keluhan Anda (misal: 'Sudah 3 hari pusing berputar disertai mual saat bangun tidur...')" rows="3"></textarea>
       </div>
 
-      <div class="flex flex-wrap items-center justify-between gap-space-xs pt-space-xs">
+      <div class="flex flex-wrap items-center justify-between gap-space-xs pt-space-xs border-t border-outline-variant/20 mt-space-2xs">
 
         <div class="flex items-center gap-space-2xs">
-          <label class="flex items-center gap-space-2xs px-space-sm py-space-xs rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface cursor-pointer transition-colors" title="Unggah Foto Gejala atau Hasil Lab" for="image-input">
+          <label class="flex items-center gap-space-2xs px-3 py-1.5 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface border border-outline-variant/30 cursor-pointer transition-all active:scale-95" title="Unggah Foto Gejala atau Hasil Lab" for="image-input">
             <span class="material-symbols-outlined text-secondary text-[18px]">add_photo_alternate</span>
-            <span class="font-label-md text-label-md hidden sm:inline">Foto</span>
+            <span class="font-label-md text-label-md hidden sm:inline font-semibold">Foto</span>
             <input class="hidden" type="file" id="image-input" accept="image/jpeg,image/png,image/webp,image/gif" />
           </label>
         </div>
 
         <div class="flex items-center gap-space-xs">
           <span class="hidden md:inline font-label-sm text-label-sm text-outline">Tekan Enter ↵</span>
-          <button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] disabled:opacity-50" id="btn-send" title="Kirim Keluhan ke AI" type="button">
+          <button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-md disabled:opacity-50" id="btn-send" title="Kirim Keluhan ke AI" type="button">
             <span class="material-symbols-outlined text-[20px]" id="send-icon">arrow_upward</span>
           </button>
         </div>
@@ -352,33 +361,36 @@
   </template>
 
   <!-- ============ PROFILE MODAL ============ -->
-  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="w-full max-w-[360px] bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.25),0_2px_8px_-2px_rgba(0,30,80,0.12)] p-space-lg relative">
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-md bg-on-surface/40 backdrop-blur-sm transition-all duration-200">
+    <div class="w-full max-w-[380px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl shadow-2xl p-space-xl relative transform transition-all scale-100">
+
       <button id="profile-modal-close" type="button"
-        class="absolute top-space-sm right-space-sm w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
-        <span class="material-symbols-outlined text-[18px]">close</span>
+        class="absolute top-space-md right-space-md w-9 h-9 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Tutup">
+        <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
 
-      <div class="flex flex-col items-center text-center mb-space-md">
-        <div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden shadow-[0_4px_16px_-4px_rgba(0,30,80,0.15)]">
+      <div class="flex flex-col items-center text-center mb-space-lg">
+        <div class="relative w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden ring-4 ring-surface-container-low shadow-inner mb-space-sm group">
           <img id="modal-avatar-img" data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[40px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[44px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
         </div>
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mt-space-sm">{{ request.user.first_name|default:"Pengguna" }}</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant">{{ request.user.email }}</p>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">{{ request.user.first_name|default:"Pengguna" }}</h2>
+        <p class="font-body-md text-body-md text-outline">{{ request.user.email }}</p>
       </div>
 
-      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all cursor-pointer">
-        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-        Changer PFP
+      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-3 px-space-md bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-full shadow-md font-label-lg text-label-lg transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+        Ubah Foto Profil
       </label>
       <input id="modal-avatar-input" class="hidden" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" />
 
-      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs"></p>
+      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs font-medium"></p>
 
-      <p class="font-label-sm text-label-sm text-outline text-center mt-space-md">
-        Akun: <span class="text-on-surface-variant">{{ request.user.username }}</span>
-      </p>
+      <div class="mt-space-lg pt-space-md border-t border-outline-variant/30 text-center">
+        <p class="font-label-sm text-label-sm text-outline">
+          Username: <span class="text-on-surface font-semibold">{{ request.user.username }}</span>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -393,11 +405,12 @@
     const chatMessages = document.getElementById('chat-messages');
     const chatInputDock = document.getElementById('chat-input-dock');
     const sessionTitleEl = document.getElementById('chat-session-title');
-    const template = document.getElementById('input-card-template');    // Mount the shared input card into the welcome view initially
+    const template = document.getElementById('input-card-template');
+
     let inputCard = template.content.firstElementChild.cloneNode(true);
     document.getElementById('input-card-mount').appendChild(inputCard);
 
-    // ============ UI helpers ============
+    // ============ UI Helpers ============
     function getEl(id) { return inputCard.querySelector('#' + id) || document.getElementById(id); }
 
     function switchToChatView() {
@@ -424,7 +437,6 @@
       return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    // Minimal, safe markdown renderer (headings, bold, lists, quotes, paragraphs)
     function renderMarkdown(raw) {
       const lines = escapeHtml(raw).split(/\r?\n/);
       let html = '', inList = false, listType = 'ul';
@@ -464,7 +476,7 @@
       if (role === 'user') {
         wrap.className = 'flex justify-end';
         const bubble = document.createElement('div');
-        bubble.className = 'max-w-[85%] bg-primary text-on-primary rounded-2xl rounded-br-md px-space-md py-space-sm font-body-md text-body-md shadow-[0_2px_8px_-2px_rgba(0,30,80,0.2)] whitespace-pre-wrap';
+        bubble.className = 'max-w-[85%] bg-primary text-on-primary rounded-2xl rounded-br-md px-space-md py-space-sm font-body-md text-body-md shadow-sm whitespace-pre-wrap';
         bubble.textContent = content;
         if (imageUrl) {
           const img = document.createElement('img');
@@ -475,13 +487,13 @@
         }
         wrap.appendChild(bubble);
       } else {
-        const bubbleColor = isEmergency ? 'bg-error-container' : 'bg-surface-container-low';
+        const bubbleColor = isEmergency ? 'bg-error-container border border-error/30' : 'bg-surface-container-lowest border border-outline-variant/30';
         wrap.className = 'flex items-start gap-space-sm';
         wrap.innerHTML = `
-          <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,30,80,0.10)] flex items-center justify-center shrink-0 mt-1 overflow-hidden ${isEmergency ? 'ring-2 ring-error' : ''}">
-            <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari AI" class="w-full h-full object-contain" />
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex items-center justify-center shrink-0 mt-1 overflow-hidden ${isEmergency ? 'ring-2 ring-error' : ''}">
+            <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari AI" class="w-full h-full object-contain p-1" />
           </span>
-          <div class="ai-bubble max-w-[85%] ${bubbleColor} rounded-2xl rounded-tl-md px-space-md py-space-sm font-body-md text-body-md text-on-surface shadow-[0_1px_6px_rgba(0,30,80,0.06)]">
+          <div class="ai-bubble max-w-[85%] ${bubbleColor} rounded-2xl rounded-tl-md px-space-md py-space-sm font-body-md text-body-md text-on-surface shadow-sm">
             <div class="ai-md"></div>
           </div>`;
         wrap.querySelector('.ai-md').innerHTML = renderMarkdown(content);
@@ -496,14 +508,14 @@
       wrap.id = 'typing-indicator';
       wrap.className = 'flex items-start gap-space-sm';
       wrap.innerHTML = `
-        <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,30,80,0.10)] flex items-center justify-center shrink-0 mt-1 overflow-hidden">
-          <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari AI" class="w-full h-full object-contain" />
+        <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex items-center justify-center shrink-0 mt-1 overflow-hidden">
+          <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari AI" class="w-full h-full object-contain p-1" />
         </span>
-        <div class="bg-surface-container-low rounded-2xl rounded-tl-md px-space-md py-space-sm flex items-center gap-space-2xs">
+        <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl rounded-tl-md px-space-md py-space-sm flex items-center gap-space-2xs shadow-sm">
           <span class="typing-dot w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
           <span class="typing-dot w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
           <span class="typing-dot w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
-          <span class="font-label-sm text-label-sm text-on-surface-variant ml-space-2xs">Lestari AI menganalisis…</span>
+          <span class="font-label-sm text-label-sm text-outline ml-space-2xs">Lestari AI menganalisis…</span>
         </div>`;
       chatMessages.appendChild(wrap);
       scrollToBottom();
@@ -534,7 +546,6 @@
       if (currentSessionId) form.append('session_id', currentSessionId);
       if (selectedImage) form.append('image', selectedImage);
 
-      // Local preview so the image shows in the chat before the server replies.
       const imagePreview = selectedImage ? URL.createObjectURL(selectedImage) : null;
 
       input.value = '';
@@ -558,8 +569,6 @@
           addMessageBubble('ai', data.error || 'Maaf, terjadi kendala. Silakan coba lagi.', false);
         } else {
           currentSessionId = data.session_id;
-          // First message of a new session: adopt its URL (replace, not push,
-          // so Back leaves the site rather than showing an empty welcome view).
           history.replaceState({ sessionId: data.session_id }, '', `/konsultasi/${data.session_id}/`);
           addMessageBubble('ai', data.ai_message.content, data.ai_message.is_emergency);
           if (data.title) { sessionTitleEl.textContent = data.title; sessionTitleEl.classList.remove('hidden'); }
@@ -578,7 +587,7 @@
       return document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1] || '';
     }
 
-    // ============ Sessions sidebar ============
+    // ============ Sessions Sidebar ============
     async function loadSessions() {
       const listEl = document.getElementById('session-list');
       try {
@@ -589,8 +598,8 @@
           return;
         }
         listEl.innerHTML = data.sessions.map(s => `
-          <a class="block px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer" data-session-id="${s.id}" href="#">
-            <p class="font-body-md text-body-md truncate">${escapeHtml(s.title)}</p>
+          <a class="block px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98] cursor-pointer" data-session-id="${s.id}" href="#">
+            <p class="font-body-md text-body-md font-medium truncate">${escapeHtml(s.title)}</p>
             <span class="font-label-sm text-label-sm text-outline">${new Date(s.updated_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
           </a>`).join('');
         listEl.querySelectorAll('[data-session-id]').forEach(a => {
@@ -601,7 +610,7 @@
       }
     }
 
-    // ============ Routing (/ and /konsultasi/<id>/) ============
+    // ============ Routing ============
     function sessionIdFromPath() {
       const m = window.location.pathname.match(/^\/konsultasi\/(\d+)\/$/);
       return m ? Number(m[1]) : null;
@@ -636,14 +645,13 @@
       else showWelcome({ push: false });
     });
 
-    // ============ Input card interactions ============
     function applyQuickPrompt(text) {
       const input = getEl('symptom-input');
       input.value = text;
       input.focus();
     }
 
-    // ============ Image attachment ============
+    // ============ Image Attachment ============
     const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
     let selectedImage = null;
@@ -681,7 +689,7 @@
       getEl('attachment-tray').classList.remove('hidden');
     }
 
-    // Wire events (delegated where possible since the card is cloned)
+    // Dynamic Delegation Events
     document.addEventListener('click', (e) => {
       const sendBtn = e.target.closest('#btn-send');
       if (sendBtn) { dispatchConsultation(); return; }
@@ -724,31 +732,21 @@
       else openSidebar();
     }
 
-    document.querySelectorAll('#sidebar a, #sidebar button').forEach(el => {
+    document.querySelectorAll('#sidebar a, #sidebar button:not(#sidebar-avatar)').forEach(el => {
       el.addEventListener('click', closeSidebar);
     });
 
-    // ============ Profile modal ============
+    // ============ Profile Modal ============
     const profileModal = document.getElementById('profile-modal');
     const modalAvatarInput = document.getElementById('modal-avatar-input');
     const modalAvatarStatus = document.getElementById('modal-avatar-status');
 
-    function openProfile() {
-      profileModal.classList.remove('hidden');
-      modalAvatarStatus.classList.add('hidden');
-    }
-
-    function closeProfile() {
-      profileModal.classList.add('hidden');
-      modalAvatarInput.value = '';
-      modalAvatarStatus.classList.add('hidden');
-    }
+    function openProfile() { profileModal.classList.remove('hidden'); modalAvatarStatus.classList.add('hidden'); }
+    function closeProfile() { profileModal.classList.add('hidden'); modalAvatarInput.value = ''; modalAvatarStatus.classList.add('hidden'); }
 
     document.getElementById('profile-modal-close').addEventListener('click', closeProfile);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeProfile(); closeSidebar(); } });
-    profileModal.addEventListener('click', (e) => {
-      if (e.target === profileModal) closeProfile();
-    });
+    profileModal.addEventListener('click', (e) => { if (e.target === profileModal) closeProfile(); });
 
     modalAvatarInput.addEventListener('change', async () => {
       const file = modalAvatarInput.files[0];
@@ -756,7 +754,8 @@
 
       modalAvatarStatus.classList.remove('hidden');
       modalAvatarStatus.classList.remove('text-error');
-      modalAvatarStatus.textContent = 'Uploading PFP…';
+      modalAvatarStatus.classList.add('text-primary');
+      modalAvatarStatus.textContent = 'Mengunggah foto profil…';
 
       const form = new FormData();
       form.append('avatar', file);
@@ -767,25 +766,23 @@
           body: form,
         });
         const isJson = (resp.headers.get('Content-Type') || '').includes('application/json');
-        if (!isJson) {
-          if (resp.status === 401) throw new Error('Sesion expired. Silakan login ulang.');
-          throw new Error('Gagal upload PFP. Silakan coba lagi.');
-        }
+        if (!isJson) throw new Error('Gagal mengunggah foto profil.');
         const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Gagal upload PFP.');
+        if (!resp.ok) throw new Error(data.error || 'Gagal mengunggah foto profil.');
 
-        // Swap every avatar (sidebar, header, modal) to the new picture.
         document.querySelectorAll('[data-avatar]').forEach(img => {
           img.src = data.avatar_url;
           img.classList.remove('hidden');
         });
         document.querySelectorAll('[data-avatar-placeholder]').forEach(el => el.classList.add('hidden'));
 
-        modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = 'PFP diperbarui!';
+        modalAvatarStatus.classList.remove('text-primary');
+        modalAvatarStatus.classList.add('text-on-surface-variant');
+        modalAvatarStatus.textContent = 'Foto profil berhasil diperbarui!';
       } catch (err) {
+        modalAvatarStatus.classList.remove('text-primary');
         modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = err.message || 'Gagal upload PFP. Silakan coba lagi.';
+        modalAvatarStatus.textContent = err.message || 'Gagal mengunggah foto. Silakan coba lagi.';
       }
       modalAvatarInput.value = '';
     });

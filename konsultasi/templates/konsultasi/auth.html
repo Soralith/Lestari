@@ -4,12 +4,18 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Lestari — Login / Sign Up</title>
+  <title>Lestari — Masuk / Daftar</title>
 
   <link href="https://fonts.googleapis.com" rel="preconnect" />
   <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <style>
+    ::-webkit-scrollbar { display: none; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -67,7 +73,7 @@
             "secondary-fixed-dim": "#7aacf0",
             "on-primary-fixed-variant": "#0a3d7a"
           },
-          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
           "spacing": {
             "container-padding-mobile": "1rem", "space-2xl": "3rem", "space-xs": "0.5rem",
             "space-3xl": "4rem", "container-padding-desktop": "2rem", "space-lg": "1.5rem",
@@ -75,12 +81,12 @@
             "space-2xs": "0.25rem", "space-sm": "0.75rem"
           },
           "fontFamily": {
-            "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"],
-            "headline-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"],
-            "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"],
-            "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"],
-            "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"],
-            "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"]
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"], "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"], "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"], "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"], "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "title-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg": ["Plus Jakarta Sans", "sans-serif"]
           },
           "fontSize": {
             "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
@@ -100,73 +106,78 @@
       }
     }
   </script>
-
-  <style>
-    .field {
-      width: 100%;
-      border-radius: 0.75rem;
-      background: transparent;
-      outline: none;
-      padding: 0.75rem 1rem 0.75rem 1rem;
-    }
-  </style>
 </head>
 
-<body class="bg-surface font-body-md text-on-surface min-h-screen flex flex-col items-center justify-center px-space-md overflow-hidden">
+<body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container min-h-screen flex flex-col items-center justify-center p-space-md relative overflow-x-hidden">
 
-  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[460px] bg-gradient-to-tr from-secondary-container/40 via-surface-container/60 to-primary-fixed-dim/20 rounded-full blur-3xl -z-10 pointer-events-none"></div>
-  <div class="absolute bottom-12 left-12 w-72 h-72 bg-tertiary-fixed/30 rounded-full blur-2xl -z-10 pointer-events-none"></div>
+  <!-- Ambient Light Orbs -->
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[460px] bg-gradient-to-tr from-secondary-container/50 via-surface-container/60 to-primary-fixed-dim/30 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+  <div class="absolute bottom-10 right-10 w-80 h-80 bg-tertiary-fixed/30 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
-  <div class="w-full max-w-[420px] my-auto z-10">
+  <!-- Main Container -->
+  <div class="w-full max-w-[420px] my-auto z-10 py-space-md">
 
+    <!-- Brand Header -->
     <div class="flex flex-col items-center text-center mb-space-lg">
-      <img alt="Lestari" class="h-14 w-auto object-contain mb-space-sm" src="{% static 'images/LestariLogo.png' %}" />
-      <h1 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-2xs">Lestari</h1>
-      <p class="font-body-md text-body-md text-on-surface-variant max-w-[380px] text-center">
+      <div class="p-3 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-md mb-space-sm transition-transform hover:scale-105">
+        <img alt="Lestari" class="h-10 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+      </div>
+      <h1 class="font-headline-lg text-headline-lg text-primary font-bold tracking-tight mb-space-2xs">Lestari</h1>
+      <p class="font-body-md text-body-md text-on-surface-variant max-w-[360px] leading-relaxed">
         Konsultasi kesehatan AI — aman, instan, dan terlindungi privasi.
       </p>
     </div>
 
-    <div class="w-full bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.09),0_2px_8px_-2px_rgba(0,30,80,0.04)] p-space-md">
+    <!-- Auth Card -->
+    <div class="w-full bg-surface-container-lowest/90 backdrop-blur-md border border-outline-variant/30 rounded-3xl shadow-xl p-space-lg md:p-space-xl">
 
-      <!-- Tab switcher -->
-      <div class="flex bg-surface-container rounded-full p-space-2xs mb-space-md">
+      <!-- Segmented Tab Switcher -->
+      <div class="flex bg-surface-container-low p-1 rounded-2xl border border-outline-variant/20 mb-space-lg">
         <button id="tab-login" type="button"
-          class="flex-1 py-space-xs rounded-full font-label-lg text-label-lg transition-all">Login</button>
+          class="flex-1 py-2 rounded-xl font-label-lg text-label-lg font-semibold transition-all">Masuk</button>
         <button id="tab-signup" type="button"
-          class="flex-1 py-space-xs rounded-full font-label-lg text-label-lg transition-all">Sign Up</button>
+          class="flex-1 py-2 rounded-xl font-label-lg text-label-lg font-semibold transition-all">Daftar</button>
       </div>
 
       <!-- ============ LOGIN FORM ============ -->
       <form id="login-form" method="post" action="{% url 'konsultasi:login' %}">
         {% csrf_token %}
 
-        <div class="flex flex-col gap-space-sm">
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Email</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="email" name="email"
-              placeholder="nama@example.com" required autocomplete="email"
-              value="{{ login_email|default:'' }}" />
+        <div class="flex flex-col gap-space-md">
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Email</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+              <input class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="email" name="email"
+                placeholder="nama@example.com" required autocomplete="email"
+                value="{{ login_email|default:'' }}" />
+            </div>
           </label>
 
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Password</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="password"
-              placeholder="••••••••" required autocomplete="current-password" />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Password</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+              <input id="login-password" class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="password" name="password"
+                placeholder="••••••••" required autocomplete="current-password" />
+              <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="text-outline hover:text-on-surface transition-colors focus:outline-none" title="Tampilkan Password">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
           </label>
         </div>
 
         {% if login_error %}
-        <div class="mt-space-sm flex items-start gap-space-xs bg-error-container rounded-lg px-space-sm py-space-xs">
-          <span class="material-symbols-outlined text-on-error-container text-[16px]">error</span>
-          <p class="font-body-sm text-body-sm text-on-error-container">{{ login_error }}</p>
+        <div class="mt-space-md flex items-start gap-space-xs bg-error-container/80 border border-error/30 rounded-xl p-space-sm">
+          <span class="material-symbols-outlined text-error text-[18px] shrink-0 mt-0.5">error</span>
+          <p class="font-body-sm text-body-sm text-on-error-container font-medium leading-snug">{{ login_error }}</p>
         </div>
         {% endif %}
 
         <button type="submit"
-          class="w-full mt-space-md flex items-center justify-center gap-space-xs py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all">
-          <span class="material-symbols-outlined text-[18px]">login</span>
-          Login
+          class="w-full mt-space-lg flex items-center justify-center gap-space-xs py-3 bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-full shadow-md font-label-lg text-label-lg transition-all">
+          <span class="material-symbols-outlined text-[20px]">login</span>
+          <span>Masuk Sekarang</span>
         </button>
       </form>
 
@@ -174,67 +185,89 @@
       <form id="signup-form" method="post" action="{% url 'konsultasi:signup' %}" enctype="multipart/form-data" class="hidden">
         {% csrf_token %}
 
-        <div class="flex flex-col items-center mb-space-sm">
-          <label for="signup-avatar" class="group relative w-24 h-24 rounded-full bg-surface-container-low flex items-center justify-center cursor-pointer overflow-hidden">
-            <img id="signup-avatar-preview" class="hidden w-full h-full object-cover" alt="PFP" />
-            <span id="signup-avatar-placeholder" class="material-symbols-outlined text-on-surface-variant text-[36px]">person</span>
-            <span class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center border-2 border-surface shadow-[0_1px_4px_rgba(0,30,80,0.15)]">
-              <span class="material-symbols-outlined text-[16px]">photo_camera</span>
+        <!-- Avatar Uploader -->
+        <div class="flex flex-col items-center mb-space-md">
+          <label for="signup-avatar" class="group relative w-20 h-20 rounded-full bg-secondary-container/60 border-2 border-dashed border-outline-variant hover:border-primary flex items-center justify-center cursor-pointer overflow-hidden transition-all shadow-inner">
+            <img id="signup-avatar-preview" class="hidden w-full h-full object-cover transition-transform group-hover:scale-105" alt="PFP" />
+            <span id="signup-avatar-placeholder" class="material-symbols-outlined text-on-secondary-container text-[32px] group-hover:scale-110 transition-transform">person</span>
+            <div class="absolute inset-0 bg-on-surface/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <span class="material-symbols-outlined text-white text-[20px]">photo_camera</span>
+            </div>
+            <span class="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center border-2 border-surface-container-lowest shadow-sm">
+              <span class="material-symbols-outlined text-[14px]">add</span>
             </span>
           </label>
           <input id="signup-avatar" class="hidden" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" />
-          <p class="font-label-sm text-label-sm text-outline mt-space-2xs">Foto profile (opsional)</p>
+          <p class="font-label-sm text-label-sm text-outline mt-1.5 font-medium">Foto Profil (opsional)</p>
         </div>
 
         <div class="flex flex-col gap-space-sm">
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Nama</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="text" name="name"
-              placeholder="Nama Anda" required autocomplete="name"
-              value="{{ signup_name|default:'' }}" />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Nama Lengkap</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">badge</span>
+              <input class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="text" name="name"
+                placeholder="Nama Anda" required autocomplete="name"
+                value="{{ signup_name|default:'' }}" />
+            </div>
           </label>
 
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Email</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="email" name="email"
-              placeholder="nama@example.com" required autocomplete="email"
-              value="{{ signup_email|default:'' }}" />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Email</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+              <input class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="email" name="email"
+                placeholder="nama@example.com" required autocomplete="email"
+                value="{{ signup_email|default:'' }}" />
+            </div>
           </label>
 
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Password</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="password"
-              placeholder="Minimal 8 karakter" required autocomplete="new-password" />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Password</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+              <input id="signup-password" class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="password" name="password"
+                placeholder="Minimal 8 karakter" required autocomplete="new-password" />
+              <button type="button" onclick="togglePasswordVisibility('signup-password', this)" class="text-outline hover:text-on-surface transition-colors focus:outline-none" title="Tampilkan Password">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
           </label>
 
-          <label class="flex flex-col gap-space-2xs">
-            <span class="font-label-md text-label-md text-on-surface-variant">Konfirmasi Password</span>
-            <input class="field bg-surface-container-low placeholder:text-outline/70" type="password" name="confirm_password"
-              placeholder="••••••••" required autocomplete="new-password" />
+          <label class="flex flex-col gap-1.5">
+            <span class="font-label-md text-label-md text-on-surface-variant font-semibold">Konfirmasi Password</span>
+            <div class="group flex items-center gap-2 px-space-md py-2.5 bg-surface-container-low/60 border border-outline-variant/40 rounded-xl focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span class="material-symbols-outlined text-outline text-[20px] group-focus-within:text-primary transition-colors">lock_reset</span>
+              <input id="signup-confirm-password" class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60" type="password" name="confirm_password"
+                placeholder="••••••••" required autocomplete="new-password" />
+              <button type="button" onclick="togglePasswordVisibility('signup-confirm-password', this)" class="text-outline hover:text-on-surface transition-colors focus:outline-none" title="Tampilkan Password">
+                <span class="material-symbols-outlined text-[20px]">visibility</span>
+              </button>
+            </div>
           </label>
         </div>
 
         {% if signup_error %}
-        <div class="mt-space-sm flex items-start gap-space-xs bg-error-container rounded-lg px-space-sm py-space-xs">
-          <span class="material-symbols-outlined text-on-error-container text-[16px]">error</span>
-          <p class="font-body-sm text-body-sm text-on-error-container">{{ signup_error }}</p>
+        <div class="mt-space-md flex items-start gap-space-xs bg-error-container/80 border border-error/30 rounded-xl p-space-sm">
+          <span class="material-symbols-outlined text-error text-[18px] shrink-0 mt-0.5">error</span>
+          <p class="font-body-sm text-body-sm text-on-error-container font-medium leading-snug">{{ signup_error }}</p>
         </div>
         {% endif %}
 
         <button type="submit"
-          class="w-full mt-space-md flex items-center justify-center gap-space-xs py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all">
-          <span class="material-symbols-outlined text-[18px]">person_add</span>
-          Reketster Akun
+          class="w-full mt-space-lg flex items-center justify-center gap-space-xs py-3 bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-full shadow-md font-label-lg text-label-lg transition-all">
+          <span class="material-symbols-outlined text-[20px]">person_add</span>
+          <span>Register Akun</span>
         </button>
       </form>
 
     </div>
 
-    <div class="w-full mt-space-md inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full">
-      <span class="material-symbols-outlined text-secondary text-[16px]">medical_services</span>
-      <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
-        Lestari AI memberikan saran triase kesehatan, bukan pengganti diagnosis darurat.
-        Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika kondisi kritis.
+    <!-- Medical Disclaimer Banner -->
+    <div class="w-full mt-space-md flex items-center gap-space-xs px-space-md py-2.5 bg-surface-container-low/80 border border-outline-variant/30 rounded-2xl shadow-sm">
+      <span class="material-symbols-outlined text-secondary text-[18px] shrink-0">medical_services</span>
+      <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        Lestari AI memberikan saran triase kesehatan, bukan pengganti diagnosis darurat. Hubungi <a class="text-error font-semibold underline underline-offset-2 hover:text-error-container" href="tel:119">119</a> jika kondisi kritis.
       </p>
     </div>
 
@@ -247,12 +280,27 @@
       const isLogin = tab === 'login';
       document.getElementById('login-form').classList.toggle('hidden', !isLogin);
       document.getElementById('signup-form').classList.toggle('hidden', isLogin);
+
       for (const key of ['login', 'signup']) {
         const btn = document.getElementById('tab-' + key);
         const isActive = key === tab;
-        btn.classList.toggle('bg-primary', isActive);
-        btn.classList.toggle('text-on-primary', isActive);
-        btn.classList.toggle('text-on-surface-variant', !isActive);
+        if (isActive) {
+          btn.className = 'flex-1 py-2 rounded-xl font-label-lg text-label-lg font-semibold transition-all bg-surface-container-lowest text-primary shadow-sm';
+        } else {
+          btn.className = 'flex-1 py-2 rounded-xl font-label-lg text-label-lg font-semibold transition-all text-outline hover:text-on-surface';
+        }
+      }
+    }
+
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const icon = btn.querySelector('span');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
       }
     }
 

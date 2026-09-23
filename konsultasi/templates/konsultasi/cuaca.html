@@ -13,6 +13,10 @@
 
   <style>
     ::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -71,7 +75,7 @@
             "secondary-fixed-dim": "#7aacf0",
             "on-primary-fixed-variant": "#0a3d7a"
           },
-          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
           "spacing": {
             "container-padding-mobile": "1rem", "space-2xl": "3rem", "space-xs": "0.5rem",
             "space-3xl": "4rem", "container-padding-desktop": "2rem", "space-lg": "1.5rem",
@@ -79,12 +83,12 @@
             "space-2xs": "0.25rem", "space-sm": "0.75rem"
           },
           "fontFamily": {
-            "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"],
-            "headline-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"],
-            "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"],
-            "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"],
-            "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"],
-            "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"]
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"], "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"], "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"], "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"], "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "title-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg": ["Plus Jakarta Sans", "sans-serif"]
           },
           "fontSize": {
             "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
@@ -106,50 +110,66 @@
   </script>
 </head>
 
-<body class="bg-background font-body-md text-on-surface">
+<body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
 
-  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+  <!-- ============ SIDEBAR ============ -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 border-r border-outline-variant/30 shadow-lg lg:shadow-none">
     <div class="flex flex-col h-full overflow-hidden">
 
-      <div class="p-space-lg flex items-center gap-space-sm">
-        <img alt="Logo" class="h-8 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+      <!-- Header / Logo -->
+      <div class="p-space-lg flex items-center gap-space-sm border-b border-outline-variant/20">
+        <div class="p-1.5 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30">
+          <img alt="Logo" class="h-7 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+        </div>
         <div class="flex flex-col">
-          <span class="font-headline-sm text-headline-sm text-primary tracking-tight">Lestari</span>
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Lestari</span>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-space-md space-y-space-md">
-        <nav class="space-y-space-2xs">
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:index' %}">
-            <span class="material-symbols-outlined text-secondary">chat</span>
-            <span class="font-body-md text-body-md">Konsultasi AI</span>
+      <!-- Navigation & Recent Sessions -->
+      <div class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-lg no-scrollbar">
+        <nav class="space-y-1">
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:index' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">chat</span>
+            <span class="font-body-md font-medium text-body-md">Konsultasi AI</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:artikel' %}">
-            <span class="material-symbols-outlined text-secondary">article</span>
-            <span class="font-body-md text-body-md">Artikel Kesehatan</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:artikel' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">article</span>
+            <span class="font-body-md font-medium text-body-md">Artikel Kesehatan</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-highest text-primary font-title-md transition-colors" href="{% url 'konsultasi:cuaca' %}">
-            <span class="material-symbols-outlined text-secondary">cloud</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-container-highest text-primary font-semibold shadow-sm transition-all" href="{% url 'konsultasi:cuaca' %}">
+            <span class="material-symbols-outlined text-primary text-[22px]">cloud</span>
             <span class="font-body-md text-body-md">Cuaca</span>
           </a>
         </nav>
+
+        <div class="pt-space-xs">
+          <div class="flex items-center justify-between px-space-md mb-space-xs">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Sesi Terakhir</span>
+            <span class="material-symbols-outlined text-[16px] text-outline">history</span>
+          </div>
+          <div id="session-list" class="space-y-1">
+            <p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline animate-pulse">Memuat sesi…</p>
+          </div>
+        </div>
       </div>
 
-      <div class="p-space-md bg-surface-container rounded-t-xl mx-space-sm mb-space-sm space-y-space-sm">
-        <div class="flex items-center justify-between gap-space-xs">
+      <!-- User Profile Card -->
+      <div class="p-space-xs m-space-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm space-y-space-sm">
+        <div class="flex items-center justify-between p-space-xs">
           <div class="flex items-center gap-space-xs min-w-0">
-            <span id="sidebar-avatar" class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
-              <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-              <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-            </span>
+            <button type="button" id="sidebar-avatar" class="relative w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 ring-2 ring-transparent hover:ring-secondary transition-all active:scale-95 group" title="Profil" onclick="openProfile()">
+              <img data-avatar class="w-full h-full object-cover transition-transform group-hover:scale-105 {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
+              <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+            </button>
             <div class="flex flex-col min-w-0">
-              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[130px]">{{ request.user.first_name|default:"Pengguna" }}</span>
-              <span class="font-label-sm text-label-sm text-secondary truncate max-w-[130px]">{{ request.user.email|default:"—" }}</span>
+              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[120px]">{{ request.user.first_name|default:"Pengguna" }}</span>
+              <span class="font-label-sm text-label-sm text-outline truncate max-w-[120px]">{{ request.user.email|default:"—" }}</span>
             </div>
           </div>
           <form method="post" action="{% url 'konsultasi:logout' %}" class="inline">
             {% csrf_token %}
-            <button type="submit" class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-colors" title="Logout">
+            <button type="submit" class="w-8 h-8 rounded-xl bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-all active:scale-95" title="Logout">
               <span class="material-symbols-outlined text-[18px]">logout</span>
             </button>
           </form>
@@ -159,107 +179,130 @@
     </div>
   </aside>
 
-  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-black/40 backdrop-blur-sm lg:hidden"></div>
+  <!-- Sidebar Backdrop -->
+  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-on-surface/30 backdrop-blur-sm lg:hidden transition-opacity"></div>
 
+  <!-- ============ MAIN CONTENT AREA ============ -->
   <div class="lg:pl-72 flex flex-col min-h-screen">
 
-    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
+    <!-- Top Navigation Header -->
+    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 z-30 flex items-center justify-between px-space-md md:px-space-xl">
       <div class="flex items-center gap-space-sm">
-        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Menu" onclick="toggleSidebar()">
-          <span class="material-symbols-outlined text-[20px]">menu</span>
+        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Menu" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <span class="font-title-md text-title-md text-on-surface">Prakiraan Cuaca</span>
+        <span class="font-title-md text-headline-sm text-on-surface font-semibold">Prakiraan Cuaca</span>
       </div>
       <div class="flex items-center gap-space-md">
-        <span class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
+        <button type="button" class="w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center ring-2 ring-transparent hover:ring-secondary/50 transition-all active:scale-95" title="Profil" onclick="openProfile()">
           <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-        </span>
+          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+        </button>
       </div>
     </header>
 
-    <main class="w-full pt-16 bg-surface flex-1 flex flex-col px-space-md md:px-space-xl py-space-lg">
+    <!-- Main Section Body -->
+    <main class="w-full pt-20 flex-1 flex flex-col px-space-md md:px-space-xl pb-space-2xl max-w-[920px] mx-auto">
 
-      <!-- Search -->
-      <div class="w-full max-w-[860px] mx-auto mb-space-lg relative">
-        <div class="flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-lowest rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.08)]">
-          <span class="material-symbols-outlined text-secondary">search</span>
-          <input id="cuaca-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md placeholder:text-outline/70"
+      <!-- Search Input & Autocomplete Dropdown -->
+      <div class="w-full mb-space-lg relative">
+        <div class="group flex items-center gap-space-xs px-space-md py-2.5 bg-surface-container-lowest border border-outline-variant/40 rounded-full shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-primary transition-all">
+          <span class="material-symbols-outlined text-secondary group-focus-within:text-primary transition-colors">search</span>
+          <input id="cuaca-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60"
             placeholder="Cari desa/kelurahan (misal: Kemayoran, Tebet, Bandung…)" autocomplete="off" />
-          <button id="cuaca-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
+          <button id="cuaca-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Hapus">
             <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
-        <div id="search-results" class="hidden absolute left-0 right-0 top-full mt-space-xs z-30 bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.18)] max-h-72 overflow-y-auto"></div>
-        <p id="cuaca-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs"></p>
+
+        <div id="search-results" class="hidden absolute left-0 right-0 top-full mt-2 z-30 bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-xl max-h-72 overflow-y-auto p-1 divide-y divide-outline-variant/20 backdrop-blur-md"></div>
+        <p id="cuaca-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs px-space-md flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">error</span>
+          <span></span>
+        </p>
       </div>
 
-      <!-- Current conditions -->
-      <div id="cuaca-loading" class="max-w-[860px] mx-auto text-center py-space-xl">
-        <span class="material-symbols-outlined text-secondary text-[32px] animate-spin">progress_activity</span>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">Memuat prakiraan cuaca…</p>
+      <!-- Loading State -->
+      <div id="cuaca-loading" class="w-full text-center py-space-2xl space-y-space-sm">
+        <div class="inline-flex p-3 rounded-full bg-surface-container">
+          <span class="material-symbols-outlined text-primary text-[32px] animate-spin">progress_activity</span>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant font-medium">Memuat prakiraan cuaca…</p>
       </div>
 
-      <div id="cuaca-content" class="hidden max-w-[860px] mx-auto w-full">
+      <!-- Weather Content Container -->
+      <div id="cuaca-content" class="hidden w-full space-y-space-md">
 
-        <!-- Current card -->
-        <div class="relative w-full overflow-hidden rounded-xl bg-gradient-to-br from-primary-container/80 via-secondary-container/70 to-tertiary-fixed/40 p-space-xl mb-space-md">
-          <div class="absolute -top-10 right-0 w-72 h-72 bg-primary-fixed/20 rounded-full blur-2xl pointer-events-none"></div>
-          <div class="flex flex-col gap-space-md">
-            <div class="flex items-center gap-space-sm">
-              <span class="material-symbols-outlined text-on-secondary-container text-[18px]">location_on</span>
-              <p id="cur-location" class="font-title-md text-title-md text-on-surface truncate">—</p>
+        <!-- Current Conditions Hero Card -->
+        <div class="relative w-full overflow-hidden rounded-3xl bg-gradient-to-br from-primary-container via-secondary-container/80 to-tertiary-fixed/50 p-space-lg md:p-space-xl border border-outline-variant/30 shadow-md">
+          <!-- Background Accent Glow -->
+          <div class="absolute -top-12 -right-12 w-80 h-80 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none"></div>
+
+          <div class="relative z-10 flex flex-col gap-space-md">
+            <!-- Location Badge -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-lowest/80 backdrop-blur-md rounded-full border border-white/40 shadow-sm w-fit max-w-full">
+              <span class="material-symbols-outlined text-primary text-[18px]">location_on</span>
+              <p id="cur-location" class="font-label-lg text-label-lg text-on-surface font-semibold truncate">—</p>
             </div>
-            <div class="flex items-center justify-between flex-wrap gap-space-lg">
+
+            <!-- Temperature & Main Status -->
+            <div class="flex items-center justify-between flex-wrap gap-space-md my-1">
               <div>
-                <p id="cur-temp" class="font-headline-lg text-headline-lg text-on-primary leading-none">—</p>
-                <p id="cur-desc" class="font-body-md text-body-md text-on-primary-fixed mt-space-xs">—</p>
+                <p id="cur-temp" class="font-display-lg text-[56px] md:text-[64px] font-bold text-primary tracking-tight leading-none">—</p>
+                <p id="cur-desc" class="font-title-md text-headline-sm text-on-primary-fixed font-semibold mt-1">—</p>
               </div>
-              <img id="cur-icon" class="w-24 h-24 object-contain" alt="Ikon cuaca" />
+              <div class="p-2 bg-surface-container-lowest/40 backdrop-blur-md rounded-2xl border border-white/30 shadow-inner">
+                <img id="cur-icon" class="w-24 h-24 md:w-28 md:h-28 object-contain drop-shadow-md transition-transform hover:scale-105" alt="Ikon cuaca" />
+              </div>
             </div>
-            <div id="cur-details" class="grid grid-cols-2 sm:grid-cols-4 gap-space-xs"></div>
+
+            <!-- Meteorological Weather Detail Cards -->
+            <div id="cur-details" class="grid grid-cols-2 sm:grid-cols-4 gap-space-xs pt-space-xs"></div>
           </div>
         </div>
 
-        <!-- 3-day forecast -->
-        <div id="forecast-days" class="flex flex-col gap-space-sm"></div>
-
-        <!-- Attribution -->
-        <div class="inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full mt-space-md">
-          <span class="material-symbols-outlined text-secondary text-[16px]">cloud</span>
-          <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
-            Sumber Data: <a class="font-semibold text-primary underline underline-offset-2" href="https://www.bmkg.go.id" target="_blank" rel="noopener">BMKG</a> (Badan Meteorologi, Klimatologi, dan Geofisika) — data prakiraan cuaca terbuka.
-          </p>
+        <!-- Multi-day Forecast Section -->
+        <div class="space-y-space-sm pt-space-xs">
+          <h3 class="font-title-md text-title-md text-on-surface font-bold px-space-xs">Prakiraan Beberapa Hari Ke Depan</h3>
+          <div id="forecast-days" class="flex flex-col gap-space-md"></div>
         </div>
+
       </div>
 
     </main>
   </div>
 
   <!-- ============ PROFILE MODAL ============ -->
-  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="w-full max-w-[360px] bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.25),0_2px_8px_-2px_rgba(0,30,80,0.12)] p-space-lg relative">
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-md bg-on-surface/40 backdrop-blur-sm transition-all duration-200">
+    <div class="w-full max-w-[380px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl shadow-2xl p-space-xl relative transform transition-all scale-100">
+
       <button id="profile-modal-close" type="button"
-        class="absolute top-space-sm right-space-sm w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
-        <span class="material-symbols-outlined text-[18px]">close</span>
+        class="absolute top-space-md right-space-md w-9 h-9 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Tutup">
+        <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
-      <div class="flex flex-col items-center text-center mb-space-md">
-        <div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden shadow-[0_4px_16px_-4px_rgba(0,30,80,0.15)]">
+
+      <div class="flex flex-col items-center text-center mb-space-lg">
+        <div class="relative w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden ring-4 ring-surface-container-low shadow-inner mb-space-sm group">
           <img id="modal-avatar-img" data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[40px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[44px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
         </div>
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mt-space-sm">{{ request.user.first_name|default:"Pengguna" }}</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant">{{ request.user.email }}</p>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">{{ request.user.first_name|default:"Pengguna" }}</h2>
+        <p class="font-body-md text-body-md text-outline">{{ request.user.email }}</p>
       </div>
-      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all cursor-pointer">
-        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-        Changer PFP
+
+      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-3 px-space-md bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-full shadow-md font-label-lg text-label-lg transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+        Ubah Foto Profil
       </label>
       <input id="modal-avatar-input" class="hidden" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" />
-      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs"></p>
-      <p class="font-label-sm text-label-sm text-outline text-center mt-space-md">
-        Akun: <span class="text-on-surface-variant">{{ request.user.username }}</span>
-      </p>
+
+      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs font-medium"></p>
+
+      <div class="mt-space-lg pt-space-md border-t border-outline-variant/30 text-center">
+        <p class="font-label-sm text-label-sm text-outline">
+          Username: <span class="text-on-surface font-semibold">{{ request.user.username }}</span>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -285,7 +328,7 @@
       else openSidebar();
     }
 
-    document.querySelectorAll('#sidebar a, #sidebar button').forEach(el => {
+    document.querySelectorAll('#sidebar a, #sidebar button:not(#sidebar-avatar)').forEach(el => {
       el.addEventListener('click', closeSidebar);
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
@@ -299,12 +342,14 @@
     function closeProfile() { profileModal.classList.add('hidden'); modalAvatarInput.value = ''; modalAvatarStatus.classList.add('hidden'); }
     document.getElementById('profile-modal-close').addEventListener('click', closeProfile);
     profileModal.addEventListener('click', (e) => { if (e.target === profileModal) closeProfile(); });
+
     modalAvatarInput.addEventListener('change', async () => {
       const file = modalAvatarInput.files[0];
       if (!file) return;
       modalAvatarStatus.classList.remove('hidden');
       modalAvatarStatus.classList.remove('text-error');
-      modalAvatarStatus.textContent = 'Uploading PFP…';
+      modalAvatarStatus.classList.add('text-primary');
+      modalAvatarStatus.textContent = 'Mengunggah foto profil…';
       const form = new FormData();
       form.append('avatar', file);
       try {
@@ -314,16 +359,18 @@
           body: form,
         });
         const isJson = (resp.headers.get('Content-Type') || '').includes('application/json');
-        if (!isJson) throw new Error('Gagal upload PFP.');
+        if (!isJson) throw new Error('Gagal mengunggah foto profil.');
         const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Gagal upload PFP.');
+        if (!resp.ok) throw new Error(data.error || 'Gagal mengunggah foto profil.');
         document.querySelectorAll('[data-avatar]').forEach(img => { img.src = data.avatar_url; img.classList.remove('hidden'); });
         document.querySelectorAll('[data-avatar-placeholder]').forEach(el => el.classList.add('hidden'));
-        modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = 'PFP diperbarui!';
+        modalAvatarStatus.classList.remove('text-primary');
+        modalAvatarStatus.classList.add('text-on-surface-variant');
+        modalAvatarStatus.textContent = 'Foto profil berhasil diperbarui!';
       } catch (err) {
+        modalAvatarStatus.classList.remove('text-primary');
         modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = err.message || 'Gagal upload PFP. Silakan coba lagi.';
+        modalAvatarStatus.textContent = err.message || 'Gagal mengunggah foto. Silakan coba lagi.';
       }
       modalAvatarInput.value = '';
     });
@@ -339,21 +386,21 @@
     const contentEl = document.getElementById('cuaca-content');
 
     function showError(msg) {
-      errorEl.textContent = msg;
+      const span = errorEl.querySelector('span:last-child');
+      if (span) span.textContent = msg;
       errorEl.classList.remove('hidden');
     }
     function hideError() { errorEl.classList.add('hidden'); }
 
     function fmtTime(localDt) {
-      // "2026-09-22 07:00:00" -> "07:00"
       const m = (localDt || '').match(/(\d{2}):(\d{2})/);
       return m ? m[1] + ':' + m[2] : (localDt || '');
     }
 
     function fmtDate(dateStr) {
       const d = new Date(dateStr + 'T00:00:00');
-      const day = ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'][d.getDay()] || '';
-      const month = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'][d.getMonth()] || '';
+      const day = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()] || '';
+      const month = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'][d.getMonth()] || '';
       return `${day}, ${d.getDate()} ${month}`;
     }
 
@@ -375,33 +422,42 @@
 
       const details = [
         { icon: 'water_drop', label: 'Kelembapan', value: firstSlot.hu != null ? firstSlot.hu + '%' : '—' },
-        { icon: 'air', label: 'Angin', value: firstSlot.ws != null ? firstSlot.ws + ' km/h' + (firstSlot.wd ? ' dari ' + firstSlot.wd : '') : '—' },
+        { icon: 'air', label: 'Kecepatan Angin', value: firstSlot.ws != null ? firstSlot.ws + ' km/h' + (firstSlot.wd ? ' (' + firstSlot.wd + ')' : '') : '—' },
         { icon: 'cloud', label: 'Tutupan Awan', value: firstSlot.tcc != null ? firstSlot.tcc + '%' : '—' },
         { icon: 'visibility', label: 'Jarak Pandang', value: firstSlot.vs_text || '—' },
       ];
       document.getElementById('cur-details').innerHTML = details.map(d =>
-        `<div class="flex items-center gap-space-2xs bg-surface-container-lowest/90 rounded-lg px-space-sm py-space-xs">
-           <span class="material-symbols-outlined text-secondary text-[16px]">${d.icon}</span>
+        `<div class="flex items-center gap-space-xs bg-surface-container-lowest/80 backdrop-blur-md rounded-2xl p-space-xs sm:p-space-sm border border-white/40 shadow-sm">
+           <div class="p-2 bg-secondary-container/50 rounded-xl flex items-center justify-center shrink-0">
+             <span class="material-symbols-outlined text-primary text-[18px]">${d.icon}</span>
+           </div>
            <div class="min-w-0 flex-1">
-             <p class="font-label-sm text-label-sm text-outline">${d.label}</p>
-             <p class="font-label-md text-label-md text-on-surface truncate">${escapeHtml(String(d.value))}</p>
+             <p class="font-label-sm text-label-sm text-outline font-medium">${d.label}</p>
+             <p class="font-label-md text-label-md text-on-surface font-bold truncate">${escapeHtml(String(d.value))}</p>
            </div>
          </div>`).join('');
 
       const daysEl = document.getElementById('forecast-days');
       daysEl.innerHTML = data.days.map(day => {
         const rows = day.slots.map(s =>
-          `<div class="flex items-center gap-space-sm px-space-md py-space-2xs rounded-lg hover:bg-surface-container transition-colors">
-             <span class="w-12 font-label-md text-label-md text-on-surface-variant">${fmtTime(s.local_datetime)}</span>
-             <img src="${s.image || ''}" alt="${escapeHtml(s.weather_desc || '')}" class="w-6 h-6 object-contain" />
-             <span class="font-body-md text-body-md text-on-surface truncate flex-1 text-left">${escapeHtml(s.weather_desc || '—')}</span>
-             <span class="font-label-md text-label-md text-secondary">${s.ws != null ? s.ws + ' km/h' : ''}</span>
-             <span class="font-label-lg text-label-lg text-primary w-12 text-right">${s.t != null ? Math.round(s.t) + '°' : '—'}</span>
+          `<div class="flex items-center justify-between gap-space-xs px-space-md py-space-xs hover:bg-surface-container-low/60 transition-colors">
+             <div class="flex items-center gap-space-sm min-w-0 flex-1">
+               <span class="w-12 font-label-md text-label-md text-outline font-semibold shrink-0">${fmtTime(s.local_datetime)}</span>
+               <img src="${s.image || ''}" alt="${escapeHtml(s.weather_desc || '')}" class="w-7 h-7 object-contain shrink-0" />
+               <span class="font-body-md text-body-md text-on-surface font-medium truncate">${escapeHtml(s.weather_desc || '—')}</span>
+             </div>
+             <div class="flex items-center gap-space-md shrink-0">
+               <span class="font-label-sm text-label-sm text-outline hidden sm:inline-block">${s.ws != null ? s.ws + ' km/h' : ''}</span>
+               <span class="font-title-md text-title-md text-primary font-bold w-10 text-right">${s.t != null ? Math.round(s.t) + '°' : '—'}</span>
+             </div>
            </div>`).join('');
         return `
-          <div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_8px_-2px_rgba(0,30,80,0.06)] overflow-hidden">
-            <div class="px-space-md py-space-xs bg-surface-container font-label-md text-label-md text-on-surface-variant font-semibold">${fmtDate(day.date)}</div>
-            <div class="flex flex-col divide-y divide-outline-variant/30">${rows}</div>
+          <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl shadow-sm overflow-hidden">
+            <div class="px-space-md py-2.5 bg-surface-container-low/70 border-b border-outline-variant/20 font-label-lg text-label-lg text-primary font-bold flex items-center gap-2">
+              <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+              ${fmtDate(day.date)}
+            </div>
+            <div class="divide-y divide-outline-variant/20">${rows}</div>
           </div>`;
       }).join('');
     }
@@ -438,8 +494,8 @@
           searchResults.innerHTML = '<p class="px-space-md py-space-sm font-body-sm text-body-sm text-outline">Lokasi tidak ditemukan.</p>';
         } else {
           searchResults.innerHTML = data.results.map(r =>
-            `<button type="button" class="w-full text-left px-space-md py-space-sm rounded-lg hover:bg-surface-container transition-colors" data-adm4="${r.code}">
-               <span class="block font-body-md text-body-md text-on-surface truncate">${escapeHtml(r.name)}</span>
+            `<button type="button" class="w-full text-left px-space-md py-space-sm rounded-xl hover:bg-surface-container transition-colors flex flex-col gap-0.5" data-adm4="${r.code}">
+               <span class="block font-body-md text-body-md text-on-surface font-semibold truncate">${escapeHtml(r.name)}</span>
                <span class="block font-label-sm text-label-sm text-outline truncate">${escapeHtml(r.path)}</span>
              </button>`).join('');
         }
@@ -479,7 +535,28 @@
       }
     });
 
+    // ============ Sesi Terakhir ============
+    async function loadSessions() {
+      const listEl = document.getElementById('session-list');
+      try {
+        const resp = await fetch('/api/sessions/');
+        const data = await resp.json();
+        if (!data.sessions.length) {
+          listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Belum ada sesi</p>';
+          return;
+        }
+        listEl.innerHTML = data.sessions.slice(0, 8).map(s => `
+          <a class="block px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="/konsultasi/${s.id}/">
+            <p class="font-body-md text-body-md font-medium truncate">${escapeHtml(s.title)}</p>
+            <span class="font-label-sm text-label-sm text-outline">${new Date(s.updated_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+          </a>`).join('');
+      } catch {
+        listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Gagal memuat sesi</p>';
+      }
+    }
+
     // ============ Init ============
+    loadSessions();
     loadForecast(DEFAULT_ADM4, 'Kemayoran, Jakarta Pusat');
   </script>
 

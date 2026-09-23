@@ -13,6 +13,10 @@
 
   <style>
     ::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar for IE, Edge and Firefox */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -71,7 +75,7 @@
             "secondary-fixed-dim": "#7aacf0",
             "on-primary-fixed-variant": "#0a3d7a"
           },
-          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+          "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px" },
           "spacing": {
             "container-padding-mobile": "1rem", "space-2xl": "3rem", "space-xs": "0.5rem",
             "space-3xl": "4rem", "container-padding-desktop": "2rem", "space-lg": "1.5rem",
@@ -79,12 +83,12 @@
             "space-2xs": "0.25rem", "space-sm": "0.75rem"
           },
           "fontFamily": {
-            "body-lg": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"],
-            "headline-md": ["Plus Jakarta Sans"], "display-lg": ["Plus Jakarta Sans"],
-            "label-sm": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"],
-            "label-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"],
-            "body-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"],
-            "title-md": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"]
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"], "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"], "display-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"], "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"], "label-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
+            "title-md": ["Plus Jakarta Sans", "sans-serif"], "headline-lg": ["Plus Jakarta Sans", "sans-serif"]
           },
           "fontSize": {
             "body-lg": ["16px", { "lineHeight": "26px", "fontWeight": "400" }],
@@ -106,50 +110,66 @@
   </script>
 </head>
 
-<body class="bg-background font-body-md text-on-surface">
+<body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
 
-  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+  <!-- ============ SIDEBAR ============ -->
+  <aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 border-r border-outline-variant/30 shadow-lg lg:shadow-none">
     <div class="flex flex-col h-full overflow-hidden">
 
-      <div class="p-space-lg flex items-center gap-space-sm">
-        <img alt="Logo" class="h-8 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+      <!-- Header / Logo -->
+      <div class="p-space-lg flex items-center gap-space-sm border-b border-outline-variant/20">
+        <div class="p-1.5 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30">
+          <img alt="Logo" class="h-7 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+        </div>
         <div class="flex flex-col">
-          <span class="font-headline-sm text-headline-sm text-primary tracking-tight">Lestari</span>
+          <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Lestari</span>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto px-space-md space-y-space-md">
-        <nav class="space-y-space-2xs">
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:index' %}">
-            <span class="material-symbols-outlined text-secondary">chat</span>
-            <span class="font-body-md text-body-md">Konsultasi AI</span>
+      <!-- Navigation & Recent Sessions -->
+      <div class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-lg no-scrollbar">
+        <nav class="space-y-1">
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:index' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">chat</span>
+            <span class="font-body-md font-medium text-body-md">Konsultasi AI</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl bg-surface-container-highest text-primary font-title-md transition-colors" href="{% url 'konsultasi:artikel' %}">
-            <span class="material-symbols-outlined text-secondary">article</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl bg-surface-container-highest text-primary font-semibold shadow-sm transition-all" href="{% url 'konsultasi:artikel' %}">
+            <span class="material-symbols-outlined text-primary text-[22px]">article</span>
             <span class="font-body-md text-body-md">Artikel Kesehatan</span>
           </a>
-          <a class="flex items-center gap-space-sm px-space-md py-space-xs rounded-xl text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" href="{% url 'konsultasi:cuaca' %}">
-            <span class="material-symbols-outlined text-secondary">cloud</span>
-            <span class="font-body-md text-body-md">Cuaca</span>
+          <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="{% url 'konsultasi:cuaca' %}">
+            <span class="material-symbols-outlined text-secondary text-[22px]">cloud</span>
+            <span class="font-body-md font-medium text-body-md">Cuaca</span>
           </a>
         </nav>
+
+        <div class="pt-space-xs">
+          <div class="flex items-center justify-between px-space-md mb-space-xs">
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Sesi Terakhir</span>
+            <span class="material-symbols-outlined text-[16px] text-outline">history</span>
+          </div>
+          <div id="session-list" class="space-y-1">
+            <p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline animate-pulse">Memuat sesi…</p>
+          </div>
+        </div>
       </div>
 
-      <div class="p-space-md bg-surface-container rounded-t-xl mx-space-sm mb-space-sm space-y-space-sm">
-        <div class="flex items-center justify-between gap-space-xs">
+      <!-- User Profile Card -->
+      <div class="p-space-xs m-space-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm space-y-space-sm">
+        <div class="flex items-center justify-between p-space-xs">
           <div class="flex items-center gap-space-xs min-w-0">
-            <span id="sidebar-avatar" class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
-              <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-              <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-            </span>
+            <button type="button" id="sidebar-avatar" class="relative w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 ring-2 ring-transparent hover:ring-secondary transition-all active:scale-95 group" title="Profil" onclick="openProfile()">
+              <img data-avatar class="w-full h-full object-cover transition-transform group-hover:scale-105 {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
+              <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+            </button>
             <div class="flex flex-col min-w-0">
-              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[130px]">{{ request.user.first_name|default:"Pengguna" }}</span>
-              <span class="font-label-sm text-label-sm text-secondary truncate max-w-[130px]">{{ request.user.email|default:"—" }}</span>
+              <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[120px]">{{ request.user.first_name|default:"Pengguna" }}</span>
+              <span class="font-label-sm text-label-sm text-outline truncate max-w-[120px]">{{ request.user.email|default:"—" }}</span>
             </div>
           </div>
           <form method="post" action="{% url 'konsultasi:logout' %}" class="inline">
             {% csrf_token %}
-            <button type="submit" class="w-8 h-8 rounded-full bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-colors" title="Logout">
+            <button type="submit" class="w-8 h-8 rounded-xl bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-all active:scale-95" title="Logout">
               <span class="material-symbols-outlined text-[18px]">logout</span>
             </button>
           </form>
@@ -159,87 +179,95 @@
     </div>
   </aside>
 
-  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-black/40 backdrop-blur-sm lg:hidden"></div>
+  <!-- Sidebar Backdrop -->
+  <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-on-surface/30 backdrop-blur-sm lg:hidden transition-opacity"></div>
 
+  <!-- ============ MAIN CONTENT AREA ============ -->
   <div class="lg:pl-72 flex flex-col min-h-screen">
 
-    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-space-xl">
+    <!-- Top Navigation Header -->
+    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 z-30 flex items-center justify-between px-space-md md:px-space-xl">
       <div class="flex items-center gap-space-sm">
-        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Menu" onclick="toggleSidebar()">
-          <span class="material-symbols-outlined text-[20px]">menu</span>
+        <button id="btn-sidebar" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Menu" onclick="toggleSidebar()">
+          <span class="material-symbols-outlined text-[22px]">menu</span>
         </button>
-        <span class="font-title-md text-title-md text-on-surface">Artikel Kesehatan</span>
+        <span class="font-title-md text-headline-sm text-on-surface font-semibold">Artikel Kesehatan</span>
       </div>
       <div class="flex items-center gap-space-md">
-        <span class="w-8 h-8 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-secondary transition-all" title="Profile" onclick="openProfile()">
+        <button type="button" class="w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center ring-2 ring-transparent hover:ring-secondary/50 transition-all active:scale-95" title="Profil" onclick="openProfile()">
           <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[18px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
-        </span>
+          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+        </button>
       </div>
     </header>
 
-    <main class="w-full pt-16 bg-surface flex-1 flex flex-col px-space-md md:px-space-xl py-space-lg">
+    <!-- Main Section Body -->
+    <main class="w-full pt-20 flex-1 flex flex-col px-space-md md:px-space-xl pb-space-2xl max-w-[920px] mx-auto">
 
-      <!-- Category chips -->
-      <div id="category-chips" class="max-w-[860px] mx-auto flex flex-wrap items-center gap-space-xs"></div>
+      <!-- Category Filter Chips -->
+      <div id="category-chips" class="w-full flex items-center gap-2 overflow-x-auto no-scrollbar py-2 px-1"></div>
 
-      <!-- Search -->
-      <div class="max-w-[860px] mx-auto mt-space-md relative">
-        <div class="flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-lowest rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.08)]">
-          <span class="material-symbols-outlined text-secondary">search</span>
-          <input id="artikel-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md placeholder:text-outline/70"
-            placeholder="Cari artikel kesehatan…" autocomplete="off" />
-          <button id="artikel-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
+      <!-- Search Input Container -->
+      <div class="w-full mt-space-md relative">
+        <div class="group flex items-center gap-space-xs px-space-md py-2.5 bg-surface-container-lowest border border-outline-variant/40 rounded-full shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-primary transition-all">
+          <span class="material-symbols-outlined text-secondary group-focus-within:text-primary transition-colors">search</span>
+          <input id="artikel-search" type="text" class="flex-1 bg-transparent outline-none font-body-md text-body-md text-on-surface placeholder:text-outline/60"
+            placeholder="Cari artikel kesehatan, topik, atau kata kunci…" autocomplete="off" />
+          <button id="artikel-search-clear" type="button" class="hidden w-7 h-7 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Hapus">
             <span class="material-symbols-outlined text-[16px]">close</span>
           </button>
         </div>
-        <p id="artikel-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs"></p>
-      </div>
-
-      <!-- Loading -->
-      <div id="artikel-loading" class="max-w-[860px] mx-auto text-center py-space-xl">
-        <span class="material-symbols-outlined text-secondary text-[32px] animate-spin">progress_activity</span>
-        <p class="font-body-md text-body-md text-on-surface-variant mt-space-xs">Memuat artikel…</p>
-      </div>
-
-      <!-- Articles -->
-      <div id="artikel-list" class="max-w-[860px] mx-auto w-full grid gap-space-sm"></div>
-
-      <!-- Attribution -->
-      <div class="max-w-[860px] mx-auto inline-flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low/90 rounded-full mt-space-md">
-        <span class="material-symbols-outlined text-secondary text-[16px]">newspaper</span>
-        <p class="font-body-sm text-body-sm text-on-surface-variant text-left">
-          Sumber: <a class="font-semibold text-primary underline underline-offset-2" href="https://news.google.com" target="_blank" rel="noopener">Google Berita</a> — agregasi artikel kesehatan terbuka.
+        <p id="artikel-error" class="hidden font-body-sm text-body-sm text-error mt-space-xs px-space-md flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">error</span>
+          <span></span>
         </p>
       </div>
+
+      <!-- Loading State -->
+      <div id="artikel-loading" class="w-full text-center py-space-2xl space-y-space-sm">
+        <div class="inline-flex p-3 rounded-full bg-surface-container">
+          <span class="material-symbols-outlined text-primary text-[32px] animate-spin">progress_activity</span>
+        </div>
+        <p class="font-body-md text-body-md text-on-surface-variant font-medium">Memuat artikel terbaru…</p>
+      </div>
+
+      <!-- Articles Grid List -->
+      <div id="artikel-list" class="w-full grid gap-space-md mt-space-lg"></div>
 
     </main>
   </div>
 
   <!-- ============ PROFILE MODAL ============ -->
-  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-    <div class="w-full max-w-[360px] bg-surface-container-lowest rounded-xl shadow-[0_12px_28px_-6px_rgba(0,30,80,0.25),0_2px_8px_-2px_rgba(0,30,80,0.12)] p-space-lg relative">
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-md bg-on-surface/40 backdrop-blur-sm transition-all duration-200">
+    <div class="w-full max-w-[380px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl shadow-2xl p-space-xl relative transform transition-all scale-100">
+
       <button id="profile-modal-close" type="button"
-        class="absolute top-space-sm right-space-sm w-8 h-8 rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" title="Sasang">
-        <span class="material-symbols-outlined text-[18px]">close</span>
+        class="absolute top-space-md right-space-md w-9 h-9 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" title="Tutup">
+        <span class="material-symbols-outlined text-[20px]">close</span>
       </button>
-      <div class="flex flex-col items-center text-center mb-space-md">
-        <div class="w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden shadow-[0_4px_16px_-4px_rgba(0,30,80,0.15)]">
+
+      <div class="flex flex-col items-center text-center mb-space-lg">
+        <div class="relative w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden ring-4 ring-surface-container-low shadow-inner mb-space-sm group">
           <img id="modal-avatar-img" data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
-          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[40px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+          <span id="modal-avatar-ph" data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[44px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
         </div>
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mt-space-sm">{{ request.user.first_name|default:"Pengguna" }}</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant">{{ request.user.email }}</p>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">{{ request.user.first_name|default:"Pengguna" }}</h2>
+        <p class="font-body-md text-body-md text-outline">{{ request.user.email }}</p>
       </div>
-      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-space-sm bg-primary text-on-primary hover:bg-primary-container active:scale-95 rounded-full shadow-[0_2px_8px_-2px_rgba(0,30,80,0.25)] font-label-lg text-label-lg transition-all cursor-pointer">
-        <span class="material-symbols-outlined text-[18px]">photo_camera</span>
-        Changer PFP
+
+      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full py-3 px-space-md bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-full shadow-md font-label-lg text-label-lg transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+        Ubah Foto Profil
       </label>
       <input id="modal-avatar-input" class="hidden" type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif" />
-      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs"></p>
-      <p class="font-label-sm text-label-sm text-outline text-center mt-space-md">
-        Akun: <span class="text-on-surface-variant">{{ request.user.username }}</span>
-      </p>
+
+      <p id="modal-avatar-status" class="hidden font-body-sm text-body-sm text-error text-center mt-space-xs font-medium"></p>
+
+      <div class="mt-space-lg pt-space-md border-t border-outline-variant/30 text-center">
+        <p class="font-label-sm text-label-sm text-outline">
+          Username: <span class="text-on-surface font-semibold">{{ request.user.username }}</span>
+        </p>
+      </div>
     </div>
   </div>
 
@@ -262,7 +290,7 @@
       if (sidebar.classList.contains('translate-x-0')) closeSidebar();
       else openSidebar();
     }
-    document.querySelectorAll('#sidebar a, #sidebar button').forEach(el => {
+    document.querySelectorAll('#sidebar a, #sidebar button:not(#sidebar-avatar)').forEach(el => {
       el.addEventListener('click', closeSidebar);
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
@@ -276,12 +304,14 @@
     function closeProfile() { profileModal.classList.add('hidden'); modalAvatarInput.value = ''; modalAvatarStatus.classList.add('hidden'); }
     document.getElementById('profile-modal-close').addEventListener('click', closeProfile);
     profileModal.addEventListener('click', (e) => { if (e.target === profileModal) closeProfile(); });
+
     modalAvatarInput.addEventListener('change', async () => {
       const file = modalAvatarInput.files[0];
       if (!file) return;
       modalAvatarStatus.classList.remove('hidden');
       modalAvatarStatus.classList.remove('text-error');
-      modalAvatarStatus.textContent = 'Uploading PFP…';
+      modalAvatarStatus.classList.add('text-primary');
+      modalAvatarStatus.textContent = 'Mengunggah foto profil…';
       const form = new FormData();
       form.append('avatar', file);
       try {
@@ -291,16 +321,18 @@
           body: form,
         });
         const isJson = (resp.headers.get('Content-Type') || '').includes('application/json');
-        if (!isJson) throw new Error('Gagal upload PFP.');
+        if (!isJson) throw new Error('Gagal mengunggah foto profil.');
         const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Gagal upload PFP.');
+        if (!resp.ok) throw new Error(data.error || 'Gagal mengunggah foto profil.');
         document.querySelectorAll('[data-avatar]').forEach(img => { img.src = data.avatar_url; img.classList.remove('hidden'); });
         document.querySelectorAll('[data-avatar-placeholder]').forEach(el => el.classList.add('hidden'));
-        modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = 'PFP diperbarui!';
+        modalAvatarStatus.classList.remove('text-primary');
+        modalAvatarStatus.classList.add('text-on-surface-variant');
+        modalAvatarStatus.textContent = 'Foto profil berhasil diperbarui!';
       } catch (err) {
+        modalAvatarStatus.classList.remove('text-primary');
         modalAvatarStatus.classList.add('text-error');
-        modalAvatarStatus.textContent = err.message || 'Gagal upload PFP. Silakan coba lagi.';
+        modalAvatarStatus.textContent = err.message || 'Gagal mengunggah foto. Silakan coba lagi.';
       }
       modalAvatarInput.value = '';
     });
@@ -326,14 +358,18 @@
 
     function renderChips() {
       chipsEl.innerHTML = CATEGORIES.map(c =>
-        `<button type="button" class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full font-label-md text-label-md transition-all ${c.q === currentQuery ? 'bg-primary text-on-primary shadow-[0_2px_6px_-2px_rgba(0,30,80,0.2)]' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'}" data-q="${c.q}">${c.label}</button>`
+        `<button type="button" class="whitespace-nowrap inline-flex items-center px-space-md py-1.5 rounded-full font-label-md text-label-md transition-all active:scale-95 ${c.q === currentQuery ? 'bg-primary text-on-primary font-semibold shadow-sm' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface border border-outline-variant/20'}" data-q="${c.q}">${c.label}</button>`
       ).join('');
       chipsEl.querySelectorAll('[data-q]').forEach(btn => {
         btn.addEventListener('click', () => loadArticles(btn.dataset.q, btn.textContent.trim()));
       });
     }
 
-    function showError(msg) { errorEl.textContent = msg; errorEl.classList.remove('hidden'); }
+    function showError(msg) {
+      const span = errorEl.querySelector('span:last-child');
+      if (span) span.textContent = msg;
+      errorEl.classList.remove('hidden');
+    }
     function hideError() { errorEl.classList.add('hidden'); }
 
     function escapeHtml(s) {
@@ -345,7 +381,7 @@
       const t = new Date(iso);
       if (isNaN(t.getTime())) return '';
       const s = Math.max(0, (Date.now() - t.getTime()) / 1000);
-      if (s < 90) return 'Kali baru';
+      if (s < 90) return 'Baru saja';
       const m = Math.floor(s / 60);
       if (m < 60) return m + ' min lalu';
       const h = Math.floor(m / 60);
@@ -359,19 +395,28 @@
       hideError();
       loadingEl.classList.add('hidden');
       if (!articles || !articles.length) {
-        listEl.innerHTML = '<div class="text-center py-space-xl"><p class="font-body-md text-body-md text-on-surface-variant">Belum ada artikel untuk pengeen ini.</p></div>';
+        listEl.innerHTML = '<div class="text-center py-space-2xl bg-surface-container-lowest border border-outline-variant/30 rounded-2xl"><p class="font-body-md text-body-md text-outline">Tidak ada artikel ditemukan untuk pencarian ini.</p></div>';
         return;
       }
       listEl.innerHTML = articles.map(a => `
         <a href="${escapeHtml(a.link)}" target="_blank" rel="noopener"
-           class="group flex flex-col gap-space-xs p-space-md bg-surface-container-lowest rounded-xl shadow-[0_2px_8px_-2px_rgba(0,30,80,0.06)] hover:shadow-[0_12px_28px_-6px_rgba(0,30,80,0.12)] transition-all">
-          <div class="flex items-center gap-space-2xs">
-            <span class="inline-flex items-center gap-space-xs px-space-xs py-space-2xs bg-secondary-container rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">${escapeHtml(a.source || 'Sumber')}</span>
-            <span class="font-label-sm text-label-sm text-outline ml-auto">${timeAgo(a.published)}</span>
+           class="group flex flex-col gap-space-xs p-space-md md:p-space-lg bg-surface-container-lowest border border-outline-variant/30 hover:border-primary/40 rounded-2xl shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 relative overflow-hidden">
+          <div class="absolute top-0 left-0 bottom-0 w-1 bg-transparent group-hover:bg-primary transition-colors"></div>
+          <div class="flex items-center justify-between gap-space-xs">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-secondary-container/60 border border-secondary/20 rounded-full font-label-sm text-label-sm text-on-secondary-container font-semibold">${escapeHtml(a.source || 'Sumber')}</span>
+            <span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">schedule</span>
+              ${timeAgo(a.published)}
+            </span>
           </div>
-          <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors leading-snug">${escapeHtml(a.title)}</h3>
-          ${a.snippet ? `<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2">${escapeHtml(a.snippet)}</p>` : ''}
-          <span class="inline-flex items-center gap-space-2xs font-label-md text-label-md text-secondary group-hover:text-primary transition-colors">Buka artikel <span class="material-symbols-outlined text-[14px]">arrow_outward</span></span>
+          <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors leading-snug font-bold mt-1">${escapeHtml(a.title)}</h3>
+          ${a.snippet ? `<p class="font-body-sm text-body-md text-on-surface-variant/80 line-clamp-2 leading-relaxed">${escapeHtml(a.snippet)}</p>` : ''}
+          <div class="pt-space-xs flex items-center justify-end">
+            <span class="inline-flex items-center gap-1 font-label-md text-label-md text-secondary group-hover:text-primary transition-colors font-semibold">
+              Baca Selengkapnya
+              <span class="material-symbols-outlined text-[16px] transition-transform group-hover:translate-x-0.5">arrow_forward</span>
+            </span>
+          </div>
         </a>`).join('');
     }
 
@@ -417,7 +462,28 @@
       hideError();
     });
 
+    // ============ Sesi Terakhir ============
+    async function loadSessions() {
+      const listEl = document.getElementById('session-list');
+      try {
+        const resp = await fetch('/api/sessions/');
+        const data = await resp.json();
+        if (!data.sessions.length) {
+          listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Belum ada sesi</p>';
+          return;
+        }
+        listEl.innerHTML = data.sessions.slice(0, 8).map(s => `
+          <a class="block px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="/konsultasi/${s.id}/">
+            <p class="font-body-md text-body-md font-medium truncate">${escapeHtml(s.title)}</p>
+            <span class="font-label-sm text-label-sm text-outline">${new Date(s.updated_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+          </a>`).join('');
+      } catch {
+        listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Gagal memuat sesi</p>';
+      }
+    }
+
     // ============ Init ============
+    loadSessions();
     renderChips();
     loadArticles(currentQuery, 'Kesehatan');
   </script>
