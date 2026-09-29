@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Saya - Lestari AI Health</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            lestari: {
+              sidebar: '#EBF3FA',
+              bg: '#F4F8FC',
+              primary: '#0B3C7B',
+              primaryHover: '#082E5E',
+              activeBg: '#D8E7FA',
+              activeText: '#0B3C7B',
+              textMain: '#0B2545',
+              textMuted: '#6B7C96',
+              border: '#E1E8F0',
+              cardBg: '#FFFFFF',
+              pillBg: '#E2EDF9',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F4F8FC;
+      color: #0B2545;
+    }
+
+    /* Custom Scrollbar for Lestari aesthetic */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row overflow-x-hidden antialiased selection:bg-blue-100 selection:text-lestari-primary">
+
+  <!-- Mobile Header Bar -->
+  <div class="md:hidden flex items-center justify-between p-4 bg-lestari-sidebar border-b border-lestari-border sticky top-0 z-40">
+    <div class="flex items-center space-x-3">
+      <div class="w-9 h-9 rounded-xl bg-white shadow-sm border border-lestari-border flex items-center justify-center p-1.5">
+        <svg viewBox="0 0 24 24" fill="none" class="w-full h-full text-lestari-primary" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
+          <path d="M12 7v10M7 12h10" stroke="#0B3C7B" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <span class="font-bold text-xl text-lestari-primary tracking-tight">Lestari</span>
+    </div>
+    <button id="mobileMenuBtn" onclick="toggleSidebar()" class="p-2 text-lestari-textMain hover:bg-white/60 rounded-xl transition">
+      <i data-lucide="menu" class="w-6 h-6"></i>
+    </button>
+  </div>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300 opacity-0"></div>
+
+  <!-- Main Sidebar -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-50 w-72 bg-lestari-sidebar border-r border-lestari-border flex flex-col justify-between p-4 transition-transform duration-300 ease-in-out -translate-x-full md:translate-x-0 h-screen overflow-y-auto">
+
+    <div class="space-y-6">
+      <!-- App Header / Logo -->
+      <div class="hidden md:flex items-center space-x-3 px-2 pt-1">
+        <div class="w-10 h-10 rounded-2xl bg-white shadow-sm border border-lestari-border flex items-center justify-center p-2">
+          <svg viewBox="0 0 24 24" class="w-full h-full text-lestari-primary" fill="currentColor">
+            <path d="M19 10.5h-5.5V5c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v5.5H5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5h5.5V19c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-5.5H19c.83 0 1.5-.67 1.5-1.5s-.67-1.5-1.5-1.5z" fill="#0B3C7B"/>
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#0B3C7B" opacity="0.15"/>
+          </svg>
+        </div>
+        <span class="font-extrabold text-2xl text-lestari-primary tracking-tight">Lestari</span>
+      </div>
+
+      <!-- Action Button -->
+      <button onclick="triggerToast('Membuka sesi Konsultasi AI Baru...')" class="w-full bg-lestari-primary hover:bg-lestari-primaryHover text-white font-semibold py-3.5 px-4 rounded-2xl flex items-center justify-center space-x-2.5 shadow-sm transition transform active:scale-[0.98]">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span class="text-sm">Konsultasi AI Baru</span>
+      </button>
+
+      <!-- Main Navigation -->
+      <nav class="space-y-1">
+        <a href="javascript:void(0)" onclick="switchNav(this)" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-medium text-lestari-textMuted hover:bg-white/50 transition group">
+          <i data-lucide="message-square" class="w-5 h-5 text-lestari-textMuted group-hover:text-lestari-primary transition"></i>
+          <span>Konsultasi AI</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="switchNav(this)" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-medium text-lestari-textMuted hover:bg-white/50 transition group">
+          <i data-lucide="newspaper" class="w-5 h-5 text-lestari-textMuted group-hover:text-lestari-primary transition"></i>
+          <span>Artikel Kesehatan</span>
+        </a>
+
+        <a href="javascript:void(0)" onclick="switchNav(this)" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-medium text-lestari-textMuted hover:bg-white/50 transition group">
+          <i data-lucide="cloud-rain" class="w-5 h-5 text-lestari-textMuted group-hover:text-lestari-primary transition"></i>
+          <span>Cuaca</span>
+        </a>
+
+        <!-- Active Menu Item: Profil Saya -->
+        <a href="javascript:void(0)" id="activeNavItem" onclick="switchNav(this)" class="flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold text-lestari-activeText bg-lestari-activeBg transition">
+          <i data-lucide="user" class="w-5 h-5 text-lestari-primary"></i>
+          <span>Profil Saya</span>
+        </a>
+      </nav>
+
+      <!-- Recent Sessions List -->
+      <div class="pt-2">
+        <div class="flex items-center justify-between px-3 mb-2">
+          <span class="text-[11px] font-bold tracking-wider text-lestari-textMuted/80 uppercase">SESI TERAKHIR</span>
+          <button class="text-lestari-textMuted hover:text-lestari-primary transition">
+            <i data-lucide="history" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-1">
+          <div class="p-3 rounded-xl hover:bg-white/40 cursor-pointer transition group">
+            <p class="text-xs font-semibold text-lestari-textMain truncate group-hover:text-lestari-primary">Tangan ku akhir-akhir ini su...</p>
+            <p class="text-[11px] text-lestari-textMuted mt-0.5">24 Sep, 08.01</p>
+          </div>
+
+          <div class="p-3 rounded-xl hover:bg-white/40 cursor-pointer transition group">
+            <p class="text-xs font-semibold text-lestari-textMain truncate group-hover:text-lestari-primary">Sudah lebih dari 2 hari dem...</p>
+            <p class="text-[11px] text-lestari-textMuted mt-0.5">24 Sep, 07.55</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Bottom Profile Card -->
+    <div class="pt-4 border-t border-lestari-border/60">
+      <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-2.5 border border-lestari-border flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-2.5 overflow-hidden">
+          <img id="sidebarAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-xl object-cover ring-2 ring-lestari-border/50">
+          <div class="truncate">
+            <p id="sidebarName" class="text-xs font-bold text-lestari-textMain truncate">Test User</p>
+            <p id="sidebarEmail" class="text-[11px] text-lestari-textMuted truncate">usertest@gmail.com</p>
+          </div>
+        </div>
+        <button onclick="triggerToast('Anda telah keluar dari sesi.')" class="p-2 text-lestari-textMuted hover:text-red-500 hover:bg-red-50 rounded-xl transition flex-shrink-0" title="Keluar">
+          <i data-lucide="log-out" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10 space-y-8">
+
+    <!-- Top Bar with Page Header & Action -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-lestari-border/60">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-lestari-textMain tracking-tight">Profil Pengguna</h1>
+        <p class="text-sm text-lestari-textMuted mt-1">Kelola informasi pribadi, riwayat kesehatan, dan preferensi akun Anda.</p>
+      </div>
+
+      <!-- Emergency Hotline Indicator -->
+      <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-lestari-pillBg/70 text-lestari-primary border border-blue-200/60 rounded-full text-xs font-medium self-start sm:self-auto">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Lestari AI Triase Aktif</span>
+      </div>
+    </div>
+
+    <!-- Profile Header Banner / Summary Card -->
+    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-lestari-border shadow-sm relative overflow-hidden">
+      <!-- Decorative background glow -->
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-lestari-sidebar rounded-full blur-3xl opacity-70 pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+
+        <!-- User Info Left -->
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+          <!-- Avatar with Edit Button -->
+          <div class="relative group">
+            <img id="mainAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="User Profile" class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover ring-4 ring-lestari-sidebar shadow-md">
+            <label for="avatarInput" class="absolute -bottom-2 -right-2 bg-lestari-primary text-white p-2 rounded-xl shadow-md cursor-pointer hover:bg-lestari-primaryHover transition transform hover:scale-105">
+              <i data-lucide="camera" class="w-4 h-4"></i>
+            </label>
+            <input type="file" id="avatarInput" class="hidden" accept="image/*" onchange="previewAvatar(event)">
+          </div>
+
+          <div class="space-y-1.5 pt-1">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <h2 id="displayFullName" class="text-xl sm:text-2xl font-bold text-lestari-textMain">Test User</h2>
+              <span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                Verifikasi ID Pasien
+              </span>
+            </div>
+            <p id="displayEmail" class="text-sm text-lestari-textMuted">usertest@gmail.com</p>
+
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-xs text-lestari-textMuted pt-2">
+              <span class="flex items-center space-x-1">
+                <i data-lucide="calendar" class="w-3.5 h-3.5 text-lestari-primary"></i>
+                <span>Anggota Sejak: <strong class="text-lestari-textMain font-medium">Jan 2024</strong></span>
+              </span>
+              <span class="text-lestari-border">•</span>
+              <span class="flex items-center space-x-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-lestari-primary"></i>
+                <span>ID Kesehatan: <strong class="text-lestari-textMain font-mono font-medium">LST-88921</strong></span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Stats Grid -->
+        <div class="grid grid-cols-3 gap-3 sm:gap-4 w-full md:w-auto min-w-[280px]">
+          <div class="bg-lestari-bg/70 p-3.5 sm:p-4 rounded-2xl border border-lestari-border text-center">
+            <p class="text-xl sm:text-2xl font-extrabold text-lestari-primary">12</p>
+            <p class="text-[11px] font-semibold text-lestari-textMuted mt-0.5">Konsultasi AI</p>
+          </div>
+          <div class="bg-lestari-bg/70 p-3.5 sm:p-4 rounded-2xl border border-lestari-border text-center">
+            <p class="text-xl sm:text-2xl font-extrabold text-lestari-primary">28</p>
+            <p class="text-[11px] font-semibold text-lestari-textMuted mt-0.5">Artikel Dibaca</p>
+          </div>
+          <div class="bg-lestari-bg/70 p-3.5 sm:p-4 rounded-2xl border border-lestari-border text-center">
+            <p class="text-xl sm:text-2xl font-extrabold text-lestari-primary">4</p>
+            <p class="text-[11px] font-semibold text-lestari-textMuted mt-0.5">Rekam Medis</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Profile Tabs Section -->
+    <div class="space-y-6">
+      <!-- Tabs Navigation -->
+      <div class="flex border-b border-lestari-border overflow-x-auto no-scrollbar space-x-6">
+        <button onclick="switchTab('pribadi')" id="tab-pribadi" class="tab-btn pb-3 text-sm font-bold text-lestari-primary border-b-2 border-lestari-primary transition whitespace-nowrap flex items-center space-x-2">
+          <i data-lucide="user-check" class="w-4 h-4"></i>
+          <span>Informasi Pribadi & Kontak</span>
+        </button>
+        <button onclick="switchTab('kesehatan')" id="tab-kesehatan" class="tab-btn pb-3 text-sm font-semibold text-lestari-textMuted hover:text-lestari-primary border-b-2 border-transparent transition whitespace-nowrap flex items-center space-x-2">
+          <i data-lucide="activity" class="w-4 h-4"></i>
+          <span>Riwayat & Catatan Kesehatan</span>
+        </button>
+        <button onclick="switchTab('keamanan')" id="tab-keamanan" class="tab-btn pb-3 text-sm font-semibold text-lestari-textMuted hover:text-lestari-primary border-b-2 border-transparent transition whitespace-nowrap flex items-center space-x-2">
+          <i data-lucide="shield-lock" class="w-4 h-4"></i>
+          <span>Pengaturan & Keamanan</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: Informasi Pribadi & Kontak -->
+      <div id="content-pribadi" class="tab-content space-y-6">
+        <form onsubmit="handleSaveProfile(event)" class="bg-white rounded-3xl p-6 sm:p-8 border border-lestari-border shadow-sm space-y-6">
+          <div class="flex items-center justify-between pb-4 border-b border-lestari-border/60">
+            <h3 class="text-lg font-bold text-lestari-textMain">Detail Profil Utama</h3>
+            <span class="text-xs text-lestari-textMuted">* Wajib diisi untuk analisis AI yang akurat</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Nama Lengkap -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Nama Lengkap</label>
+              <input type="text" id="inputName" value="Test User" required class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Alamat Email</label>
+              <input type="email" id="inputEmail" value="usertest@gmail.com" required class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+            </div>
+
+            <!-- Nomor Telepon -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Nomor Telepon / WhatsApp</label>
+              <input type="tel" value="+62 812-3456-7890" class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+            </div>
+
+            <!-- Tanggal Lahir -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Tanggal Lahir</label>
+              <input type="date" value="1995-08-14" class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+            </div>
+
+            <!-- Jenis Kelamin -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Jenis Kelamin</label>
+              <select class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+                <option value="Laki-laki" selected>Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+
+            <!-- Golongan Darah -->
+            <div>
+              <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Golongan Darah</label>
+              <select class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition">
+                <option value="A+">A (+)</option>
+                <option value="B+">B (+)</option>
+                <option value="O+" selected>O (+)</option>
+                <option value="AB+">AB (+)</option>
+                <option value="Tidak Diketahui">Tidak Diketahui</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Alamat -->
+          <div>
+            <label class="block text-xs font-bold text-lestari-textMain uppercase tracking-wider mb-2">Alamat Domisili</label>
+            <textarea rows="3" class="w-full px-4 py-3 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 focus:border-lestari-primary text-sm font-medium transition resize-none">Jl. Asia Afrika No. 123, Lengkong, Kota Bandung, Jawa Barat</textarea>
+          </div>
+
+          <!-- Action Button -->
+          <div class="flex justify-end pt-2">
+            <button type="submit" class="bg-lestari-primary hover:bg-lestari-primaryHover text-white font-semibold px-6 py-3 rounded-2xl transition shadow-sm flex items-center space-x-2 active:scale-95">
+              <i data-lucide="save" class="w-4 h-4"></i>
+              <span>Simpan Perubahan</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 2: Riwayat & Catatan Kesehatan -->
+      <div id="content-kesehatan" class="tab-content hidden space-y-6">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-lestari-border shadow-sm space-y-6">
+          <div class="flex items-center justify-between pb-4 border-b border-lestari-border/60">
+            <div>
+              <h3 class="text-lg font-bold text-lestari-textMain">Riwayat Kesehatan Pasien</h3>
+              <p class="text-xs text-lestari-textMuted mt-0.5">Informasi ini membantu AI Lestari memberikan rekomendasi triase klinis yang relevan.</p>
+            </div>
+            <button onclick="triggerToast('Menambahkan catatan riwayat medis baru...')" class="text-xs font-bold text-lestari-primary bg-lestari-sidebar hover:bg-lestari-activeBg px-3.5 py-2 rounded-xl transition flex items-center space-x-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+              <span>Tambah Catatan</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Alergi -->
+            <div class="p-5 rounded-2xl bg-lestari-bg/60 border border-lestari-border space-y-3">
+              <div class="flex items-center space-x-2 text-lestari-primary font-bold text-sm">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i>
+                <span>Alergi Obat & Makanan</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-white border border-lestari-border rounded-xl text-xs font-medium text-lestari-textMain flex items-center space-x-1">
+                  <span>Penisilin</span>
+                  <button class="hover:text-red-500 ml-1">×</button>
+                </span>
+                <span class="px-3 py-1 bg-white border border-lestari-border rounded-xl text-xs font-medium text-lestari-textMain flex items-center space-x-1">
+                  <span>Seafood</span>
+                  <button class="hover:text-red-500 ml-1">×</button>
+                </span>
+              </div>
+            </div>
+
+            <!-- Riwayat Penyakit -->
+            <div class="p-5 rounded-2xl bg-lestari-bg/60 border border-lestari-border space-y-3">
+              <div class="flex items-center space-x-2 text-lestari-primary font-bold text-sm">
+                <i data-lucide="file-text" class="w-4 h-4 text-lestari-primary"></i>
+                <span>Riwayat Penyakit</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-white border border-lestari-border rounded-xl text-xs font-medium text-lestari-textMain">
+                  Asam Lambung (GERD)
+                </span>
+                <span class="px-3 py-1 bg-white border border-lestari-border rounded-xl text-xs font-medium text-lestari-textMain">
+                  Migrain Ringan
+                </span>
+              </div>
+            </div>
+
+            <!-- Obat Rutin -->
+            <div class="p-5 rounded-2xl bg-lestari-bg/60 border border-lestari-border space-y-3">
+              <div class="flex items-center space-x-2 text-lestari-primary font-bold text-sm">
+                <i data-lucide="pill" class="w-4 h-4 text-emerald-600"></i>
+                <span>Obat Rutin</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-3 py-1 bg-white border border-lestari-border rounded-xl text-xs font-medium text-lestari-textMain">
+                  Antasida Doen (Jika Perlu)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Medical Checks List -->
+          <div class="pt-4">
+            <h4 class="text-sm font-bold text-lestari-textMain mb-3">Ringkasan Konsultasi Terakhir</h4>
+            <div class="space-y-3">
+              <div class="p-4 rounded-2xl border border-lestari-border hover:bg-white transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-10 h-10 rounded-xl bg-lestari-sidebar flex items-center justify-center text-lestari-primary font-bold flex-shrink-0">
+                    <i data-lucide="stethoscope" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-sm font-bold text-lestari-textMain">Triase Mandiri: Nyeri Sendi & Demam</h5>
+                    <p class="text-xs text-lestari-textMuted mt-0.5">Disarankan konsultasi lanjutan ke Dokter Spesialis Penyakit Dalam.</p>
+                  </div>
+                </div>
+                <span class="text-xs text-lestari-textMuted self-end sm:self-center">24 Sep 2026</span>
+              </div>
+
+              <div class="p-4 rounded-2xl border border-lestari-border hover:bg-white transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-10 h-10 rounded-xl bg-lestari-sidebar flex items-center justify-center text-lestari-primary font-bold flex-shrink-0">
+                    <i data-lucide="heart-pulse" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h5 class="text-sm font-bold text-lestari-textMain">Triase Mandiri: Dada Sesak & Asam Lambung</h5>
+                    <p class="text-xs text-lestari-textMuted mt-0.5">Indikasi GERD Flare-up, rekomendasi istirahat cukup & pola makan teratur.</p>
+                  </div>
+                </div>
+                <span class="text-xs text-lestari-textMuted self-end sm:self-center">18 Sep 2026</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: Pengaturan & Keamanan -->
+      <div id="content-keamanan" class="tab-content hidden space-y-6">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-lestari-border shadow-sm space-y-6">
+          <h3 class="text-lg font-bold text-lestari-textMain pb-4 border-b border-lestari-border/60">Keamanan & Privasi Data</h3>
+
+          <!-- Password Change -->
+          <div class="space-y-4 max-w-xl">
+            <h4 class="text-sm font-bold text-lestari-textMain">Ubah Kata Sandi</h4>
+            <div class="space-y-3">
+              <div>
+                <label class="block text-xs font-medium text-lestari-textMuted mb-1">Kata Sandi Saat Ini</label>
+                <input type="password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 text-sm">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-lestari-textMuted mb-1">Kata Sandi Baru</label>
+                <input type="password" placeholder="••••••••" class="w-full px-4 py-2.5 rounded-2xl bg-lestari-bg/50 border border-lestari-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-lestari-primary/30 text-sm">
+              </div>
+            </div>
+            <button onclick="triggerToast('Kata sandi berhasil diperbarui!')" class="bg-lestari-primary hover:bg-lestari-primaryHover text-white text-xs font-semibold px-5 py-2.5 rounded-xl transition">
+              Perbarui Kata Sandi
+            </button>
+          </div>
+
+          <hr class="border-lestari-border/60 my-6">
+
+          <!-- Preferences & Toggles -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-bold text-lestari-textMain">Preferensi Layanan Lestari AI</h4>
+
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-lestari-bg/40 border border-lestari-border">
+              <div class="space-y-0.5">
+                <p class="text-sm font-bold text-lestari-textMain">Notifikasi Kesehatan & Pengingat Obat</p>
+                <p class="text-xs text-lestari-textMuted">Terima pengingat harian dan pembaruan hasil triase melalui email/WA.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lestari-primary"></div>
+              </label>
+            </div>
+
+            <div class="flex items-center justify-between p-4 rounded-2xl bg-lestari-bg/40 border border-lestari-border">
+              <div class="space-y-0.5">
+                <p class="text-sm font-bold text-lestari-textMain">Enkripsi Anonim Rekam Medis</p>
+                <p class="text-xs text-lestari-textMuted">Lindungi data pribadi Anda agar tidak dapat diidentifikasi pihak ketiga.</p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-lestari-primary"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medical Disclaimer Bar (Matching Lestari Footer Notice) -->
+    <div class="p-4 rounded-2xl bg-lestari-pillBg/80 border border-blue-200/70 text-lestari-primary text-xs flex items-start space-x-3 shadow-sm">
+      <i data-lucide="shield-alert" class="w-5 h-5 flex-shrink-0 mt-0.5 text-lestari-primary"></i>
+      <div>
+        <span class="font-bold">Peringatan Medis:</span> Lestari AI memberikan saran triase kesehatan berbasis bukti medis, bukan pengganti diagnosis darurat rumah sakit. Hubungi <a href="tel:119" class="underline font-bold text-red-600">119</a> jika dalam kondisi kritis.
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Notification Toast Box -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-lestari-textMain text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center space-x-3 transition transform translate-y-20 opacity-0 pointer-events-none duration-300">
+    <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>
+    <span id="toastMsg" class="text-xs font-semibold">Perubahan berhasil disimpan!</span>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Toggle Mobile Sidebar
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      const isClosed = sidebar.classList.contains('-translate-x-full');
+
+      if (isClosed) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0');
+        setTimeout(() => overlay.classList.add('hidden'), 300);
+      }
+    }
+
+    // Switch Tab Logic
+    function switchTab(tabKey) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Reset tab button styles
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('text-lestari-primary', 'border-lestari-primary', 'font-bold');
+        btn.classList.add('text-lestari-textMuted', 'border-transparent', 'font-semibold');
+      });
+
+      // Show selected tab content
+      document.getElementById(`content-${tabKey}`).classList.remove('hidden');
+
+      // Active state button
+      const activeBtn = document.getElementById(`tab-${tabKey}`);
+      activeBtn.classList.add('text-lestari-primary', 'border-lestari-primary', 'font-bold');
+      activeBtn.classList.remove('text-lestari-textMuted', 'border-transparent');
+    }
+
+    // Nav Switcher active indicator simulator
+    function switchNav(element) {
+      // Remove active state from current
+      const currentActive = document.getElementById('activeNavItem');
+      if (currentActive) {
+        currentActive.classList.remove('text-lestari-activeText', 'bg-lestari-activeBg', 'font-semibold');
+        currentActive.classList.add('text-lestari-textMuted', 'font-medium');
+        currentActive.removeAttribute('id');
+      }
+
+      // Add to newly clicked element
+      element.classList.add('text-lestari-activeText', 'bg-lestari-activeBg', 'font-semibold');
+      element.classList.remove('text-lestari-textMuted', 'font-medium');
+      element.id = 'activeNavItem';
+    }
+
+    // Handle Save Form Function
+    function handleSaveProfile(e) {
+      e.preventDefault();
+
+      const newName = document.getElementById('inputName').value;
+      const newEmail = document.getElementById('inputEmail').value;
+
+      // Update UI displays dynamically
+      document.getElementById('displayFullName').innerText = newName;
+      document.getElementById('displayEmail').innerText = newEmail;
+      document.getElementById('sidebarName').innerText = newName;
+      document.getElementById('sidebarEmail').innerText = newEmail;
+
+      triggerToast("Profil Anda telah berhasil diperbarui!");
+    }
+
+    // Preview Uploaded Avatar
+    function previewAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('mainAvatar').src = e.target.result;
+          document.getElementById('sidebarAvatar').src = e.target.result;
+          triggerToast("Foto profil berhasil diganti!");
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Trigger Toast Notification
+    function triggerToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+
+      toastMsg.innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

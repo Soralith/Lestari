@@ -8,7 +8,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
-from .models import ConsultationSession, ConsultationMessage, Profile
+from .models import (
+    ConsultationSession,
+    ConsultationMessage,
+    HealthNote,
+    Profile,
+)
 from .services import get_ai_response
 from .artikel import fetch_articles
 from .bmkg import BmkgError, get_forecast, search_locations
@@ -190,6 +195,12 @@ def artikel_page(request):
 
 
 @login_required
+def catatan_page(request):
+    """'Catatan Kesehatan' page: the user's health records saved by Lestari AI."""
+    return render(request, "konsultasi/catatan.html")
+
+
+@login_required
 def api_artikel(request):
     """Return health articles for a query (cached Google News search)."""
     q = (request.GET.get("q") or "").strip() or "kesehatan"
@@ -279,7 +290,13 @@ def api_send_message(request):
         for m in history
     )
 
-    result = get_ai_response(conversation_text, mode=mode, image=image)
+    result = get_ai_response(
+        conversation_text,
+        mode=mode,
+        image=image,
+        user=request.user,
+        session=session,
+    )
 
     ai_msg = ConsultationMessage.objects.create(
         session=session,
@@ -307,6 +324,7 @@ def api_send_message(request):
             "is_emergency": ai_msg.is_emergency,
         },
         "error": result["error"],
+        "note_created": result["note_created"],
     })
 
 
@@ -338,3 +356,41 @@ def api_sessions(request):
 def api_session_detail(request, session_id):
     session = get_object_or_404(ConsultationSession, id=session_id)
     return JsonResponse(_session_to_dict(session))
+
+
+@login_required
+@require_POST
+def api_session_delete(request, session_id):
+    """Delete one consultation session (and best-effort its attached chat images)."""
+    session = get_object_or_404(ConsultationSession, id=session_id)
+    for m in session.messages.exclude(image_url=""):
+        delete_avatar(m.image_url)
+    session.delete()
+    return JsonResponse({"deleted": session_id})
+
+
+@login_required
+def api_notes(request):
+    """List the current user's health notes (newest first)."""
+    notes = HealthNote.objects.filter(user=request.user)
+    return JsonResponse({
+        "notes": [
+            {
+                "id": n.id,
+                "title": n.title,
+                "content": n.content,
+                "created_at": n.created_at.isoformat(),
+                "updated_at": n.updated_at.isoformat(),
+            }
+            for n in notes
+        ]
+    })
+
+
+@login_required
+@require_POST
+def api_note_delete(request, note_id):
+    """Delete one health note owned by the current user."""
+    note = get_object_or_404(HealthNote, id=note_id, user=request.user)
+    note.delete()
+    return JsonResponse({"deleted": note_id})

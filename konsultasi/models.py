@@ -73,6 +73,33 @@ class ConsultationMessage(models.Model):
         return f"{self.get_role_display()}: {self.content[:50]}"
 
 
+class HealthNote(models.Model):
+    """A health record saved by Lestari AI (via function calling) for later reading."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="health_notes",
+    )
+    session = models.ForeignKey(
+        ConsultationSession,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="health_notes",
+    )
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return self.title or f"Catatan #{self.pk}"
+
+
 class WeatherCache(models.Model):
     """Cached BMKG forecast for one adm4 location (respects rate limits)."""
 

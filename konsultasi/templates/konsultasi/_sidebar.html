@@ -1,0 +1,84 @@
+{% load static %}
+<!-- ============ SIDEBAR ============ -->
+<aside id="sidebar" class="fixed left-0 top-0 h-screen w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-surface-container-low flex flex-col justify-between z-40 border-r border-outline-variant/30 shadow-lg lg:shadow-none">
+  <div class="flex flex-col h-full overflow-hidden">
+
+    <!-- Header / Logo -->
+    <div class="p-space-lg flex items-center gap-space-sm border-b border-outline-variant/20">
+      <div class="p-1.5 bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30">
+        <img alt="Logo" class="h-7 w-auto object-contain" src="{% static 'images/LestariLogo.png' %}" />
+      </div>
+      <div class="flex flex-col">
+        <span class="font-headline-sm text-headline-sm text-primary tracking-tight font-bold">Lestari</span>
+      </div>
+    </div>
+
+    <!-- New Chat Button -->
+    <div class="px-space-md pt-space-md">
+      <button id="btn-new-chat" type="button"
+        onclick="{% if active_page == 'index' %}showWelcome(){% else %}window.location.href='{% url 'konsultasi:index' %}'{% endif %}"
+        class="flex items-center justify-center gap-space-xs w-full py-2.5 px-space-md bg-primary text-on-primary hover:bg-primary-container active:scale-[0.98] rounded-2xl shadow-sm hover:shadow transition-all font-label-lg text-label-lg">
+        <span class="material-symbols-outlined text-[20px]">add_circle</span>
+        <span>Konsultasi AI Baru</span>
+      </button>
+    </div>
+
+    <!-- Navigation & Recent Sessions -->
+    <div class="flex-1 overflow-y-auto px-space-md py-space-md space-y-space-lg no-scrollbar">
+      <nav class="space-y-1">
+        <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl {% if active_page == 'index' %}bg-surface-container-highest text-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]{% endif %}" href="{% url 'konsultasi:index' %}">
+          <span class="material-symbols-outlined {% if active_page == 'index' %}text-primary{% else %}text-secondary{% endif %} text-[22px]">chat</span>
+          <span class="font-body-md {% if active_page != 'index' %}font-medium{% endif %} text-body-md">Konsultasi AI</span>
+        </a>
+        <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl {% if active_page == 'artikel' %}bg-surface-container-highest text-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]{% endif %}" href="{% url 'konsultasi:artikel' %}">
+          <span class="material-symbols-outlined {% if active_page == 'artikel' %}text-primary{% else %}text-secondary{% endif %} text-[22px]">article</span>
+          <span class="font-body-md {% if active_page != 'artikel' %}font-medium{% endif %} text-body-md">Artikel Kesehatan</span>
+        </a>
+        <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl {% if active_page == 'cuaca' %}bg-surface-container-highest text-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]{% endif %}" href="{% url 'konsultasi:cuaca' %}">
+          <span class="material-symbols-outlined {% if active_page == 'cuaca' %}text-primary{% else %}text-secondary{% endif %} text-[22px]">cloud</span>
+          <span class="font-body-md {% if active_page != 'cuaca' %}font-medium{% endif %} text-body-md">Cuaca</span>
+        </a>
+        <a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-xl {% if active_page == 'catatan' %}bg-surface-container-highest text-primary font-semibold shadow-sm{% else %}text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]{% endif %}" href="{% url 'konsultasi:catatan' %}">
+          <span class="material-symbols-outlined {% if active_page == 'catatan' %}text-primary{% else %}text-secondary{% endif %} text-[22px]">description</span>
+          <span class="font-body-md {% if active_page != 'catatan' %}font-medium{% endif %} text-body-md">Catatan Kesehatan</span>
+        </a>
+      </nav>
+
+      <div class="pt-space-xs">
+        <div class="flex items-center justify-between px-space-md mb-space-xs">
+          <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Sesi Terakhir</span>
+          <span class="material-symbols-outlined text-[16px] text-outline">history</span>
+        </div>
+        <div id="session-list" class="space-y-1">
+          <p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline animate-pulse">Memuat sesi…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Profile Card -->
+    <div class="p-space-xs m-space-sm bg-surface-container-lowest border border-outline-variant/40 rounded-2xl shadow-sm space-y-space-sm">
+      <div class="flex items-center justify-between p-space-xs">
+        <div class="flex items-center gap-space-xs min-w-0">
+          <button type="button" id="sidebar-avatar" class="relative w-9 h-9 rounded-full overflow-hidden bg-secondary-container flex items-center justify-center shrink-0 ring-2 ring-transparent hover:ring-secondary transition-all active:scale-95 group" title="Profil" onclick="openProfile()">
+            <img data-avatar class="w-full h-full object-cover transition-transform group-hover:scale-105 {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="PFP" />
+            <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[20px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+          </button>
+          <div class="flex flex-col min-w-0">
+            <span class="font-label-md text-label-md text-on-surface font-semibold truncate max-w-[120px]">{{ request.user.first_name|default:"Pengguna" }}</span>
+            <span class="font-label-sm text-label-sm text-outline truncate max-w-[120px]">{{ request.user.email|default:"—" }}</span>
+          </div>
+        </div>
+        <form method="post" action="{% url 'konsultasi:logout' %}" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="w-8 h-8 rounded-xl bg-surface-container-low hover:bg-error-container text-on-surface-variant hover:text-error flex items-center justify-center transition-all active:scale-95" title="Logout">
+            <span class="material-symbols-outlined text-[18px]">logout</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- Sidebar Backdrop -->
+<div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-on-surface/30 backdrop-blur-sm lg:hidden transition-opacity"></div>
