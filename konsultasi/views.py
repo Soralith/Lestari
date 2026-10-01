@@ -1,4 +1,5 @@
 import json
+import math
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -17,6 +18,12 @@ from .models import (
 from .services import get_ai_response
 from .artikel import fetch_articles
 from .bmkg import BmkgError, get_forecast, search_locations
+from .hospitals import (
+    HospitalSearchError,
+    SEARCH_RADIUS_METERS,
+    find_nearby_hospitals,
+    geocode_place,
+)
 from .storage import (
     MAX_AVATAR_BYTES,
     ALLOWED_CONTENT_TYPES,
@@ -189,6 +196,13 @@ def cuaca_page(request):
 
 
 @login_required
+@ensure_csrf_cookie
+def rumah_sakit_page(request):
+    """Nearby hospital finder page (/rumah-sakit/)."""
+    return render(request, "konsultasi/rumah_sakit.html")
+
+
+@login_required
 def artikel_page(request):
     """Health articles page (/artikel/)."""
     return render(request, "konsultasi/artikel.html")
@@ -229,6 +243,84 @@ def api_cuaca_forecast(request):
         return JsonResponse(get_forecast(adm4))
     except BmkgError as exc:
         return JsonResponse({"error": str(exc)}, status=502)
+
+
+@login_required
+@require_POST
+def api_nearby_hospitals(request):
+    """Find hospitals near a one-time browser location; coordinates aren't saved."""
+    try:
+        payload = json.loads(request.body or "{}")
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({"error": "Permintaan lokasi tidak valid."}, status=400)
+
+    if not isinstance(payload, dict):
+        return JsonResponse({"error": "Permintaan lokasi tidak valid."}, status=400)
+
+    location_accuracy = None
+    query = payload.get("query")
+    if query is not None:
+        if not isinstance(query, str) or not 2 <= len(query.strip()) <= 200:
+            return JsonResponse({"error": "Masukkan nama tempat atau alamat (2–200 karakter)."}, status=400)
+        try:
+            place = geocode_place(query)
+        except HospitalSearchError:
+            return JsonResponse(
+                {"error": "Pencarian alamat sedang tidak tersedia. Silakan coba lagi."},
+                status=502,
+            )
+        if not place:
+            return JsonResponse(
+                {"error": "Lokasi tidak ditemukan. Coba masukkan nama tempat atau alamat yang lebih lengkap."},
+                status=404,
+            )
+        latitude = place["latitude"]
+        longitude = place["longitude"]
+        location_label = place["label"]
+    else:
+        raw_latitude = payload.get("latitude")
+        raw_longitude = payload.get("longitude")
+        if (
+            isinstance(raw_latitude, bool)
+            or isinstance(raw_longitude, bool)
+            or not isinstance(raw_latitude, (int, float))
+            or not isinstance(raw_longitude, (int, float))
+        ):
+            return JsonResponse({"error": "Koordinat lokasi tidak valid."}, status=400)
+
+        latitude = float(raw_latitude)
+        longitude = float(raw_longitude)
+        if (
+            not math.isfinite(latitude)
+            or not math.isfinite(longitude)
+            or not -90 <= latitude <= 90
+            or not -180 <= longitude <= 180
+        ):
+            return JsonResponse({"error": "Koordinat lokasi berada di luar rentang yang valid."}, status=400)
+        location_label = "Lokasi perangkat"
+        raw_accuracy = payload.get("accuracy")
+        if (
+            isinstance(raw_accuracy, (int, float))
+            and not isinstance(raw_accuracy, bool)
+            and math.isfinite(raw_accuracy)
+            and 0 <= raw_accuracy <= 100_000
+        ):
+            location_accuracy = round(raw_accuracy)
+
+    try:
+        hospitals = find_nearby_hospitals(latitude, longitude)
+    except HospitalSearchError:
+        return JsonResponse(
+            {"error": "Pencarian rumah sakit sedang tidak tersedia. Silakan coba lagi."},
+            status=502,
+        )
+
+    return JsonResponse({
+        "hospitals": hospitals,
+        "radius_meters": SEARCH_RADIUS_METERS,
+        "location_label": location_label,
+        "accuracy_meters": location_accuracy,
+    })
 
 
 @login_required

@@ -1,0 +1,392 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Lestari — Rumah Sakit Terdekat</title>
+
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#003380", "primary-container": "#0e4494", "on-primary": "#f0f6ff",
+            secondary: "#1b4f9c", "secondary-container": "#d0e4ff", "on-secondary-container": "#1d4e8f",
+            "surface-bright": "#f0f6ff", "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#e5eeff", "surface-container": "#ddeaff",
+            "surface-container-high": "#d2e3ff", "surface-container-highest": "#c8daff",
+            "on-surface": "#071524", "on-surface-variant": "#3a4758", outline: "#5f6b7c",
+            "outline-variant": "#bcc7d8", "error-container": "#ffdad6", error: "#ba1a1a",
+            "on-error-container": "#93000a", "primary-fixed": "#a8c8ff", "tertiary-fixed": "#b0d0ff"
+          },
+          spacing: {
+            "space-2xs": "0.25rem", "space-xs": "0.5rem", "space-sm": "0.75rem",
+            "space-md": "1rem", "space-lg": "1.5rem", "space-xl": "2rem", "space-2xl": "3rem"
+          },
+          fontFamily: {
+            "body-md": ["Plus Jakarta Sans", "sans-serif"], "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"], "title-md": ["Plus Jakarta Sans", "sans-serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"], "label-md": ["Plus Jakarta Sans", "sans-serif"],
+            "label-lg": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          fontSize: {
+            "body-md": ["14px", { lineHeight: "22px" }], "body-sm": ["12px", { lineHeight: "18px" }],
+            "headline-sm": ["20px", { lineHeight: "28px" }], "title-md": ["18px", { lineHeight: "26px" }],
+            "label-sm": ["11px", { lineHeight: "14px" }], "label-md": ["12px", { lineHeight: "16px" }],
+            "label-lg": ["14px", { lineHeight: "20px" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+
+<body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+  {% include 'konsultasi/_sidebar.html' with active_page='rumah_sakit' %}
+
+  <div class="lg:pl-72 flex flex-col min-h-screen">
+    <header class="fixed top-0 lg:left-72 right-0 h-16 bg-surface-bright/90 backdrop-blur-md border-b border-outline-variant/30 z-30 flex items-center px-space-md md:px-space-xl">
+      <button id="btn-sidebar" type="button" aria-label="Buka menu" class="lg:hidden w-10 h-10 rounded-xl bg-surface-container text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-all active:scale-95" onclick="toggleSidebar()">
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+      <h1 class="font-title-md text-headline-sm text-on-surface font-semibold ml-space-sm">Rumah Sakit Terdekat</h1>
+    </header>
+
+    <main class="w-full pt-24 flex-1 px-space-md md:px-space-xl pb-space-2xl max-w-[920px] mx-auto">
+      <section class="relative overflow-hidden rounded-3xl border border-outline-variant/30 bg-gradient-to-br from-primary-container via-secondary-container to-primary-fixed p-space-lg md:p-space-xl shadow-sm">
+        <div class="relative z-10 max-w-2xl">
+          <div class="w-14 h-14 rounded-2xl bg-white/80 border border-white/70 flex items-center justify-center shadow-sm mb-space-md" aria-hidden="true">
+            <span class="material-symbols-outlined text-primary text-[30px]">local_hospital</span>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-primary">Temukan rumah sakit di sekitar Anda</h2>
+          <p class="mt-space-xs text-on-surface-variant text-base leading-relaxed">Izinkan akses lokasi untuk melihat rumah sakit terdekat, jarak, dan petunjuk arah.</p>
+          <button id="find-hospitals" type="button" class="mt-space-lg min-h-11 inline-flex items-center justify-center gap-space-xs px-space-lg py-3 rounded-full bg-primary text-on-primary font-semibold shadow-sm hover:bg-primary-container focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 transition-all active:scale-[0.98] cursor-pointer disabled:opacity-60 disabled:cursor-wait">
+            <span class="material-symbols-outlined text-[20px]" aria-hidden="true">my_location</span>
+            <span id="find-button-label">Gunakan lokasi saya</span>
+          </button>
+          <p class="mt-space-sm text-sm text-on-surface-variant">Koordinat dikirim sementara ke OpenStreetMap untuk pencarian dan tidak disimpan oleh Lestari. Browser akan meminta izin Anda.</p>
+        </div>
+        <span class="material-symbols-outlined absolute -right-8 -bottom-12 text-primary/10 text-[220px] pointer-events-none" aria-hidden="true">location_on</span>
+      </section>
+
+      <section class="mt-space-md rounded-2xl bg-surface-container-lowest border border-outline-variant/30 p-space-md md:p-space-lg">
+        <h2 class="font-title-md text-title-md text-on-surface font-bold">Lokasi perangkat kurang tepat?</h2>
+        <p class="mt-1 text-sm text-on-surface-variant">Cari rumah sakit berdasarkan nama tempat atau alamat, misalnya “SMKN 11 Bandung”. Pencarian alamat juga diproses oleh OpenStreetMap.</p>
+        <form id="place-search-form" class="mt-space-sm flex flex-col sm:flex-row gap-space-xs">
+          <label class="sr-only" for="place-query">Nama tempat atau alamat</label>
+          <input id="place-query" name="query" type="search" maxlength="200" autocomplete="street-address" placeholder="Nama tempat atau alamat" class="min-h-11 flex-1 min-w-0 rounded-xl border border-outline-variant/60 bg-white px-space-md py-2 text-base text-on-surface placeholder:text-outline focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 focus:border-primary" />
+          <button id="place-search-button" type="submit" class="min-h-11 inline-flex items-center justify-center gap-1.5 rounded-xl bg-secondary px-space-md py-2 text-sm font-semibold text-white hover:bg-primary focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait">
+            <span class="material-symbols-outlined text-[18px]" aria-hidden="true">search</span>
+            Cari alamat
+          </button>
+        </form>
+      </section>
+
+      <div id="hospital-loading" class="hidden mt-space-lg rounded-2xl bg-surface-container-lowest border border-outline-variant/30 p-space-lg flex items-center gap-space-sm" role="status" aria-live="polite">
+        <span class="material-symbols-outlined text-primary animate-spin" aria-hidden="true">progress_activity</span>
+        <p class="text-on-surface-variant">Mencari rumah sakit di sekitar lokasi Anda…</p>
+      </div>
+
+      <div id="hospital-error" class="hidden mt-space-lg rounded-2xl bg-error-container border border-error/20 p-space-md" role="alert">
+        <div class="flex items-start gap-space-xs">
+          <span class="material-symbols-outlined text-error" aria-hidden="true">error</span>
+          <p id="hospital-error-text" class="text-on-error-container flex-1"></p>
+        </div>
+      </div>
+
+      <section id="hospital-results" class="hidden mt-space-xl" aria-live="polite">
+        <div class="flex flex-wrap items-end justify-between gap-space-xs px-space-xs mb-space-sm">
+          <div>
+            <p class="font-label-sm uppercase tracking-wider text-outline font-bold">Hasil pencarian</p>
+            <h2 id="results-heading" class="font-title-md text-title-md text-on-surface font-bold mt-1"></h2>
+          </div>
+          <button id="search-again" type="button" class="min-h-11 px-space-md py-2 rounded-full text-primary hover:bg-secondary-container focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 font-semibold transition-colors cursor-pointer">Cari lagi</button>
+        </div>
+        <p id="location-summary" class="mb-space-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest px-space-md py-3 text-sm text-on-surface-variant"></p>
+        <div id="hospital-list" class="space-y-space-sm"></div>
+      </section>
+
+      <div class="mt-space-xl rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-space-md flex items-start gap-space-xs">
+        <span class="material-symbols-outlined text-secondary" aria-hidden="true">info</span>
+        <p class="text-sm leading-relaxed text-on-surface-variant">Jarak yang ditampilkan adalah perkiraan garis lurus, bukan waktu tempuh. Data rumah sakit berasal dari <a class="font-semibold text-primary underline underline-offset-2" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> dan bisa belum lengkap atau terbaru. Hubungi rumah sakit untuk memastikan layanan tersedia. Jika kondisi darurat, hubungi <a class="font-bold text-error underline underline-offset-2" href="tel:119">119</a>.</p>
+      </div>
+    </main>
+  </div>
+
+  <div id="profile-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-space-md bg-on-surface/40 backdrop-blur-sm">
+    <div class="w-full max-w-[380px] bg-surface-container-lowest border border-outline-variant/30 rounded-3xl shadow-2xl p-space-xl relative">
+      <button id="profile-modal-close" type="button" aria-label="Tutup profil" class="absolute top-space-md right-space-md w-10 h-10 rounded-full bg-surface-container-low hover:bg-surface-container text-on-surface-variant flex items-center justify-center transition-all">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+      <div class="flex flex-col items-center text-center mb-space-lg">
+        <div class="relative w-24 h-24 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden ring-4 ring-surface-container-low mb-space-sm">
+          <img data-avatar class="w-full h-full object-cover {% if not request.user.profile.avatar_url %}hidden{% endif %}" src="{{ request.user.profile.avatar_url|default:'#' }}" alt="Foto profil" />
+          <span data-avatar-placeholder class="material-symbols-outlined text-on-secondary-container text-[44px] {% if request.user.profile.avatar_url %}hidden{% endif %}">person</span>
+        </div>
+        <h2 class="text-xl text-on-surface font-bold">{{ request.user.first_name|default:"Pengguna" }}</h2>
+        <p class="text-sm text-outline">{{ request.user.email }}</p>
+      </div>
+      <label for="modal-avatar-input" class="flex items-center justify-center gap-space-xs w-full min-h-11 py-3 px-space-md bg-primary text-on-primary hover:bg-primary-container rounded-full shadow-sm font-semibold transition-all cursor-pointer">
+        <span class="material-symbols-outlined text-[20px]">photo_camera</span>Ubah Foto Profil
+      </label>
+      <input id="modal-avatar-input" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif" />
+      <p id="modal-avatar-status" class="hidden text-sm text-center mt-space-xs" role="status"></p>
+    </div>
+  </div>
+
+  <script>
+    const sidebar = document.getElementById('sidebar');
+    const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+    const profileModal = document.getElementById('profile-modal');
+    const avatarInput = document.getElementById('modal-avatar-input');
+    const avatarStatus = document.getElementById('modal-avatar-status');
+    const findButton = document.getElementById('find-hospitals');
+    const loadingEl = document.getElementById('hospital-loading');
+    const errorEl = document.getElementById('hospital-error');
+    const resultsEl = document.getElementById('hospital-results');
+
+    function openSidebar() {
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      sidebarBackdrop.classList.remove('hidden');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('translate-x-0');
+      sidebar.classList.add('-translate-x-full');
+      sidebarBackdrop.classList.add('hidden');
+    }
+    function toggleSidebar() {
+      if (sidebar.classList.contains('translate-x-0')) closeSidebar();
+      else openSidebar();
+    }
+    document.querySelectorAll('#sidebar a, #sidebar button:not(#sidebar-avatar)').forEach((el) => el.addEventListener('click', closeSidebar));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') { closeSidebar(); closeProfile(); }
+    });
+
+    function openProfile() { profileModal.classList.remove('hidden'); avatarStatus.classList.add('hidden'); }
+    function closeProfile() { profileModal.classList.add('hidden'); avatarInput.value = ''; avatarStatus.classList.add('hidden'); }
+    document.getElementById('profile-modal-close').addEventListener('click', closeProfile);
+    profileModal.addEventListener('click', (event) => { if (event.target === profileModal) closeProfile(); });
+
+    avatarInput.addEventListener('change', async () => {
+      const file = avatarInput.files[0];
+      if (!file) return;
+      avatarStatus.classList.remove('hidden', 'text-error');
+      avatarStatus.classList.add('text-primary');
+      avatarStatus.textContent = 'Mengunggah foto profil…';
+      const form = new FormData();
+      form.append('avatar', file);
+      try {
+        const response = await fetch('/api/profile/avatar/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': getCsrfToken() },
+          body: form,
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Gagal mengunggah foto profil.');
+        document.querySelectorAll('[data-avatar]').forEach((img) => { img.src = data.avatar_url; img.classList.remove('hidden'); });
+        document.querySelectorAll('[data-avatar-placeholder]').forEach((el) => el.classList.add('hidden'));
+        avatarStatus.textContent = 'Foto profil berhasil diperbarui.';
+      } catch (error) {
+        avatarStatus.classList.remove('text-primary');
+        avatarStatus.classList.add('text-error');
+        avatarStatus.textContent = error.message || 'Gagal mengunggah foto profil. Silakan coba lagi.';
+      }
+      avatarInput.value = '';
+    });
+
+    function getCsrfToken() {
+      return document.cookie.split('; ').find((row) => row.startsWith('csrftoken='))?.split('=')[1] || '';
+    }
+
+    function setError(message) {
+      document.getElementById('hospital-error-text').textContent = message;
+      errorEl.classList.remove('hidden');
+    }
+    function hideError() { errorEl.classList.add('hidden'); }
+
+    function formatDistance(meters) {
+      if (meters < 1000) return `${meters} m`;
+      return `${(meters / 1000).toFixed(1).replace('.', ',')} km`;
+    }
+
+    function makeLink(label, href, icon, className) {
+      const link = document.createElement('a');
+      link.href = href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = className;
+      const symbol = document.createElement('span');
+      symbol.className = 'material-symbols-outlined text-[18px]';
+      symbol.setAttribute('aria-hidden', 'true');
+      symbol.textContent = icon;
+      link.append(symbol, document.createTextNode(label));
+      return link;
+    }
+
+    function renderHospitals(hospitals, radiusMeters, locationLabel, accuracyMeters) {
+      const list = document.getElementById('hospital-list');
+      list.replaceChildren();
+      resultsEl.classList.remove('hidden');
+      const summary = document.getElementById('location-summary');
+      summary.classList.remove('border-error/30', 'bg-error-container', 'text-on-error-container');
+      summary.textContent = locationLabel || 'Lokasi perangkat';
+      if (Number.isFinite(accuracyMeters)) {
+        const accuracyText = accuracyMeters >= 1000
+          ? `±${(accuracyMeters / 1000).toFixed(1).replace('.', ',')} km`
+          : `±${accuracyMeters} m`;
+        summary.textContent += ` · Akurasi perkiraan browser: ${accuracyText}`;
+        if (accuracyMeters > 1000) {
+          summary.classList.add('border-error/30', 'bg-error-container', 'text-on-error-container');
+          summary.textContent += ' — lokasi mungkin kurang tepat. Coba cari berdasarkan alamat di atas.';
+        }
+      }
+      if (!hospitals.length) {
+        document.getElementById('results-heading').textContent = `Belum ada rumah sakit terdata dalam radius ${Math.round(radiusMeters / 1000)} km`;
+        const note = document.createElement('p');
+        note.className = 'rounded-2xl bg-surface-container-lowest border border-outline-variant/30 p-space-lg text-on-surface-variant';
+        note.textContent = 'Coba lagi dari lokasi lain atau hubungi 119 jika Anda membutuhkan bantuan darurat.';
+        list.appendChild(note);
+        return;
+      }
+
+      document.getElementById('results-heading').textContent = `${hospitals.length} rumah sakit terdekat`;
+      hospitals.forEach((hospital, index) => {
+        const card = document.createElement('article');
+        card.className = 'rounded-2xl bg-surface-container-lowest border border-outline-variant/30 p-space-md md:p-space-lg shadow-sm';
+        const top = document.createElement('div');
+        top.className = 'flex items-start justify-between gap-space-sm';
+        const info = document.createElement('div');
+        info.className = 'min-w-0';
+        const titleRow = document.createElement('div');
+        titleRow.className = 'flex flex-wrap items-center gap-space-xs';
+        const title = document.createElement('h3');
+        title.className = 'text-base md:text-lg font-bold text-on-surface';
+        title.textContent = hospital.name;
+        titleRow.appendChild(title);
+        if (index === 0) {
+          const badge = document.createElement('span');
+          badge.className = 'inline-flex items-center px-2.5 py-1 rounded-full bg-secondary-container text-primary text-xs font-bold';
+          badge.textContent = 'Terdekat';
+          titleRow.appendChild(badge);
+        }
+        info.appendChild(titleRow);
+        if (hospital.address) {
+          const address = document.createElement('p');
+          address.className = 'mt-1 text-sm text-on-surface-variant';
+          address.textContent = hospital.address;
+          info.appendChild(address);
+        }
+        if (hospital.phone) {
+          const phone = document.createElement('a');
+          phone.className = 'inline-block mt-1 text-sm text-primary underline underline-offset-2';
+          phone.href = `tel:${hospital.phone.replace(/[^+\d]/g, '')}`;
+          phone.textContent = hospital.phone;
+          info.appendChild(phone);
+        }
+        const distance = document.createElement('span');
+        distance.className = 'shrink-0 px-3 py-1 rounded-full bg-surface-container-low text-primary font-bold text-sm';
+        distance.textContent = formatDistance(hospital.distance_meters);
+        top.append(info, distance);
+        const actions = document.createElement('div');
+        actions.className = 'flex flex-wrap gap-space-xs mt-space-md';
+        actions.appendChild(makeLink('Lihat di peta', hospital.osm_url, 'map', 'min-h-11 inline-flex items-center justify-center gap-1.5 rounded-full border border-outline-variant/50 px-space-md py-2 text-sm font-semibold text-primary hover:bg-surface-container-low focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 transition-colors'));
+        actions.appendChild(makeLink('Petunjuk arah', hospital.directions_url, 'near_me', 'min-h-11 inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-space-md py-2 text-sm font-semibold text-on-primary hover:bg-primary-container focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/30 transition-colors'));
+        card.append(top, actions);
+        list.appendChild(card);
+      });
+    }
+
+    async function requestNearbyHospitals(payload) {
+      const response = await fetch('/api/nearby-hospitals/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+        cache: 'no-store',
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Pencarian rumah sakit gagal. Silakan coba lagi.');
+      renderHospitals(data.hospitals || [], data.radius_meters || 30000, data.location_label, data.accuracy_meters);
+    }
+
+    function handleLocationError(error) {
+      loadingEl.classList.add('hidden');
+      findButton.disabled = false;
+      document.getElementById('place-search-button').disabled = false;
+      document.getElementById('find-button-label').textContent = 'Coba lagi';
+      if (error.code === 1) {
+        setError('Izin lokasi tidak diberikan. Aktifkan izin lokasi untuk situs ini di pengaturan browser, lalu coba lagi.');
+      } else if (error.code === 2) {
+        setError('Lokasi Anda tidak dapat ditentukan. Periksa pengaturan lokasi perangkat, lalu coba lagi.');
+      } else if (error.code === 3) {
+        setError('Permintaan lokasi terlalu lama. Coba lagi di area dengan sinyal yang lebih baik.');
+      } else {
+        setError(error.message || 'Gagal mencari rumah sakit. Periksa koneksi internet dan coba lagi.');
+      }
+    }
+
+    function findHospitals() {
+      hideError();
+      resultsEl.classList.add('hidden');
+      if (!window.isSecureContext || !navigator.geolocation) {
+        setError('Akses lokasi membutuhkan koneksi HTTPS yang aman dan dukungan geolokasi dari browser.');
+        return;
+      }
+      findButton.disabled = true;
+      document.getElementById('place-search-button').disabled = true;
+      document.getElementById('find-button-label').textContent = 'Mencari…';
+      loadingEl.classList.remove('hidden');
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          await requestNearbyHospitals({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+          });
+        } catch (error) {
+          setError(error.message || 'Pencarian rumah sakit gagal. Silakan coba lagi.');
+        } finally {
+          loadingEl.classList.add('hidden');
+          findButton.disabled = false;
+          document.getElementById('place-search-button').disabled = false;
+          document.getElementById('find-button-label').textContent = 'Cari lagi';
+        }
+      }, handleLocationError, { enableHighAccuracy: true, timeout: 25000, maximumAge: 0 });
+    }
+
+    document.getElementById('place-search-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const query = document.getElementById('place-query').value.trim();
+      if (query.length < 2) {
+        setError('Masukkan nama tempat atau alamat yang lebih lengkap.');
+        return;
+      }
+      hideError();
+      resultsEl.classList.add('hidden');
+      findButton.disabled = true;
+      document.getElementById('place-search-button').disabled = true;
+      loadingEl.classList.remove('hidden');
+      try {
+        await requestNearbyHospitals({ query });
+      } catch (error) {
+        setError(error.message || 'Pencarian rumah sakit gagal. Silakan coba lagi.');
+      } finally {
+        loadingEl.classList.add('hidden');
+        findButton.disabled = false;
+        document.getElementById('place-search-button').disabled = false;
+      }
+    });
+
+    findButton.addEventListener('click', findHospitals);
+    document.getElementById('search-again').addEventListener('click', findHospitals);
+  </script>
+</body>
+</html>
