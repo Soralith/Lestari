@@ -1,0 +1,300 @@
+/* Lestari design system — calm, clear, and rooted in care. */
+:root {
+  color-scheme: light;
+  --lestari-ink: #1d3028;
+  --lestari-muted: #66766e;
+  --lestari-primary: #176b53;
+  --lestari-primary-strong: #10543f;
+  --lestari-primary-soft: #e2f0e8;
+  --lestari-mint: #d3e9dc;
+  --lestari-canvas: #f5f8f4;
+  --lestari-paper: #ffffff;
+  --lestari-line: #dce6dd;
+  --lestari-sidebar: #edf4ee;
+  --lestari-warm: #f6ebd9;
+  --lestari-danger: #b43c36;
+  --lestari-shadow: 0 18px 48px -30px rgba(27, 64, 47, .34);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { color: var(--lestari-ink); }
+button, input, textarea { font: inherit; }
+button, a, label[for] { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid rgba(23, 107, 83, .42) !important; outline-offset: 3px; }
+::selection { background: #d3e9dc; color: #143e2e; }
+
+/* The authenticated workspace and all its shared Tailwind utility colors. */
+body:not(.lestari-landing):not(.lestari-auth) {
+  min-height: 100vh;
+  background: var(--lestari-canvas) !important;
+  color: var(--lestari-ink) !important;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-bright,
+body:not(.lestari-landing):not(.lestari-auth) .bg-background { background-color: var(--lestari-canvas) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface,
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-container-lowest { background-color: var(--lestari-paper) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-container-low { background-color: var(--lestari-sidebar) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-container { background-color: #e7efe8 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-container-high { background-color: #deeadf !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-surface-container-highest { background-color: #dcebe0 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-secondary-container { background-color: var(--lestari-primary-soft) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-primary { background-color: var(--lestari-primary) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-primary-container { background-color: var(--lestari-primary-strong) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-primary:hover,
+body:not(.lestari-landing):not(.lestari-auth) .bg-primary-container:hover { background-color: var(--lestari-primary-strong) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-secondary { background-color: var(--lestari-primary) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .bg-error-container { background-color: #fbe9e4 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-primary,
+body:not(.lestari-landing):not(.lestari-auth) .text-secondary { color: var(--lestari-primary) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-on-primary { color: #fff !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-on-primary-container { color: #e4f3e9 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-on-secondary-container { color: #195c46 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-on-surface,
+body:not(.lestari-landing):not(.lestari-auth) .text-on-background { color: var(--lestari-ink) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-on-surface-variant { color: #50635a !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-outline { color: #64766d !important; }
+body:not(.lestari-landing):not(.lestari-auth) .text-error { color: var(--lestari-danger) !important; }
+body:not(.lestari-landing):not(.lestari-auth) [class*="border-outline-variant"] { border-color: var(--lestari-line) !important; }
+body:not(.lestari-landing):not(.lestari-auth) [class*="border-primary"] { border-color: var(--lestari-primary) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .hover\:bg-primary-container:hover { background-color: var(--lestari-primary-strong) !important; }
+body:not(.lestari-landing):not(.lestari-auth) .hover\:bg-surface-container:hover { background-color: #e7efe8 !important; }
+body:not(.lestari-landing):not(.lestari-auth) .selection\:bg-secondary-container ::selection { background: #cde7d5; }
+
+/* App frame: quiet navigation, paper-like content, deliberate rhythm. */
+#sidebar {
+  background: var(--lestari-sidebar) !important;
+  border-color: var(--lestari-line) !important;
+  box-shadow: 12px 0 32px -32px rgba(22, 67, 47, .45);
+  view-transition-name: lestari-sidebar;
+}
+#sidebar > div > div:first-child { border-color: #dce7de !important; }
+#sidebar > div > div:first-child img { filter: saturate(.82); }
+#sidebar #btn-new-chat {
+  min-height: 48px;
+  border-radius: 15px !important;
+  background: var(--lestari-primary) !important;
+  box-shadow: 0 8px 18px -12px rgba(17, 84, 63, .7) !important;
+}
+#sidebar #btn-new-chat:hover { background: var(--lestari-primary-strong) !important; transform: translateY(-1px); }
+#sidebar nav a { min-height: 46px; border-radius: 13px !important; }
+#sidebar nav a[class*="bg-surface-container-highest"] {
+  background: #dcebe0 !important;
+  color: var(--lestari-primary-strong) !important;
+  box-shadow: inset 3px 0 0 var(--lestari-primary) !important;
+}
+#sidebar nav a:hover { color: var(--lestari-primary-strong) !important; }
+#sidebar #session-list > * { border-radius: 11px; }
+#session-list a { min-height: 54px; padding-top: 8px; padding-bottom: 8px; }
+#session-list[aria-busy="true"] .session-skeleton { display: grid; gap: 8px; padding: 8px 14px; }
+.session-skeleton span { display: block; height: 8px; border-radius: 999px; background: #dce8de; animation: session-shimmer 1.2s ease-in-out infinite alternate; }
+.session-skeleton span:last-child { width: 58%; height: 6px; opacity: .72; }
+#sidebar [class*="bg-surface-container-lowest"][class*="rounded-2xl"] { box-shadow: 0 4px 14px -12px rgba(29, 63, 44, .4); }
+
+body:not(.lestari-landing):not(.lestari-auth) > div.lg\:pl-72 > header,
+body:not(.lestari-landing):not(.lestari-auth) header.fixed {
+  background: rgba(249, 251, 248, .92) !important;
+  border-color: rgba(220, 230, 221, .92) !important;
+  box-shadow: 0 5px 20px -20px rgba(20, 61, 40, .5);
+  backdrop-filter: blur(18px);
+  view-transition-name: lestari-topbar;
+}
+body:not(.lestari-landing):not(.lestari-auth) main { color: var(--lestari-ink); }
+body:not(.lestari-landing):not(.lestari-auth) .rounded-3xl,
+body:not(.lestari-landing):not(.lestari-auth) .rounded-2xl { border-radius: 22px; }
+body:not(.lestari-landing):not(.lestari-auth) main [class*="shadow-sm"] { box-shadow: 0 6px 20px -17px rgba(22, 62, 40, .5); }
+body:not(.lestari-landing):not(.lestari-auth) main [class*="border-outline-variant"] { border-color: var(--lestari-line) !important; }
+body:not(.lestari-landing):not(.lestari-auth) main button,
+body:not(.lestari-landing):not(.lestari-auth) main a,
+#sidebar button, #sidebar a { transition-duration: 220ms; transition-property: color, background-color, border-color, box-shadow, transform; }
+
+/* Consultation workspace */
+#welcome-view { min-height: calc(100vh - 4rem); }
+#welcome-view > div:first-child { background-image: radial-gradient(ellipse, rgba(203, 231, 211, .55), rgba(241, 248, 240, .05) 68%); }
+#welcome-view h1 { color: var(--lestari-primary-strong) !important; font-size: clamp(2rem, 4vw, 3.15rem); line-height: 1.12; letter-spacing: -.045em; max-width: 720px; }
+#welcome-view > div:nth-child(2) > div:first-child p { font-size: 1rem; color: var(--lestari-muted) !important; }
+#input-card-mount > div,
+#chat-input-dock > div {
+  border: 1px solid #d6e4d8 !important;
+  border-radius: 22px !important;
+  background: #fff !important;
+  box-shadow: 0 20px 42px -30px rgba(24, 77, 49, .42) !important;
+}
+#symptom-input { min-height: 88px; line-height: 1.65; }
+#symptom-input::placeholder { color: #8a9990; }
+#btn-send { min-width: 44px; min-height: 44px; box-shadow: 0 7px 16px -9px rgba(23, 107, 83, .8) !important; }
+#welcome-view button:not(#btn-send) { border-color: #dbe6dc !important; }
+#welcome-view button:not(#btn-send):hover { border-color: #9ec7aa !important; color: var(--lestari-primary-strong) !important; }
+#chat-messages { scroll-behavior: smooth; }
+#chat-view > div:last-child { border-color: var(--lestari-line) !important; background: rgba(247, 250, 246, .94) !important; }
+#chat-messages > div { animation: lestari-message-in 240ms cubic-bezier(.2,.7,.25,1) both; }
+.ai-bubble { background: #fff !important; border-color: #dce6dd !important; }
+.ai-md h3 { color: var(--lestari-primary-strong) !important; }
+.ai-md strong { color: var(--lestari-primary) !important; }
+.ai-md blockquote { background: #eff6ef !important; border-color: var(--lestari-primary) !important; }
+
+/* Utility pages: consistent page titles and content cards. */
+body:not(.lestari-landing):not(.lestari-auth) main > section:first-child h2,
+body:not(.lestari-landing):not(.lestari-auth) main h1 { letter-spacing: -.035em; }
+body:not(.lestari-landing):not(.lestari-auth) main > section:first-child:not(#hospital-results):not(#welcome-view) {
+  box-shadow: var(--lestari-shadow);
+}
+body:not(.lestari-landing):not(.lestari-auth) main > section:first-child:not(#hospital-results):not(#welcome-view) {
+  background-color: #edf5ee !important;
+  background-image: linear-gradient(128deg, #e6f1e7 0%, #f2f7ee 58%, #f7f1e7 100%) !important;
+  border-color: #d9e7da !important;
+}
+body:not(.lestari-landing):not(.lestari-auth) main > section:first-child:not(#hospital-results) h2 { color: var(--lestari-primary-strong) !important; }
+#artikel-list > a { animation: lestari-card-in 320ms cubic-bezier(.2,.7,.25,1) both; }
+#artikel-list > a:hover, #hospital-list > div[class*="rounded-2xl"]:hover,
+#catatan-list > div[class*="rounded-2xl"]:hover { transform: translateY(-2px); box-shadow: 0 15px 30px -24px rgba(25, 77, 48, .52); }
+#hospital-list > div[class*="rounded-2xl"] { transition: transform 220ms ease, box-shadow 220ms ease; }
+#catatan-list > div[class*="rounded-2xl"] { transition: transform 220ms ease, box-shadow 220ms ease; }
+#hospital-results > div:first-child { padding-inline: 4px; }
+#hospital-results #location-summary { background: #edf5ee !important; }
+#cuaca-content > div:first-child {
+  background: linear-gradient(135deg, #e4f2e7 0%, #f3f8ec 56%, #f6ebd9 100%) !important;
+  border-color: #d7e7d9 !important;
+  box-shadow: var(--lestari-shadow) !important;
+}
+#cur-temp { color: var(--lestari-primary-strong) !important; }
+#catatan-empty, #artikel-loading, #cuaca-loading { color: var(--lestari-muted); }
+#profile-modal { background: rgba(19, 36, 27, .48) !important; }
+#profile-modal > div { border-color: var(--lestari-line) !important; box-shadow: 0 28px 90px -36px rgba(14, 47, 31, .5) !important; }
+#profile-modal button, #profile-modal label { min-height: 42px; }
+
+/* Public home */
+body.lestari-landing {
+  --lestari-ink: #1d3028;
+  --lestari-muted: #65766c;
+  --lestari-primary: #176b53;
+  --lestari-primary-strong: #10543f;
+  --lestari-paper: #fff;
+  color: var(--lestari-ink) !important;
+  background: #f7f9f5 !important;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+body.lestari-landing > header {
+  background: rgba(248, 250, 247, .91) !important;
+  border-bottom: 1px solid rgba(220, 230, 221, .85) !important;
+  box-shadow: 0 8px 30px -28px rgba(21, 60, 39, .55);
+}
+body.lestari-landing > header nav { min-height: 76px; }
+body.lestari-landing > header nav > a img { height: 38px; }
+body.lestari-landing .nav-pill { color: #5b6d62; padding: 10px 15px; }
+body.lestari-landing .nav-pill:hover { color: var(--lestari-primary-strong); background: #e8f2e9; }
+body.lestari-landing .text-slate-900 { color: var(--lestari-ink) !important; }
+body.lestari-landing .text-slate-600 { color: #52645a !important; }
+body.lestari-landing .text-slate-500 { color: #65766c !important; }
+body.lestari-landing .text-slate-400 { color: #75847a !important; }
+body.lestari-landing [class*="bg-[#003380]"] { background: var(--lestari-primary) !important; }
+body.lestari-landing [class*="text-[#003380]"] { color: var(--lestari-primary-strong) !important; }
+body.lestari-landing [class*="hover:bg-[#0e4494]"]:hover { background: var(--lestari-primary-strong) !important; }
+body.lestari-landing .hero-slide h1 { letter-spacing: -.055em; text-wrap: balance; text-shadow: 0 3px 26px rgba(12, 43, 31, .16); }
+body.lestari-landing #top > div {
+  height: min(650px, calc(100svh - 112px)) !important;
+  min-height: 490px;
+  border-radius: 30px;
+  box-shadow: 0 30px 80px -48px rgba(15, 54, 39, .65);
+}
+body.lestari-landing .hero-slide > img { filter: saturate(.83); }
+body.lestari-landing .hero-slide > div:nth-child(2) { background: linear-gradient(90deg, rgba(13, 54, 40, .88) 0%, rgba(18, 70, 49, .55) 49%, rgba(18, 62, 44, .06) 100%) !important; }
+body.lestari-landing .hero-slide .eyebrow { color: rgba(255,255,255,.72); }
+body.lestari-landing .hero-dot { min-width: 9px; min-height: 9px; }
+body.lestari-landing .hero-nav { width: 46px; height: 46px; }
+body.lestari-landing #top .bottom-0.right-0 > div { background: rgba(250, 252, 248, .95) !important; }
+body.lestari-landing #top .bottom-0.right-0 p:first-child { color: var(--lestari-primary-strong); }
+body.lestari-landing .eyebrow { color: #788a7d; }
+body.lestari-landing section:not(#top) { scroll-margin-top: 88px; }
+body.lestari-landing section:not(#top) h2 { letter-spacing: -.045em; text-wrap: balance; }
+body.lestari-landing #features { background: #e9f1e8 !important; }
+body.lestari-landing .feat-card {
+  border-color: #dbe6db;
+  border-radius: 22px;
+  padding: 30px;
+  box-shadow: 0 10px 28px -26px rgba(20, 60, 39, .45);
+}
+body.lestari-landing .feat-card:hover { border-color: #b6d0bb; box-shadow: 0 22px 45px -30px rgba(18, 72, 47, .48); transform: translateY(-3px); }
+body.lestari-landing .feat-icon { background: var(--lestari-primary); border-radius: 15px; }
+body.lestari-landing .cat-tile { border-color: #dce7dc; border-radius: 19px; }
+body.lestari-landing .cat-tile::before { background: var(--lestari-primary); }
+body.lestari-landing #store img { filter: saturate(.84); }
+body.lestari-landing section.bg-\[\#003380\] { background: var(--lestari-primary-strong) !important; }
+body.lestari-landing #cat-card { border: 1px solid var(--lestari-line); border-radius: 24px; }
+body.lestari-landing .reveal { transition-duration: 420ms; }
+body.lestari-landing .feat-card, body.lestari-landing .cat-tile { transition-duration: 240ms; }
+
+/* Sign-in and registration */
+body.lestari-auth {
+  background: radial-gradient(ellipse at 50% 12%, #e1f0e4 0%, #f6f9f4 48%, #f1f6f0 100%) !important;
+  color: var(--lestari-ink) !important;
+}
+body.lestari-auth > div.absolute:first-of-type { background: radial-gradient(ellipse, rgba(186, 222, 194, .66), rgba(239, 247, 238, .2)) !important; }
+body.lestari-auth > div.absolute:nth-of-type(2) { background: radial-gradient(ellipse, rgba(245, 225, 190, .45), rgba(245, 248, 243, .12)) !important; }
+body.lestari-auth .max-w-\[420px\] > div:first-child > div {
+  border-color: #dce8dc !important;
+  box-shadow: 0 14px 38px -30px rgba(23, 81, 51, .46) !important;
+}
+body.lestari-auth .max-w-\[420px\] > div:last-child {
+  border: 1px solid #dce7dc !important;
+  border-radius: 25px !important;
+  background: rgba(255,255,255,.91) !important;
+  box-shadow: 0 30px 80px -48px rgba(20, 65, 43, .44) !important;
+}
+body.lestari-auth .bg-surface-bright { background: #f5f8f4 !important; }
+body.lestari-auth .bg-surface-container-lowest { background: #fff !important; }
+body.lestari-auth .bg-surface-container-low { background: #edf4ee !important; }
+body.lestari-auth .bg-surface-container { background: #e7efe8 !important; }
+body.lestari-auth .bg-secondary-container { background: #e2f0e8 !important; }
+body.lestari-auth .bg-primary { background: var(--lestari-primary) !important; }
+body.lestari-auth .bg-primary-container { background: var(--lestari-primary-strong) !important; }
+body.lestari-auth .bg-primary:hover { background: var(--lestari-primary-strong) !important; }
+body.lestari-auth .text-primary, body.lestari-auth .text-secondary { color: var(--lestari-primary) !important; }
+body.lestari-auth .text-on-surface { color: var(--lestari-ink) !important; }
+body.lestari-auth .text-on-surface-variant { color: #50635a !important; }
+body.lestari-auth .text-outline { color: #64766d !important; }
+body.lestari-auth [class*="border-outline-variant"] { border-color: var(--lestari-line) !important; }
+body.lestari-auth input { min-height: 44px; }
+
+/* Small-screen and motion preferences */
+@media (max-width: 767px) {
+  body.lestari-landing > header nav { min-height: 66px; }
+  body.lestari-landing #top { padding-inline: 16px; padding-top: 12px; }
+  body.lestari-landing #top > div { min-height: 580px; height: min(680px, calc(100svh - 86px)) !important; border-radius: 23px; }
+  body.lestari-landing .hero-slide > div:last-of-type { padding: 30px 25px 36px !important; }
+  body.lestari-landing .hero-slide h1 { font-size: clamp(2.5rem, 11vw, 4rem); }
+  body.lestari-landing #top .bottom-0.right-0 { display: none !important; }
+  body.lestari-landing section:not(#top) { padding-block: 64px; }
+  body.lestari-landing .feat-card { padding: 24px; }
+  body.lestari-landing .stat-cell { padding: 16px 8px; }
+  body:not(.lestari-landing):not(.lestari-auth) main { padding-left: 16px; padding-right: 16px; }
+  #welcome-view { padding-top: 28px; padding-bottom: 22px; }
+  #welcome-view h1 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  #sidebar { width: min(19rem, calc(100vw - 36px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  body.lestari-landing .reveal { opacity: 1; transform: none; }
+  ::view-transition-old(root), ::view-transition-new(root),
+  ::view-transition-old(lestari-sidebar), ::view-transition-new(lestari-sidebar),
+  ::view-transition-old(lestari-topbar), ::view-transition-new(lestari-topbar) { animation: none !important; }
+}
+
+@keyframes lestari-message-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lestari-card-in {
+  from { opacity: 0; transform: translateY(9px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes session-shimmer { to { opacity: .38; } }
+
+@view-transition { navigation: auto; }
+::view-transition-group(root),
+::view-transition-group(lestari-sidebar),
+::view-transition-group(lestari-topbar),
+::view-transition-old(root), ::view-transition-new(root),
+::view-transition-old(lestari-sidebar), ::view-transition-new(lestari-sidebar),
+::view-transition-old(lestari-topbar), ::view-transition-new(lestari-topbar) { animation: none; }

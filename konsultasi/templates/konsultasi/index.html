@@ -134,6 +134,7 @@
       }
     }
   </script>
+  <link href="{% static 'lestari.css' %}" rel="stylesheet" />
 </head>
 
 <body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
@@ -201,15 +202,15 @@
             </p>
             <div class="flex flex-wrap items-center justify-center gap-space-xs">
               <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Sudah lebih dari 2 hari demam naik turun disertai meriang dan nyeri sendi')" type="button">
-                <span class="w-6 h-6 rounded-full bg-error-container/60 flex items-center justify-center text-on-error-container text-[12px]">🌡️</span>
+                <span class="w-6 h-6 rounded-full bg-error-container/60 flex items-center justify-center text-on-error-container"><span class="material-symbols-outlined text-[16px]">device_thermostat</span></span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Demam &amp; Meriang &gt; 2 Hari</span>
               </button>
               <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Dada terasa panas seperti terbakar menjalar ke tenggorokan dan perut kembung (GERD)')" type="button">
-                <span class="w-6 h-6 rounded-full bg-secondary-container/60 flex items-center justify-center text-on-secondary-container text-[12px]">🫀</span>
+                <span class="w-6 h-6 rounded-full bg-secondary-container/60 flex items-center justify-center text-on-secondary-container"><span class="material-symbols-outlined text-[16px]">cardiology</span></span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Dada Sesak &amp; Asam Lambung Naik</span>
               </button>
               <button class="group flex items-center gap-space-xs px-space-md py-2 bg-surface-container-lowest hover:bg-surface-container border border-outline-variant/30 rounded-full shadow-sm transition-all active:scale-95" onclick="applyQuickPrompt('Bolehkah mengonsumsi Paracetamol bersamaan dengan antibiotik Amoxicillin?')" type="button">
-                <span class="w-6 h-6 rounded-full bg-tertiary-fixed/60 flex items-center justify-center text-on-tertiary-fixed text-[12px]">💊</span>
+                <span class="w-6 h-6 rounded-full bg-tertiary-fixed/60 flex items-center justify-center text-on-tertiary-fixed"><span class="material-symbols-outlined text-[16px]">medication</span></span>
                 <span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Cek Interaksi Obat &amp; Dosis</span>
               </button>
             </div>
@@ -439,13 +440,13 @@
         }
         wrap.appendChild(bubble);
       } else {
-        const bubbleColor = isEmergency ? 'bg-error-container border border-error/30' : 'bg-surface-container-lowest border border-outline-variant/30';
+        const bubbleColor = 'bg-surface-container-lowest border border-outline-variant/30';
         wrap.className = 'flex items-start gap-space-sm';
         wrap.innerHTML = `
-          <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex items-center justify-center shrink-0 mt-1 overflow-hidden ${isEmergency ? 'ring-2 ring-error' : ''}">
+          <span class="w-8 h-8 rounded-full bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex items-center justify-center shrink-0 mt-1 overflow-hidden">
             <img src="{% static 'images/LestariLogo.png' %}" alt="Lestari AI" class="w-full h-full object-contain p-1" />
           </span>
-          <div class="ai-bubble max-w-[85%] ${bubbleColor} rounded-2xl rounded-tl-md px-space-md py-space-sm font-body-md text-body-md text-on-surface shadow-sm">
+          <div class="ai-bubble max-w-[85%] ${bubbleColor} rounded-2xl rounded-tl-md px-space-md py-space-sm font-body-md text-body-md text-on-surface shadow-sm" ${isEmergency ? 'role="alert"' : ''}>
             <div class="ai-md"></div>
           </div>`;
         wrap.querySelector('.ai-md').innerHTML = renderMarkdown(content);
@@ -528,7 +529,7 @@
           if (data.note_created) {
             showToast('Catatan kesehatan berhasil disimpan. Buka halaman Catatan Kesehatan untuk membaca atau mengunduhnya sebagai PDF.');
           }
-          loadSessions();
+          loadSessions({ force: true });
         }
       } catch (err) {
         hideTypingIndicator();
@@ -544,34 +545,8 @@
     }
 
     // ============ Sessions Sidebar ============
-    async function loadSessions() {
-      const listEl = document.getElementById('session-list');
-      try {
-        const resp = await fetch('/api/sessions/');
-        const data = await resp.json();
-        if (!data.sessions.length) {
-          listEl.innerHTML = '<p class="px-space-md font-body-sm text-body-sm text-outline">Belum ada sesi</p>';
-          return;
-        }
-        listEl.innerHTML = data.sessions.map(s => `
-          <div class="group relative flex items-center rounded-xl hover:bg-surface-container transition-all">
-            <a class="flex-1 min-w-0 block px-space-md py-2 rounded-xl text-on-surface-variant hover:text-on-surface transition-all cursor-pointer" data-session-id="${s.id}" href="#">
-              <p class="font-body-md text-body-md font-medium truncate">${escapeHtml(s.title)}</p>
-              <span class="font-label-sm text-label-sm text-outline">${new Date(s.updated_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-            </a>
-            <button type="button" class="shrink-0 mr-1 w-7 h-7 rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container/60 flex items-center justify-center opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all active:scale-95" data-delete-session="${s.id}" title="Hapus Sesi">
-              <span class="material-symbols-outlined text-[18px]">delete</span>
-            </button>
-          </div>`).join('');
-        listEl.querySelectorAll('[data-session-id]').forEach(a => {
-          a.addEventListener('click', (e) => { e.preventDefault(); showSession(Number(a.dataset.sessionId)); });
-        });
-        listEl.querySelectorAll('[data-delete-session]').forEach(btn => {
-          btn.addEventListener('click', (e) => { e.stopPropagation(); deleteSession(Number(btn.dataset.deleteSession)); });
-        });
-      } catch {
-        listEl.innerHTML = '<p class="px-space-md font-body-sm text-body-sm text-outline">Gagal memuat sesi</p>';
-      }
+    function loadSessions(options = {}) {
+      return window.LestariSessions?.refresh(options);
     }
 
     async function deleteSession(sessionId, { fromChat = false } = {}) {
@@ -587,7 +562,7 @@
           history.replaceState({}, '', '/konsultasi/');
           showWelcome({ push: false });
         }
-        loadSessions();
+        loadSessions({ force: true });
       } catch {
         alert('Gagal menghapus sesi. Silakan coba lagi.');
       }
@@ -675,6 +650,12 @@
 
     // Dynamic Delegation Events
     document.addEventListener('click', (e) => {
+      const sessionLink = e.target.closest('#session-list [data-session-id]');
+      if (sessionLink) { e.preventDefault(); showSession(Number(sessionLink.dataset.sessionId)); return; }
+
+      const sessionDelete = e.target.closest('#session-list [data-delete-session]');
+      if (sessionDelete) { e.preventDefault(); deleteSession(Number(sessionDelete.dataset.deleteSession)); return; }
+
       const sendBtn = e.target.closest('#btn-send');
       if (sendBtn) { dispatchConsultation(); return; }
 

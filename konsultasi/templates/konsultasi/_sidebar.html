@@ -53,8 +53,8 @@
           <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">Sesi Terakhir</span>
           <span class="material-symbols-outlined text-[16px] text-outline">history</span>
         </div>
-        <div id="session-list" class="space-y-1">
-          <p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline animate-pulse">Memuat sesi…</p>
+        <div id="session-list" class="space-y-1" aria-live="polite" aria-busy="true">
+          <div class="session-skeleton" aria-hidden="true"><span></span><span></span></div>
         </div>
       </div>
     </div>
@@ -83,6 +83,8 @@
 
   </div>
 </aside>
+
+<script src="{% static 'lestari-navigation.js' %}"></script>
 
 <!-- Sidebar Backdrop -->
 <div id="sidebar-backdrop" onclick="closeSidebar()" class="hidden fixed inset-0 z-[35] bg-on-surface/30 backdrop-blur-sm lg:hidden transition-opacity"></div>

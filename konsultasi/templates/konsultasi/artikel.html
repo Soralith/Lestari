@@ -108,6 +108,7 @@
       }
     }
   </script>
+  <link href="{% static 'lestari.css' %}" rel="stylesheet" />
 </head>
 
 <body class="bg-surface-bright font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-container">
@@ -395,23 +396,8 @@
     });
 
     // ============ Sesi Terakhir ============
-    async function loadSessions() {
-      const listEl = document.getElementById('session-list');
-      try {
-        const resp = await fetch('/api/sessions/');
-        const data = await resp.json();
-        if (!data.sessions.length) {
-          listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Belum ada sesi</p>';
-          return;
-        }
-        listEl.innerHTML = data.sessions.slice(0, 8).map(s => `
-          <a class="block px-space-md py-2 rounded-xl text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all active:scale-[0.98]" href="/konsultasi/${s.id}/">
-            <p class="font-body-md text-body-md font-medium truncate">${escapeHtml(s.title)}</p>
-            <span class="font-label-sm text-label-sm text-outline">${new Date(s.updated_at).toLocaleString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
-          </a>`).join('');
-      } catch {
-        listEl.innerHTML = '<p class="px-space-md py-space-xs font-body-sm text-body-sm text-outline">Gagal memuat sesi</p>';
-      }
+    function loadSessions(options = {}) {
+      return window.LestariSessions?.refresh(options);
     }
 
     // ============ Init ============

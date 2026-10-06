@@ -13,13 +13,6 @@
       body { font-family: "Plus Jakarta Sans", sans-serif; background: #F7F9FC; color: #0f172a; }
       ::-webkit-scrollbar { width: 0; }
 
-      /* ── Page wipe ── */
-      .page-wipe { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(circle at center, #0e4494 0%, #003380 100%); clip-path: circle(0% at 50% 50%); visibility: hidden; pointer-events: none; }
-      .page-wipe.active { visibility: visible; animation: wipe-in 750ms cubic-bezier(0.65,0,0.35,1) forwards; }
-      @keyframes wipe-in { to { clip-path: circle(150% at 50% 50%); } }
-      .page-exit { animation: page-exit 650ms cubic-bezier(0.4,0,1,1) forwards; pointer-events: none; }
-      @keyframes page-exit { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(1.05); } }
-
       /* ── Nav ── */
       .nav-pill { position: relative; font-size: 14px; font-weight: 600; color: #64748b; padding: 6px 14px; border-radius: 999px; transition: all 200ms; }
       .nav-pill:hover { color: #0f172a; background: rgba(14,68,148,0.07); }
@@ -111,8 +104,9 @@
       /* ── Sticky nav glow ── */
       header { background: rgba(247,249,252,.92); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(226,232,240,.7); }
     </style>
+    <link href="{% static 'lestari.css' %}" rel="stylesheet" />
   </head>
-  <body class="antialiased overflow-x-hidden">
+  <body class="lestari-landing antialiased overflow-x-hidden">
 
     <!-- ═══════════ NAVBAR ═══════════ -->
     <header class="sticky top-0 z-40">
@@ -226,8 +220,8 @@
         </div>
 
         <!-- Nav prev/next -->
-        <button id="hero-prev" aria-label="Previous" class="hero-nav absolute left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
-        <button id="hero-next" aria-label="Next" class="hero-nav absolute right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+        <button id="hero-prev" aria-label="Slide sebelumnya" class="hero-nav absolute left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+        <button id="hero-next" aria-label="Slide berikutnya" class="hero-nav absolute right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
 
         <!-- Dots -->
         <div class="absolute top-6 right-8 flex items-center gap-2 z-20">
@@ -449,9 +443,6 @@
       </div>
     </div>
 
-    <!-- Transition overlay -->
-    <div id="page-wipe" class="page-wipe" aria-hidden="true"></div>
-
     <script>
       lucide.createIcons();
 
@@ -465,25 +456,14 @@
           slides.forEach((s,j) => s.classList.toggle('active', j===cur));
           dots.forEach((d,j) => d.classList.toggle('active', j===cur));
         }
-        function startAuto(){ timer = setInterval(() => goTo(cur+1), 5000); }
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function startAuto(){ if (!reduceMotion) timer = setInterval(() => goTo(cur+1), 5000); }
         dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.goto)));
         document.getElementById('hero-prev').addEventListener('click', () => goTo(cur-1));
         document.getElementById('hero-next').addEventListener('click', () => goTo(cur+1));
         goTo(0); startAuto();
         document.addEventListener('visibilitychange', () => { if(document.visibilityState==='visible'){ clearInterval(timer); startAuto(); } });
       })();
-
-      /* ─── Page wipe ─── */
-      var wipe = document.getElementById('page-wipe');
-      document.querySelectorAll('a[href="/login/"], a[href="/signup/"], a[href="/konsultasi/"]').forEach(link => {
-        link.addEventListener('click', e => {
-          e.preventDefault();
-          var target = link.getAttribute('href');
-          document.body.classList.add('page-exit');
-          wipe.classList.add('active');
-          setTimeout(() => window.location.href = target, 720);
-        });
-      });
 
       /* ─── Smooth scroll ─── */
       document.querySelectorAll('a[href^="#"]').forEach(a => {
