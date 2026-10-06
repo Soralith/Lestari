@@ -82,8 +82,9 @@ body:not(.lestari-landing):not(.lestari-auth) .selection\:bg-secondary-container
 #sidebar nav a[class*="bg-surface-container-highest"] {
   background: #dcebe0 !important;
   color: var(--lestari-primary-strong) !important;
-  box-shadow: inset 3px 0 0 var(--lestari-primary) !important;
+  box-shadow: none !important;
 }
+#sidebar nav a[class*="bg-surface-container-highest"] .material-symbols-outlined { color: var(--lestari-primary-strong) !important; }
 #sidebar nav a:hover { color: var(--lestari-primary-strong) !important; }
 #sidebar #session-list > * { border-radius: 11px; }
 #session-list a { min-height: 54px; padding-top: 8px; padding-bottom: 8px; }
