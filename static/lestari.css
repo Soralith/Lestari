@@ -127,7 +127,45 @@ body:not(.lestari-landing):not(.lestari-auth) main a,
 #welcome-view button:not(#btn-send) { border-color: #dbe6dc !important; }
 #welcome-view button:not(#btn-send):hover { border-color: #9ec7aa !important; color: var(--lestari-primary-strong) !important; }
 #chat-messages { scroll-behavior: smooth; }
-#chat-view > div:last-child { border-color: var(--lestari-line) !important; background: rgba(247, 250, 246, .94) !important; }
+#chat-view { position: relative; }
+#chat-view > div:last-child {
+  position: absolute;
+  z-index: 10;
+  inset: auto 0 0;
+  padding: 12px 0 max(12px, env(safe-area-inset-bottom)) !important;
+  border: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+#chat-view > div:last-child > div { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 16px !important; pointer-events: auto; }
+#chat-input-dock > div {
+  padding: 10px 12px !important;
+  border: 1px solid #e2eae1 !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, .98) !important;
+  box-shadow: 0 16px 38px -22px rgba(24, 66, 43, .38), 0 3px 12px -8px rgba(24, 66, 43, .2) !important;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+#chat-input-dock > div:focus-within {
+  border-color: #a5bda7 !important;
+  box-shadow: 0 0 0 3px rgba(97, 134, 104, .09), 0 16px 38px -22px rgba(24, 66, 43, .38) !important;
+}
+#chat-input-dock #symptom-input { min-height: 52px; max-height: 128px; padding: 6px 4px; line-height: 1.55; }
+#chat-input-dock #symptom-input:focus-visible { outline: 0 !important; }
+#chat-input-dock #composer-enter-hint { display: none !important; }
+#chat-input-dock > div > div:last-child { margin-top: 5px; padding-top: 0 !important; border-top: 0 !important; }
+#chat-input-dock label[for="image-input"] {
+  min-width: 44px; min-height: 44px; justify-content: center;
+  padding: 0 !important; border: 0 !important; border-radius: 11px !important;
+  color: #7b8b80 !important; background: transparent !important;
+}
+#chat-input-dock label[for="image-input"]:hover { color: var(--lestari-primary) !important; background: #eff5ef !important; }
+#chat-input-dock label[for="image-input"] .material-symbols-outlined { font-size: 20px !important; }
+#chat-input-dock label[for="image-input"] .font-label-md { display: none !important; }
+#chat-input-dock #btn-send { width: 44px; height: 44px; min-width: 44px; min-height: 44px; border-radius: 12px !important; box-shadow: none !important; }
+#chat-input-dock #btn-send:disabled { color: #9eaaa0 !important; background: #eef1ed !important; opacity: 1 !important; }
+#chat-messages { padding-bottom: 190px !important; }
 #chat-messages > div { animation: lestari-message-in 240ms cubic-bezier(.2,.7,.25,1) both; }
 .ai-bubble { background: #fff !important; border-color: #dce6dd !important; }
 .ai-md h3 { color: var(--lestari-primary-strong) !important; }
@@ -271,6 +309,8 @@ body.lestari-auth input { min-height: 44px; }
   body:not(.lestari-landing):not(.lestari-auth) main { padding-left: 16px; padding-right: 16px; }
   #welcome-view { padding-top: 28px; padding-bottom: 22px; }
   #welcome-view h1 { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  #chat-input-dock > div { padding: 9px !important; border-radius: 16px !important; }
+  #chat-messages { padding-bottom: 198px !important; }
   #sidebar { width: min(19rem, calc(100vw - 36px)); }
 }
 @media (prefers-reduced-motion: reduce) {

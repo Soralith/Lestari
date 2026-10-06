@@ -277,7 +277,7 @@
         </div>
 
         <div class="flex items-center gap-space-xs">
-          <span class="hidden md:inline font-label-sm text-label-sm text-outline">Tekan Enter ↵</span>
+          <span id="composer-enter-hint" class="hidden md:inline font-label-sm text-label-sm text-outline">Tekan Enter ↵</span>
           <button class="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-on-primary hover:bg-primary-container active:scale-95 transition-all shadow-md disabled:opacity-50" id="btn-send" title="Kirim Keluhan ke AI" type="button">
             <span class="material-symbols-outlined text-[20px]" id="send-icon">arrow_upward</span>
           </button>
@@ -357,6 +357,7 @@
       chatView.classList.add('flex');
       chatInputDock.appendChild(inputCard);
       getEl('symptom-input').rows = 2;
+      getEl('symptom-input').placeholder = 'Tulis pesan lanjutan…';
       window.scrollTo(0, 0);
     }
 
@@ -366,6 +367,7 @@
       welcomeView.classList.remove('hidden');
       document.getElementById('input-card-mount').appendChild(inputCard);
       getEl('symptom-input').rows = 3;
+      getEl('symptom-input').placeholder = "Ceritakan keluhan Anda (misal: 'Sudah 3 hari pusing berputar disertai mual saat bangun tidur...')";
       sessionTitleEl.classList.add('hidden');
       document.getElementById('btn-delete-session').classList.add('hidden');
       chatMessages.innerHTML = '';
