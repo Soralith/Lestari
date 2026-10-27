@@ -1,0 +1,14 @@
+.env
+.env.*
+.env*
+BACKUP_DONTOPENANDEDIT/
+main/
+.venv/
+venv/
+env/
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+__pycache__/
+*.py[cod]
+*.egg-info/

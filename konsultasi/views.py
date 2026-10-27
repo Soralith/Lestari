@@ -1,6 +1,7 @@
 import json
 import math
 
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -199,7 +200,11 @@ def cuaca_page(request):
 @ensure_csrf_cookie
 def rumah_sakit_page(request):
     """Nearby hospital finder page (/rumah-sakit/)."""
-    return render(request, "konsultasi/rumah_sakit.html")
+    return render(
+        request,
+        "konsultasi/rumah_sakit.html",
+        {"geoapify_enabled": bool(settings.GEOAPIFY_API_KEY)},
+    )
 
 
 @login_required
@@ -271,7 +276,12 @@ def api_nearby_hospitals(request):
             )
         if not place:
             return JsonResponse(
-                {"error": "Lokasi tidak ditemukan. Coba masukkan nama tempat atau alamat yang lebih lengkap."},
+                {
+                    "error": (
+                        "Lokasi tidak ditemukan. Coba masukkan nama tempat atau "
+                        "alamat yang lebih lengkap, atau gunakan lokasi saya."
+                    )
+                },
                 status=404,
             )
         latitude = place["latitude"]
@@ -323,11 +333,33 @@ def api_nearby_hospitals(request):
     })
 
 
+def _parse_device_location(raw_latitude, raw_longitude):
+    """Validate optional browser coordinates sent with a chat message."""
+    if raw_latitude in (None, "") and raw_longitude in (None, ""):
+        return None
+    if isinstance(raw_latitude, bool) or isinstance(raw_longitude, bool):
+        raise ValueError("invalid coordinates")
+    try:
+        latitude = float(raw_latitude)
+        longitude = float(raw_longitude)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("invalid coordinates") from exc
+    if (
+        not math.isfinite(latitude)
+        or not math.isfinite(longitude)
+        or not -90 <= latitude <= 90
+        or not -180 <= longitude <= 180
+    ):
+        raise ValueError("invalid coordinates")
+    return {"latitude": latitude, "longitude": longitude}
+
+
 @login_required
 @require_POST
 def api_send_message(request):
     """Receive a user prompt (and optional image), consult Gemini, persist, and return the reply."""
     image = None
+    raw_latitude = raw_longitude = None
 
     if request.content_type == "application/json":
         try:
@@ -337,10 +369,14 @@ def api_send_message(request):
         message = (payload.get("message") or "").strip()
         mode = payload.get("mode") or DEFAULT_MODE
         session_id = payload.get("session_id")
+        raw_latitude = payload.get("latitude")
+        raw_longitude = payload.get("longitude")
     else:
         message = (request.POST.get("message") or "").strip()
         mode = request.POST.get("mode") or DEFAULT_MODE
         session_id = request.POST.get("session_id")
+        raw_latitude = request.POST.get("latitude")
+        raw_longitude = request.POST.get("longitude")
         upload = request.FILES.get("image")
         if upload:
             content_type = getattr(upload, "content_type", "") or ""
@@ -354,6 +390,11 @@ def api_send_message(request):
         return JsonResponse({"error": "Pesan tidak boleh kosong."}, status=400)
     if mode not in VALID_MODES:
         mode = DEFAULT_MODE
+
+    try:
+        device_location = _parse_device_location(raw_latitude, raw_longitude)
+    except ValueError:
+        return JsonResponse({"error": "Koordinat lokasi tidak valid."}, status=400)
 
     # Persist the attached image to storage so it can be shown in chat history.
     image_url = ""
@@ -388,6 +429,7 @@ def api_send_message(request):
         image=image,
         user=request.user,
         session=session,
+        device_location=device_location,
     )
 
     ai_msg = ConsultationMessage.objects.create(

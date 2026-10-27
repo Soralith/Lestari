@@ -31,3 +31,5 @@ BACKUP_DONTOPENANDEDIT/
 
 # uv
 uv.lock
+.vercel
+.env*

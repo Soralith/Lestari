@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import ConsultationMessage, ConsultationSession, HealthNote, Profile
+from .models import (
+    ConsultationMessage,
+    ConsultationSession,
+    GeocodeCache,
+    HealthNote,
+    HospitalSearchCache,
+    Profile,
+)
 
 
 @admin.register(Profile)
@@ -21,3 +28,13 @@ class ConsultationMessageAdmin(admin.ModelAdmin):
 @admin.register(HealthNote)
 class HealthNoteAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "title", "session", "created_at", "updated_at")
+
+
+@admin.register(GeocodeCache)
+class GeocodeCacheAdmin(admin.ModelAdmin):
+    list_display = ("query", "fetched_at")
+
+
+@admin.register(HospitalSearchCache)
+class HospitalSearchCacheAdmin(admin.ModelAdmin):
+    list_display = ("area", "fetched_at")

@@ -72,14 +72,14 @@
             <span class="material-symbols-outlined text-[20px]" aria-hidden="true">my_location</span>
             <span id="find-button-label">Gunakan lokasi saya</span>
           </button>
-          <p class="mt-space-sm text-sm text-on-surface-variant">Koordinat dikirim sementara ke OpenStreetMap untuk pencarian dan tidak disimpan oleh Lestari. Browser akan meminta izin Anda.</p>
+          <p class="mt-space-sm text-sm text-on-surface-variant">Koordinat dikirim sementara ke layanan peta (OpenStreetMap{% if geoapify_enabled %} dan Geoapify{% endif %}) untuk pencarian dan tidak disimpan oleh Lestari. Browser akan meminta izin Anda.</p>
         </div>
         <span class="material-symbols-outlined absolute -right-8 -bottom-12 text-primary/10 text-[220px] pointer-events-none" aria-hidden="true">location_on</span>
       </section>
 
       <section class="mt-space-md rounded-2xl bg-surface-container-lowest border border-outline-variant/30 p-space-md md:p-space-lg">
         <h2 class="font-title-md text-title-md text-on-surface font-bold">Lokasi perangkat kurang tepat?</h2>
-        <p class="mt-1 text-sm text-on-surface-variant">Cari rumah sakit berdasarkan nama tempat atau alamat, misalnya “SMKN 11 Bandung”. Pencarian alamat juga diproses oleh OpenStreetMap.</p>
+        <p class="mt-1 text-sm text-on-surface-variant">Cari rumah sakit berdasarkan nama tempat atau alamat, misalnya “SMKN 11 Bandung”. Pencarian alamat diproses oleh OpenStreetMap{% if geoapify_enabled %} dan Geoapify{% endif %}.</p>
         <form id="place-search-form" class="mt-space-sm flex flex-col sm:flex-row gap-space-xs">
           <label class="sr-only" for="place-query">Nama tempat atau alamat</label>
           <input id="place-query" name="query" type="search" maxlength="200" autocomplete="street-address" placeholder="Nama tempat atau alamat" class="min-h-11 flex-1 min-w-0 rounded-xl border border-outline-variant/60 bg-white px-space-md py-2 text-base text-on-surface placeholder:text-outline focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 focus:border-primary" />
@@ -116,7 +116,8 @@
 
       <div class="mt-space-xl rounded-2xl border border-outline-variant/30 bg-surface-container-lowest p-space-md flex items-start gap-space-xs">
         <span class="material-symbols-outlined text-secondary" aria-hidden="true">info</span>
-        <p class="text-sm leading-relaxed text-on-surface-variant">Jarak yang ditampilkan adalah perkiraan garis lurus, bukan waktu tempuh. Data rumah sakit berasal dari <a class="font-semibold text-primary underline underline-offset-2" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> dan bisa belum lengkap atau terbaru. Hubungi rumah sakit untuk memastikan layanan tersedia. Jika kondisi darurat, hubungi <a class="font-bold text-error underline underline-offset-2" href="tel:119">119</a>.</p>
+        <p class="text-sm leading-relaxed text-on-surface-variant">Jarak yang ditampilkan adalah perkiraan garis lurus, bukan waktu tempuh. Data rumah sakit berasal dari <a class="font-semibold text-primary underline underline-offset-2" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>{% if geoapify_enabled %} dengan dukungan <a class="font-semibold text-primary underline underline-offset-2" href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>{% endif %} dan bisa belum lengkap atau terbaru. Hubungi rumah sakit untuk memastikan layanan tersedia. Jika kondisi darurat, hubungi <a class="font-bold text-error underline underline-offset-2" href="tel:119">119</a>.</p>
+        {% if geoapify_enabled %}<p class="mt-1 text-sm leading-relaxed text-on-surface-variant">Powered by <a class="font-semibold text-primary underline underline-offset-2" href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">Geoapify</a>.</p>{% endif %}
       </div>
     </main>
   </div>

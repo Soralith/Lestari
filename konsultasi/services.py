@@ -7,6 +7,7 @@ based, in Bahasa Indonesia (or the user's language).
 """
 
 import logging
+import math
 
 from dotenv import load_dotenv
 
@@ -15,6 +16,12 @@ from django.conf import settings
 from google import genai
 from google.genai import types
 
+from .hospitals import (
+    SEARCH_RADIUS_METERS,
+    HospitalSearchError,
+    find_nearby_hospitals,
+    geocode_place,
+)
 from .models import HealthNote
 
 logger = logging.getLogger(__name__)
@@ -91,7 +98,7 @@ You are "Lestari AI" — an analytical AI health advisor on the Lestari platform
   > diagnosis dokter. Jika gejala memburuk, segera cari pertolongan medis.
 
 # TOOLS — saving health records
-- You have ONE tool available: `create_health_note`.
+- You have two tools: `create_health_note` and `find_nearby_hospitals`.
 - Use `create_health_note` whenever the user asks to save, record, or
   summarize this consultation as a health note / catatan kesehatan
   (e.g. "buatkan catatan kesehatannya", "simpan rekap kondisi saya",
@@ -99,8 +106,44 @@ You are "Lestari AI" — an analytical AI health advisor on the Lestari platform
 - When you call it, pass a short descriptive `title`. You do NOT need to write
   the body: the system silently distills this conversation into a structured
   analytical health report automatically.
-- Do NOT call the tool for ordinary questions; only when the user asks to
-  save a record. After the tool runs, briefly confirm the note was saved.
+- Do NOT call `create_health_note` for ordinary questions; only when the user
+  asks to save a record. After the tool runs, briefly confirm the note was
+  saved.
+
+# TOOLS — nearest hospitals
+- Use `find_nearby_hospitals` when the user asks for the nearest hospital,
+  ER/UGD/IGD, puskesmas, or where to go for urgent care.
+- Only pass `location` when the user named a place/address. Never invent
+  coordinates and never guess the user's location.
+- If the user gave no location and device location is unavailable, ask for a
+  landmark or full address instead of calling the tool. You may also point
+  them to the "Rumah Sakit Terdekat" page, which can use device location.
+- After the tool returns results, list the nearest hospitals with name,
+  distance, and address. State clearly that distances are straight-line
+  estimates, not travel time. Include the hospital map link (`osm_url`) when
+  useful, and point users to the "Rumah Sakit Terdekat" page for turn-by-turn
+  directions. Remind the user to call 119 for an emergency.
+- Never invent hospital names, addresses, phone numbers, or distances. Only
+  use what the tool returned.
+- If the tool reports that the location was not found or the service is
+  unavailable, say so honestly and suggest trying a more specific address.
+"""
+
+DEVICE_LOCATION_AVAILABLE_NOTE = """
+
+# DEVICE LOCATION
+The user's device coordinates are available for this message. If they ask for
+the nearest hospital without naming a place/address, call
+`find_nearby_hospitals` without arguments. Do not ask them for their location.
+"""
+
+DEVICE_LOCATION_UNAVAILABLE_NOTE = """
+
+# DEVICE LOCATION
+No device location is available for this message. If the user asks for the
+nearest hospital without naming a place/address, ask for a landmark or full
+address. You may suggest the "Rumah Sakit Terdekat" page, which can request
+device location from the browser.
 """
 
 REFUSAL_TEMPLATE = (
@@ -149,6 +192,52 @@ HEALTH_NOTE_TOOL = types.Tool(
             },
         )
     ]
+)
+
+HOSPITAL_TOOL = types.Tool(
+    function_declarations=[
+        types.FunctionDeclaration(
+            name="find_nearby_hospitals",
+            description=(
+                "Cari rumah sakit terdekat dari sebuah nama tempat/alamat, atau "
+                "dari lokasi perangkat pengguna bila tersedia. Panggil HANYA "
+                "ketika pengguna menanyakan rumah sakit/UGD/IGD/puskesmas "
+                "terdekat, meminta rekomendasi fasilitas kesehatan terdekat, atau "
+                "ingin tahu harus pergi ke mana untuk kondisi darurat. Jangan "
+                "panggil untuk pertanyaan umum tentang rumah sakit. Jangan "
+                "mengarang koordinat. Jika pengguna tidak menyebut lokasi dan "
+                "lokasi perangkat tidak tersedia, tanyakan lokasi terlebih dahulu."
+            ),
+            parameters={
+                "type": "OBJECT",
+                "properties": {
+                    "location": {
+                        "type": "STRING",
+                        "description": (
+                            "Nama tempat atau alamat yang disebut pengguna, mis. "
+                            "'SMKN 11 Bandung' atau 'Jl. Asia Afrika Bandung'. "
+                            "Kosongkan jika memakai lokasi perangkat."
+                        ),
+                    },
+                    "latitude": {
+                        "type": "NUMBER",
+                        "description": "Koordinat lintang, hanya jika pengguna menyebutkannya.",
+                    },
+                    "longitude": {
+                        "type": "NUMBER",
+                        "description": "Koordinat bujur, hanya jika pengguna menyebutkannya.",
+                    },
+                },
+            },
+        )
+    ]
+)
+
+HOSPITAL_TOOL_NAMES = {"find_nearby_hospitals"}
+
+HOSPITAL_SEARCH_UNAVAILABLE = (
+    "Pencarian rumah sakit sedang tidak tersedia. Silakan coba lagi beberapa "
+    "saat lagi, atau buka halaman Rumah Sakit Terdekat."
 )
 
 NOTE_CREATED_TEMPLATE = (
@@ -253,18 +342,214 @@ def _get_client():
     return _client
 
 
+_GENERIC_LOCATION_PHRASES = {
+    "lokasi saya",
+    "lokasi perangkat",
+    "lokasi saat ini",
+    "posisi saya",
+    "posisi saat ini",
+    "my location",
+    "here",
+    "sini",
+}
+
+
+def _is_valid_latitude(value) -> bool:
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(float(value))
+        and -90 <= float(value) <= 90
+    )
+
+
+def _is_valid_longitude(value) -> bool:
+    return (
+        not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(float(value))
+        and -180 <= float(value) <= 180
+    )
+
+
+def _execute_hospital_tool(args, device_location=None) -> dict:
+    """Resolve a location and return the closest hospitals for the AI tool."""
+    args = args or {}
+    location = str(args.get("location") or "").strip()
+    if location.casefold() in _GENERIC_LOCATION_PHRASES:
+        location = ""
+
+    latitude = longitude = None
+    location_label = ""
+
+    if location:
+        try:
+            place = geocode_place(location)
+        except HospitalSearchError:
+            return {
+                "status": "error",
+                "error": "upstream_unavailable",
+                "message": HOSPITAL_SEARCH_UNAVAILABLE,
+            }
+        if not place:
+            return {
+                "status": "not_found",
+                "query": location,
+                "message": (
+                    "Lokasi tidak ditemukan. Minta pengguna menulis nama tempat "
+                    "atau alamat yang lebih lengkap."
+                ),
+            }
+        latitude = place["latitude"]
+        longitude = place["longitude"]
+        location_label = place["label"]
+    elif device_location:
+        latitude = device_location.get("latitude")
+        longitude = device_location.get("longitude")
+        location_label = "Lokasi perangkat (perkiraan)"
+    elif (
+        _is_valid_latitude(args.get("latitude"))
+        and _is_valid_longitude(args.get("longitude"))
+    ):
+        latitude = float(args["latitude"])
+        longitude = float(args["longitude"])
+        location_label = "Koordinat yang diberikan"
+    else:
+        return {
+            "status": "location_required",
+            "message": (
+                "Lokasi belum tersedia. Minta pengguna menyebutkan nama tempat, "
+                "alamat lengkap, atau buka halaman Rumah Sakit Terdekat untuk "
+                "memakai lokasi perangkat."
+            ),
+        }
+
+    if not _is_valid_latitude(latitude) or not _is_valid_longitude(longitude):
+        return {
+            "status": "error",
+            "error": "invalid_coordinates",
+            "message": "Koordinat lokasi tidak valid.",
+        }
+
+    try:
+        hospitals = find_nearby_hospitals(float(latitude), float(longitude))
+    except HospitalSearchError:
+        return {
+            "status": "error",
+            "error": "upstream_unavailable",
+            "message": HOSPITAL_SEARCH_UNAVAILABLE,
+        }
+
+    # Strip the directions URL: it embeds the user's exact coordinates, and
+    # this text is persisted as a chat message. Use the hospital page for
+    # turn-by-turn directions instead.
+    safe_hospitals = [
+        {
+            "name": hospital.get("name", ""),
+            "address": hospital.get("address", ""),
+            "phone": hospital.get("phone", ""),
+            "distance_meters": hospital.get("distance_meters"),
+            "latitude": hospital.get("latitude"),
+            "longitude": hospital.get("longitude"),
+            "osm_url": hospital.get("osm_url", ""),
+        }
+        for hospital in hospitals
+    ]
+    return {
+        "status": "ok",
+        "location_label": location_label,
+        "radius_meters": SEARCH_RADIUS_METERS,
+        "used_device_location": bool(device_location and not location),
+        "hospitals": safe_hospitals,
+    }
+
+
+def _format_distance(meters) -> str:
+    if meters is None:
+        return ""
+    if meters < 1000:
+        return f"{int(meters)} m"
+    return f"{meters / 1000:.1f}".replace(".", ",") + " km"
+
+
+def _format_hospital_response(result: dict, is_emergency: bool = False) -> str:
+    """Render hospital tool results as a safe, deterministic markdown answer."""
+    status = result.get("status")
+    if status == "ok":
+        hospitals = result.get("hospitals") or []
+        label = result.get("location_label") or "lokasi tersebut"
+        radius_km = (result.get("radius_meters") or 0) // 1000
+        if hospitals:
+            lines = [
+                f"Berikut rumah sakit terdekat dari **{label}** "
+                f"(radius {radius_km} km):"
+            ]
+            for index, hospital in enumerate(hospitals[:5], start=1):
+                lines.append(f"{index}. **{hospital.get('name', 'Rumah sakit')}**")
+                if hospital.get("address"):
+                    lines.append(f"   - Alamat: {hospital['address']}")
+                distance = _format_distance(hospital.get("distance_meters"))
+                if distance:
+                    lines.append(f"   - Jarak: ±{distance} (garis lurus)")
+                if hospital.get("phone"):
+                    lines.append(f"   - Telepon: {hospital['phone']}")
+                if hospital.get("osm_url"):
+                    lines.append(f"   - [Peta]({hospital['osm_url']})")
+            lines.append("")
+            lines.append(
+                "Buka [Rumah Sakit Terdekat](/rumah-sakit/) untuk peta lengkap "
+                "dan petunjuk arah."
+            )
+            text = "\n".join(lines)
+        else:
+            text = (
+                f"Belum ada rumah sakit terdata dalam radius {radius_km} km dari "
+                f"**{label}**. Coba lokasi lain atau buka halaman "
+                "[Rumah Sakit Terdekat](/rumah-sakit/)."
+            )
+    elif status == "not_found":
+        text = (
+            "Lokasi tidak ditemukan. Coba tulis nama tempat atau alamat yang "
+            "lebih lengkap, atau buka halaman [Rumah Sakit Terdekat](/rumah-sakit/)."
+        )
+    elif status == "location_required":
+        text = (
+            "Sebutkan nama tempat atau alamat lengkapnya, misalnya "
+            "\"rumah sakit terdekat dari SMKN 11 Bandung\". Anda juga bisa "
+            "membuka halaman [Rumah Sakit Terdekat](/rumah-sakit/) untuk memakai "
+            "lokasi perangkat."
+        )
+    else:
+        text = (
+            "Pencarian rumah sakit sedang tidak tersedia. Silakan coba lagi "
+            "beberapa saat lagi, atau buka halaman "
+            "[Rumah Sakit Terdekat](/rumah-sakit/)."
+        )
+
+    if is_emergency:
+        text = EMERGENCY_BANNER + "\n\n" + text
+    text += (
+        "\n\n⚠️ **Catatan:** Jarak adalah perkiraan garis lurus, bukan waktu "
+        "tempuh. Dalam kondisi darurat, hubungi **119** atau menuju IGD terdekat."
+    )
+    return text
+
+
 def get_ai_response(
     user_message: str,
     mode: str = "Triase Lengkap",
     image: dict | None = None,
     user=None,
     session=None,
+    device_location: dict | None = None,
 ) -> dict:
     """
     Send the user's message (and optional image) to Gemini with the strict
     Lestari AI persona.
 
     `image` is an optional dict: {"data": bytes, "mime_type": str}.
+    `device_location` is an optional {"latitude", "longitude"} dict supplied by
+    the browser; it is used only for the hospital tool and never persisted.
     `user`/`session` are required for `create_health_note` function calls;
     if the model requests a note and `user` is provided, a HealthNote is saved.
 
@@ -283,45 +568,84 @@ def get_ai_response(
 
         client = _get_client()
         # If an image is attached, send it as a Part next to the message text.
-        contents = user_message
+        contents = [user_message]
         if image:
-            contents = [
-                user_message,
-                types.Part.from_bytes(data=image["data"], mime_type=image["mime_type"]),
-            ]
+            contents.append(
+                types.Part.from_bytes(
+                    data=image["data"],
+                    mime_type=image["mime_type"],
+                )
+            )
+
+        system_instruction = SYSTEM_INSTRUCTION + (
+            DEVICE_LOCATION_AVAILABLE_NOTE
+            if device_location
+            else DEVICE_LOCATION_UNAVAILABLE_NOTE
+        )
+        config = types.GenerateContentConfig(
+            system_instruction=system_instruction,
+            temperature=0.2,  # low temperature → more factual & analytical
+            tools=[HEALTH_NOTE_TOOL, HOSPITAL_TOOL],
+            automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+        )
 
         response = client.models.generate_content(
             model=MODEL_NAME,
             contents=contents,
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_INSTRUCTION,
-                temperature=0.2,  # low temperature → more factual & analytical
-                tools=[HEALTH_NOTE_TOOL],
-                automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
-            ),
+            config=config,
         )
 
-        # The model may call `create_health_note` to persist a health record.
-        if response.function_calls:
-            notes_created = _execute_note_calls(
-                response.function_calls,
-                user=user,
-                session=session,
-                conversation_text=user_message,
-                report_generator=_generate_health_note_report,
-            )
-            if notes_created:
-                title = notes_created[0].title
-                text = NOTE_CREATED_TEMPLATE.format(title=title)
-            else:
-                text = (response.text or "").strip() or NOTE_CREATE_FAILED_TEMPLATE
-            return {
-                "text": text,
-                "is_emergency": _contains_emergency(user_message),
-                "note_created": bool(notes_created),
-                "error": False,
-                "error_message": "",
-            }
+        function_calls = list(response.function_calls or [])
+        is_emergency = _contains_emergency(user_message)
+
+        if function_calls:
+            # Saving a health note keeps its existing one-shot behavior.
+            note_calls = [
+                fc
+                for fc in function_calls
+                if getattr(fc, "name", None) == "create_health_note"
+            ]
+            if note_calls:
+                notes_created = _execute_note_calls(
+                    note_calls,
+                    user=user,
+                    session=session,
+                    conversation_text=user_message,
+                    report_generator=_generate_health_note_report,
+                )
+                if notes_created:
+                    title = notes_created[0].title
+                    text = NOTE_CREATED_TEMPLATE.format(title=title)
+                else:
+                    text = (response.text or "").strip() or NOTE_CREATE_FAILED_TEMPLATE
+                return {
+                    "text": text,
+                    "is_emergency": is_emergency,
+                    "note_created": bool(notes_created),
+                    "error": False,
+                    "error_message": "",
+                }
+
+            hospital_calls = [
+                fc
+                for fc in function_calls
+                if getattr(fc, "name", None) in HOSPITAL_TOOL_NAMES
+            ]
+            if hospital_calls:
+                # Render hospital data directly instead of making a second
+                # Gemini request. This keeps the response fast and prevents
+                # the model from inventing hospital details.
+                result = _execute_hospital_tool(
+                    hospital_calls[0].args or {},
+                    device_location,
+                )
+                return {
+                    "text": _format_hospital_response(result, is_emergency),
+                    "is_emergency": is_emergency,
+                    "note_created": False,
+                    "error": False,
+                    "error_message": "",
+                }
 
         text = (response.text or "").strip()
         if not text:
@@ -335,7 +659,6 @@ def get_ai_response(
         # Triage urgency is judged from the USER's own words. We deliberately
         # do not scan the AI answer: comprehensive answers always mention red
         # flags ("nyeri dada", "sesak napas") which would false-positive.
-        is_emergency = _contains_emergency(user_message)
         return {
             "text": text,
             "is_emergency": is_emergency,

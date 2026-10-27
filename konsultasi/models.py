@@ -122,3 +122,19 @@ class ArtikelCache(models.Model):
     query = models.CharField(max_length=200, primary_key=True)
     payload = models.JSONField()
     fetched_at = models.DateTimeField(auto_now=True)
+
+
+class GeocodeCache(models.Model):
+    """Cached place/address lookup; empty payload means 'not found'."""
+
+    query = models.CharField(max_length=255, primary_key=True)
+    payload = models.JSONField()
+    fetched_at = models.DateTimeField(auto_now=True)
+
+
+class HospitalSearchCache(models.Model):
+    """Cached hospital POIs for a coarse area (~1 km), not exact user coordinates."""
+
+    area = models.CharField(max_length=32, primary_key=True)
+    payload = models.JSONField()
+    fetched_at = models.DateTimeField(auto_now=True)

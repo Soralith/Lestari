@@ -386,7 +386,12 @@
       const inline = (s) => s
         .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
         .replace(/(^|\s)\*(?!\s)(.+?)\*/g, '$1<em>$2</em>')
-        .replace(/`(.+?)`/g, '<code class="bg-surface-container px-1 rounded">$1</code>');
+        .replace(/`(.+?)`/g, '<code class="bg-surface-container px-1 rounded">$1</code>')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+|\/[^\s)]*)\)/g, (match, label, href) => {
+          const external = href.startsWith('http');
+          const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+          return `<a href="${href}"${attrs} class="text-primary font-semibold underline underline-offset-2">${label}</a>`;
+        });
 
       for (const line of lines) {
         const t = line.trim();
@@ -488,12 +493,45 @@
       getEl('send-icon').classList.toggle('animate-spin', sending);
     }
 
+    // Ask for device location only for hospital-location questions. The
+    // browser permission prompt is triggered by the send action itself.
+    function isHospitalLocationQuery(message) {
+      const text = message.toLowerCase();
+      const hasHospital = /\b(rumah\s*sakit|ugd|igd|puskesmas|hospital)\b/.test(text) || /\brs\b/.test(text);
+      const hasLocationIntent = /\b(terdekat|dekat|mana|dimana|kemana|ke|darurat)\b/.test(text);
+      if (!hasHospital || !hasLocationIntent) return false;
+      // If the user already named a place ("dari SMKN 11 Bandung"), don't
+      // bother them with a device-location prompt.
+      const mentionsDevice = /\b(saya|sini|lokasi\s+saya|lokasi\s+perangkat|sekitar\s+saya)\b/.test(text);
+      const namesPlace = /\b(dari|di|dekat|sekitar)\s+(?!saya\b|sini\b|lokasi\b|sekitar\b|mana\b|dimana\b|kemana\b)\S+/i.test(text);
+      return mentionsDevice || !namesPlace;
+    }
+
+    function getDeviceLocationForHospitalQuery(message) {
+      if (!isHospitalLocationQuery(message)) return Promise.resolve(null);
+      if (!window.isSecureContext || !navigator.geolocation) return Promise.resolve(null);
+      return new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+          }),
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
+        );
+      });
+    }
+
     // ============ Core: send message to Lestari AI ============
     async function dispatchConsultation() {
       if (isSending) return;
       const input = getEl('symptom-input');
       const query = input.value.trim();
       if (!query) { input.focus(); return; }
+
+      // Start the permission prompt while we still have the user gesture.
+      const deviceLocationPromise = getDeviceLocationForHospitalQuery(query);
 
       const form = new FormData();
       form.append('message', query);
@@ -512,6 +550,13 @@
       showTypingIndicator();
 
       try {
+        const deviceLocation = await deviceLocationPromise;
+        if (deviceLocation) {
+          form.append('latitude', deviceLocation.latitude);
+          form.append('longitude', deviceLocation.longitude);
+          form.append('accuracy', deviceLocation.accuracy);
+        }
+
         const resp = await fetch('/api/send/', {
           method: 'POST',
           headers: { 'X-CSRFToken': getCsrfToken() },
