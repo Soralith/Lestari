@@ -543,24 +543,63 @@ def get_ai_response(
     session=None,
     device_location: dict | None = None,
 ) -> dict:
-    """
-    Send the user's message (and optional image) to Gemini with the strict
-    Lestari AI persona.
+    """Menghasilkan jawaban Lestari AI untuk satu giliran percakapan.
 
-    `image` is an optional dict: {"data": bytes, "mime_type": str}.
-    `device_location` is an optional {"latitude", "longitude"} dict supplied by
-    the browser; it is used only for the hospital tool and never persisted.
-    `user`/`session` are required for `create_health_note` function calls;
-    if the model requests a note and `user` is provided, a HealthNote is saved.
+    Mengirim ``user_message`` (opsional bersama satu gambar) ke Gemini 2.5
+    Flash dengan system instruction Lestari. Bila model meminta
+    ``find_nearby_hospitals``, jawaban dirakit di Python tanpa panggilan model
+    kedua. Bila meminta ``create_health_note``, isi catatan dibuat lewat
+    panggilan Gemini kedua yang senyap, lalu dikembalikan sebagai konfirmasi.
+    Kegagalan tidak dilempar sebagai exception, melainkan dikembalikan sebagai
+    pesan galat di dalam dict.
 
-    Returns a dict:
-    {
-        "text": str,            # markdown answer
-        "is_emergency": bool,   # True → show escalation banner
-        "note_created": bool,   # True → a health note was saved to Catatan Kesehatan
-        "error": bool,
-        "error_message": str,
-    }
+    Args:
+        user_message: Teks yang dikirim ke model. Pemanggil
+            (``api_send_message``) mengisinya dengan seluruh riwayat sesi
+            yang sudah diformat "User: ...\n\nLestari AI: ...", bukan hanya
+            pesan terbaru. Deteksi darurat dan laporan catatan karena itu
+            membaca transkrip penuh.
+        mode: Diterima untuk kompatibilitas API dan disimpan pada sesi oleh
+            pemanggil. Saat ini TIDAK dibaca di dalam fungsi ini, sehingga
+            tidak memengaruhi prompt maupun jawaban.
+        image: Gambar opsional ``{"data": bytes, "mime_type": str}``. Dikirim
+            sebagai ``types.Part`` setelah teks. Validasi tipe/ukuran dilakukan
+            di view sebelum fungsi ini dipanggil.
+        user: Pengguna Django pemilik catatan. Wajib agar
+            ``create_health_note`` dapat menyimpan ``HealthNote``; bila None,
+            pembuatan catatan dilewati.
+        session: ``ConsultationSession`` tempat catatan ditautkan. Boleh None.
+        device_location: ``{"latitude": float, "longitude": float}`` dari
+            peramban. Hanya dipakai untuk memilih varian system instruction
+            dan sebagai sumber lokasi tool rumah sakit; tidak pernah disimpan.
+
+    Returns:
+        dict: Lima kunci yang selalu ada.
+
+        - ``text`` (str): jawaban Markdown siap tampil; berisi
+          ``ERROR_TEMPLATE`` bila terjadi kegagalan.
+        - ``is_emergency`` (bool): True bila kata kunci red flag ditemukan
+          pada ``user_message`` (bukan hanya pada kalimat terakhir pengguna).
+        - ``note_created`` (bool): True bila satu ``HealthNote`` tersimpan
+          pada giliran ini.
+        - ``error`` (bool): True bila pemanggilan Gemini gagal.
+        - ``error_message`` (str): pesan teknis; string kosong saat sukses.
+
+    Notes:
+        * Hasil tool rumah sakit dirakit oleh ``_format_hospital_response()``
+          dan langsung dikembalikan; tidak ada panggilan model kedua.
+        * ``directions_url`` sengaja dibuang sebelum teks disimpan karena URL
+          itu memuat koordinat persis pengguna.
+        * Semua exception ditangkap dan dicatat lewat ``logger.exception``.
+
+    Example:
+        >>> hasil = get_ai_response(
+        ...     "Sudah 3 hari demam 38,5 derajat.",
+        ...     user=request.user,
+        ...     session=sesi,
+        ... )
+        >>> hasil["error"], hasil["note_created"]
+        (False, False)
     """
     try:
         if not GEMINI_API_KEY:
@@ -596,10 +635,16 @@ def get_ai_response(
         )
 
         function_calls = list(response.function_calls or [])
+        # Pemeriksaan darurat memindai `user_message` apa adanya. Dari
+        # api_send_message, nilai itu adalah transkrip penuh (termasuk jawaban
+        # AI sebelumnya), sehingga red flag pada giliran lama tetap membuat
+        # is_emergency=True pada giliran berikutnya dalam sesi yang sama.
         is_emergency = _contains_emergency(user_message)
 
         if function_calls:
-            # Saving a health note keeps its existing one-shot behavior.
+            # Catatan disimpan, lalu isi laporannya dibuat lewat panggilan
+            # Gemini kedua yang senyap (_generate_health_note_report). Cabang
+            # ini memakai dua panggilan model, berbeda dari cabang rumah sakit.
             note_calls = [
                 fc
                 for fc in function_calls
@@ -632,9 +677,12 @@ def get_ai_response(
                 if getattr(fc, "name", None) in HOSPITAL_TOOL_NAMES
             ]
             if hospital_calls:
-                # Render hospital data directly instead of making a second
-                # Gemini request. This keeps the response fast and prevents
-                # the model from inventing hospital details.
+                # Hasil tool sudah final dan deterministik: nama, alamat, telepon,
+                # dan jarak berasal dari OpenStreetMap/Geoapify. Karena itu teks
+                # jawaban dirakit di Python dan TIDAK dikirim balik ke Gemini —
+                # satu panggilan model lebih cepat dan menutup peluang model
+                # mengarang detail rumah sakit. Pengguna cukup diarahkan ke
+                # /rumah-sakit/ untuk petunjuk arah.
                 result = _execute_hospital_tool(
                     hospital_calls[0].args or {},
                     device_location,
@@ -656,9 +704,6 @@ def get_ai_response(
         if "hanya dapat membantu pertanyaan seputar kesehatan" in text.lower():
             text = REFUSAL_TEMPLATE
 
-        # Triage urgency is judged from the USER's own words. We deliberately
-        # do not scan the AI answer: comprehensive answers always mention red
-        # flags ("nyeri dada", "sesak napas") which would false-positive.
         return {
             "text": text,
             "is_emergency": is_emergency,
